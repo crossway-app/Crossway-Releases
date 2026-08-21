@@ -200,16 +200,15 @@
         Crossway, donations are always appreciated!</p>
         <p class="caption">Donations aren't wired up yet. Check back soon.</p>
       </div>
-      <!-- FLIP-LIVE checklist (when donations are wired up):
-           1. GitHub Sponsors: replace the first span below with
-              <a class="btn" href="https://github.com/sponsors/crossway-app">GitHub Sponsors</a>
-           2. Stripe: replace the second span with
-              <a class="btn btn-default" href="PAYMENT_LINK">Buy a coffee</a>
-           3. Delete the "aren't wired up yet" caption above.
-           4. Add `github: crossway-app` to FUNDING.yml (ORG-level only —
-              the personal handle never appears; brand-surface rule). -->
+      <!-- FLIP-LIVE (one swap, when the Stripe Payment Link exists):
+           replace the span below with
+             <a class="btn btn-default" href="PAYMENT_LINK" rel="noopener">Buy a coffee</a>
+           and delete the "aren't wired up yet" caption above.
+           Method decision (2026-08-21, user): ONE method, a Stripe
+           Payment Link (Apple Pay + Google Pay, no platform fee).
+           GitHub Sponsors dropped; FUNDING.yml keeps pointing at this
+           page, so nothing else changes. -->
       <div class="dialog-actions btn-row right">
-        <span class="btn is-disabled" role="button" aria-disabled="true">GitHub Sponsors</span>
         <span class="btn is-disabled" role="button" aria-disabled="true">Buy a coffee</span>
       </div>
     </div>
