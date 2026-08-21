@@ -133,10 +133,16 @@ code, kbd {
   outline: none;
 }
 .menubar .apptitle {
+  display: inline-flex;
+  align-items: center;
   padding: 5px 10px 5px 2px;
   white-space: nowrap;
 }
-.menubar .cmdglyph { font-size: 17px; margin-right: 6px; }
+.menubar .appicon {
+  width: 18px;
+  height: 18px;
+  margin-right: 7px;
+}
 .menubar .spacer { flex: 1; }
 
 /* ---------- desktop layout ---------- */
