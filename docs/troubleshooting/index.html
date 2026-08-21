@@ -3,12 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="light dark">
 <title>Crossway Troubleshooting</title>
 <meta name="description" content="Fixes for the common Crossway install problems, and how to check which version you're running.">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
-<script>try{if(localStorage.getItem("crossway-night")==="1")document.documentElement.classList.add("night")}catch(e){}</script>
+<script>try{var v=localStorage.getItem("crossway-night");if(v==="1")document.documentElement.classList.add("night");else if(v==="0")document.documentElement.classList.add("day")}catch(e){}</script>
 <link rel="stylesheet" href="../style.css">
 <script src="../night.js" defer></script>
 </head>
