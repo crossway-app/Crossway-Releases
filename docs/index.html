@@ -17,7 +17,9 @@
 <meta name="twitter:image" content="https://crosswayapp.com/assets/social-card.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<script>try{if(localStorage.getItem("crossway-night")==="1")document.documentElement.classList.add("night")}catch(e){}</script>
 <link rel="stylesheet" href="style.css">
+<script src="night.js" defer></script>
 </head>
 <body>
 
@@ -54,19 +56,19 @@
               <rect x="1" y="1" width="1" height="1" fill="currentColor"/>
             </pattern>
             <g id="mwA">
-              <rect x="0" y="0" width="26" height="20" fill="#fff" stroke="currentColor"/>
+              <rect x="0" y="0" width="26" height="20" style="fill: var(--paper)" stroke="currentColor"/>
               <rect x="1" y="5" width="24" height="1" fill="currentColor"/>
               <rect x="3" y="2" width="20" height="1" fill="currentColor" opacity=".6"/>
               <rect x="2" y="7" width="22" height="11" fill="url(#dA)" opacity=".28"/>
             </g>
           </defs>
-          <rect x="2" y="2" width="152" height="84" rx="5" fill="#fff" stroke="currentColor" stroke-width="2"/>
+          <rect x="2" y="2" width="152" height="84" rx="5" style="fill: var(--paper)" stroke="currentColor" stroke-width="2"/>
           <!-- app icon row -->
           <rect x="12" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
           <circle cx="20" cy="18" r="4" fill="currentColor"/>
           <rect x="40" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
           <rect x="44" y="14" width="8" height="8" fill="currentColor"/>
-          <rect x="46" y="16" width="4" height="4" fill="#fff"/>
+          <rect x="46" y="16" width="4" height="4" style="fill: var(--paper)"/>
           <rect x="68" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
           <polygon points="76,13 81,22 71,22" fill="currentColor"/>
           <rect x="96" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
@@ -95,13 +97,13 @@
               <rect x="1" y="1" width="1" height="1" fill="currentColor"/>
             </pattern>
             <g id="mwB">
-              <rect x="0" y="0" width="26" height="20" fill="#fff" stroke="currentColor"/>
+              <rect x="0" y="0" width="26" height="20" style="fill: var(--paper)" stroke="currentColor"/>
               <rect x="1" y="5" width="24" height="1" fill="currentColor"/>
               <rect x="3" y="2" width="20" height="1" fill="currentColor" opacity=".6"/>
               <rect x="2" y="7" width="22" height="11" fill="url(#dB)" opacity=".28"/>
             </g>
           </defs>
-          <rect x="2" y="2" width="152" height="84" rx="5" fill="#fff" stroke="currentColor" stroke-width="2"/>
+          <rect x="2" y="2" width="152" height="84" rx="5" style="fill: var(--paper)" stroke="currentColor" stroke-width="2"/>
           <!-- every open window, windows only -->
           <use href="#mwB" x="20" y="17"/>
           <use href="#mwB" x="64" y="17"/>
