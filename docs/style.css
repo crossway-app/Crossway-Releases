@@ -105,20 +105,23 @@ code, kbd {
 
 /* ---------- menu bar (site nav) ---------- */
 
+/* No overflow scrolling here: on narrow screens the bar WRAPS to a
+   second row instead. A horizontally scrollable sticky nav turns every
+   touch into a drag of the nav itself (the reported mobile wonkiness). */
 .menubar {
   position: sticky;
   top: 0;
   z-index: 10;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 4px;
-  height: 34px;
+  gap: 0 4px;
+  min-height: 34px;
   padding: 0 14px;
   background: var(--paper);
   border-bottom: var(--border) solid var(--ink);
   font-family: var(--font-display);
   font-size: 15px;
-  overflow-x: auto;
 }
 .menubar a {
   display: inline-flex;
@@ -395,6 +398,11 @@ pre.cmd {
 /* ---------- small screens ---------- */
 
 @media (max-width: 700px) {
+  html { scroll-padding-top: 84px; } /* the wrapped two-row bar */
+  .menubar { padding: 2px 8px 4px; }
+  .menubar .spacer { display: none; } /* title row, then links flow below */
+  .menubar .apptitle { flex-basis: 100%; padding-top: 6px; }
+  .menubar a { padding: 4px 8px; font-size: 14px; }
   h1 { font-size: 26px; }
   .desktop { padding: 24px 12px 56px; }
   .desktop > * + * { margin-top: 28px; }
