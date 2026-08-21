@@ -2,9 +2,9 @@
    A System 7 shareware page, executed with modern polish.
    Design system: the page is a classic Mac desktop with a menu bar on
    top and every content section, Donate included, as a titled window.
-   Single deliberate appearance (Platinum light) — this is a period
-   piece. (One secret exception: night.js can flip the html.night token
-   block below. Keep that a secret.)
+   Light Platinum by default, dark Platinum when the visitor's system
+   prefers dark, and night.js's secret word forces either. Keep the
+   word a secret.
    No frameworks, no build step, no external requests: every asset is
    served from this site. */
 
@@ -26,11 +26,40 @@
   --radius-btn: 9px;
 }
 
-/* ---------- night (the secret appearance) ---------- */
+/* ---------- night (system-following + the secret toggle) ---------- */
 
-/* Toggled by night.js when someone types the magic word; persisted by
-   the inline head snippet. Same design system, tokens swapped: a dark
+/* Three states: no class = follow the system (the media block below),
+   .night = forced dark, .day = forced light. night.js's magic word sets
+   the override and clears it again when a toggle lands back on the
+   system's own side. Same design system, tokens swapped: a dark
    Platinum desktop. The pixel heart keeps its exact red. */
+@media (prefers-color-scheme: dark) {
+  html:not(.day) {
+    --ink: #e8e8e8;
+    --paper: #141414;
+    --desktop-a: #2e2e2e;
+    --desktop-b: #1f1f1f;
+    --dim: #6f6f6f;
+    --muted: #a9a9a9;
+    --link: #7aa2ff;
+    --link-visited: #b391e0;
+  }
+  html:not(.day) body {
+    background-color: #262626;
+  }
+  html:not(.day) .notice {
+    background-image: repeating-conic-gradient(
+      rgba(255, 255, 255, 0.05) 0% 25%, transparent 0% 50%);
+  }
+  html:not(.day) .btn.is-disabled {
+    background-image: repeating-conic-gradient(
+      rgba(0, 0, 0, 0.55) 0% 25%, transparent 0% 50%);
+  }
+}
+
+/* The forced-night twin of the media block above — keep the two
+   identical. (One shared block would take light-dark(), which the old
+   Macs this site serves never got.) */
 html.night {
   --ink: #e8e8e8;
   --paper: #141414;
@@ -52,6 +81,13 @@ html.night .btn.is-disabled {
   background-image: repeating-conic-gradient(
     rgba(0, 0, 0, 0.55) 0% 25%, transparent 0% 50%);
 }
+
+/* Forced states also pin the UA's own chrome — scrollbars, selection,
+   canvas — to the forced side; system-follow gets this from the pages'
+   color-scheme meta. (.day needs no token overrides: the media block
+   above excludes it.) */
+html.night { color-scheme: dark; }
+html.day { color-scheme: light; }
 
 /* ---------- the dissolve (night.js flourish) ---------- */
 
@@ -458,6 +494,148 @@ pre.cmd {
 .footer .links a { color: var(--ink); }
 .footer .links a:visited { color: var(--ink); }
 .footer .fineprint { color: var(--muted); }
+
+/* ---------- hero demos ---------- */
+
+/* The two hero figures are live demos (demo.js): state is data
+   attributes on each SVG, motion lives here. Transform/opacity only —
+   the glide and every later animation stay on the compositor. CSS px
+   inside an SVG are user units, so all of it scales with the viewBox.
+   The selection ring's markup home is its default data-sel position;
+   these rules move it between targets (28-unit icon pitch). */
+#demo-apps[data-sel="0"] .demo-selector { transform: translateX(-56px); }
+#demo-apps[data-sel="1"] .demo-selector { transform: translateX(-28px); }
+#demo-apps[data-sel="2"] .demo-selector { transform: translateX(0); }
+#demo-apps[data-sel="3"] .demo-selector { transform: translateX(28px); }
+#demo-apps[data-sel="4"] .demo-selector { transform: translateX(56px); }
+
+/* The right figure's ring: the same idea in two axes (44-unit column
+   pitch, 35-unit row pitch; markup home is window 1, top middle).
+   Diagonal moves are one transition, so they glide as one motion. */
+#demo-windows[data-sel="0"] .demo-selector { transform: translate(-44px, 0); }
+#demo-windows[data-sel="1"] .demo-selector { transform: translate(0, 0); }
+#demo-windows[data-sel="2"] .demo-selector { transform: translate(44px, 0); }
+#demo-windows[data-sel="3"] .demo-selector { transform: translate(-44px, 35px); }
+#demo-windows[data-sel="4"] .demo-selector { transform: translate(0, 35px); }
+#demo-windows[data-sel="5"] .demo-selector { transform: translate(44px, 35px); }
+
+/* The trailing glide: a short ease-out keeps the ring a beat behind
+   the pointer, and retargeting mid-transition turns a fast sweep into
+   one continuous motion. Reduced-motion visitors get an instant snap
+   (no transition at all). */
+@media (prefers-reduced-motion: no-preference) {
+  .demo-selector {
+    transition: transform 0.16s cubic-bezier(0.25, 0.1, 0.25, 1);
+  }
+}
+
+/* Window-preview strips: five pre-rendered per app, one displayed.
+   The markup default (data-strip="2") keeps the JS-less page on
+   today's exact static render. (Measured Chrome behavior, 2026-08:
+   animations inside a display:none subtree keep running and do NOT
+   restart on re-display — a re-shown movie simply joins its loop
+   mid-cycle, like a real live window.) */
+.demo-strip { display: none; }
+#demo-apps[data-strip="0"] .demo-strip[data-app="0"],
+#demo-apps[data-strip="1"] .demo-strip[data-app="1"],
+#demo-apps[data-strip="2"] .demo-strip[data-app="2"],
+#demo-apps[data-strip="3"] .demo-strip[data-app="3"],
+#demo-apps[data-strip="4"] .demo-strip[data-app="4"] { display: inline; }
+
+/* The swap is a CROSSFADE (2026-08-21 user feedback, three rounds:
+   a per-window stepped stagger read as glitching; a translate rise
+   shimmered the crispEdges art — moving pixel art re-snaps every
+   edge to the pixel grid per frame; and any enter-only fade leaves
+   a blank first instant that reads as a flash). Seamless means the
+   OUTGOING strip lingers while the incoming fades over it, so the
+   strip area never blanks: `display 0.15s allow-discrete` keeps the
+   old strip rendered until its fade-out ends, and @starting-style
+   gives the newly displayed strip its opacity-0 starting point so
+   its fade-in actually transitions. Gated on .demo-live (added by
+   demo.js at the first swap) so first paint stays the static image.
+   Browsers without allow-discrete/@starting-style simply swap
+   instantly — the period-correct floor (this desktop never eased
+   anyway). Reduced motion also swaps instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  #demo-apps.demo-live .demo-strip {
+    opacity: 0;
+    transition: opacity 0.15s ease-out, display 0.15s allow-discrete;
+  }
+  #demo-apps.demo-live[data-strip="0"] .demo-strip[data-app="0"],
+  #demo-apps.demo-live[data-strip="1"] .demo-strip[data-app="1"],
+  #demo-apps.demo-live[data-strip="2"] .demo-strip[data-app="2"],
+  #demo-apps.demo-live[data-strip="3"] .demo-strip[data-app="3"],
+  #demo-apps.demo-live[data-strip="4"] .demo-strip[data-app="4"] { opacity: 1; }
+  @starting-style {
+    #demo-apps.demo-live .demo-strip { opacity: 0; }
+  }
+}
+
+/* Live-preview movies: tiny CSS flipbooks, the hint that Crossway's
+   previews are live. A .movie stacks pre-rendered .frame groups; one
+   keyframes per reel length holds each frame for its 0.4 s slot (a
+   hard cut, no crossfade), and nth-child delays phase the frames.
+   Pure CSS. Reels in hidden strips keep ticking (opacity-only, a few
+   style recalcs a second, measured harmless; .offstage pauses them
+   all), and reduced motion shows frame 1 as a still. */
+.movie .frame { opacity: 0; }
+@media (prefers-reduced-motion: no-preference) {
+  /* Each movie sets its own tempo via --slot (seconds per frame) on
+     the .movie group; the reel duration and the frames' phase delays
+     all derive from it. */
+  .frames-3 .frame { animation: demo-reel-3 calc(var(--slot, 0.4s) * 3) steps(1, end) infinite; }
+  .frames-4 .frame { animation: demo-reel-4 calc(var(--slot, 0.4s) * 4) steps(1, end) infinite; }
+  .frames-5 .frame { animation: demo-reel-5 calc(var(--slot, 0.4s) * 5) steps(1, end) infinite; }
+  .frames-6 .frame { animation: demo-reel-6 calc(var(--slot, 0.4s) * 6) steps(1, end) infinite; }
+  .frames-9 .frame { animation: demo-reel-9 calc(var(--slot, 0.4s) * 9) steps(1, end) infinite; }
+  .frames-10 .frame { animation: demo-reel-10 calc(var(--slot, 0.4s) * 10) steps(1, end) infinite; }
+  .movie .frame:nth-child(2) { animation-delay: calc(var(--slot, 0.4s) * 1); }
+  .movie .frame:nth-child(3) { animation-delay: calc(var(--slot, 0.4s) * 2); }
+  .movie .frame:nth-child(4) { animation-delay: calc(var(--slot, 0.4s) * 3); }
+  .movie .frame:nth-child(5) { animation-delay: calc(var(--slot, 0.4s) * 4); }
+  .movie .frame:nth-child(6) { animation-delay: calc(var(--slot, 0.4s) * 5); }
+  .movie .frame:nth-child(7) { animation-delay: calc(var(--slot, 0.4s) * 6); }
+  .movie .frame:nth-child(8) { animation-delay: calc(var(--slot, 0.4s) * 7); }
+  .movie .frame:nth-child(9) { animation-delay: calc(var(--slot, 0.4s) * 8); }
+  .movie .frame:nth-child(10) { animation-delay: calc(var(--slot, 0.4s) * 9); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .movie .frame:first-child { opacity: 1; }
+}
+/* Offscreen, the movies pause (demo.js flips .offstage from one
+   IntersectionObserver): zero animation work when unwatched. */
+.offstage .movie .frame { animation-play-state: paused; }
+
+@keyframes demo-reel-3 {
+  0% { opacity: 1; }
+  33.34% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes demo-reel-4 {
+  0% { opacity: 1; }
+  25% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes demo-reel-5 {
+  0% { opacity: 1; }
+  20% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes demo-reel-6 {
+  0% { opacity: 1; }
+  16.667% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes demo-reel-9 {
+  0% { opacity: 1; }
+  11.112% { opacity: 0; }
+  100% { opacity: 0; }
+}
+@keyframes demo-reel-10 {
+  0% { opacity: 1; }
+  10% { opacity: 0; }
+  100% { opacity: 0; }
+}
 
 /* ---------- small screens ---------- */
 
