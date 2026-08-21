@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="color-scheme" content="light">
+<meta name="color-scheme" content="light dark">
 <title>Crossway</title>
 <meta name="description" content="A fast and powerful window switcher for macOS. Free, signed &amp; notarized, records nothing.">
 <meta property="og:title" content="Crossway">
@@ -17,9 +17,10 @@
 <meta name="twitter:image" content="https://crosswayapp.com/assets/social-card.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<script>try{if(localStorage.getItem("crossway-night")==="1")document.documentElement.classList.add("night")}catch(e){}</script>
+<script>try{var v=localStorage.getItem("crossway-night");if(v==="1")document.documentElement.classList.add("night");else if(v==="0")document.documentElement.classList.add("day")}catch(e){}</script>
 <link rel="stylesheet" href="style.css">
 <script src="night.js" defer></script>
+<script src="demo.js" defer></script>
 </head>
 <body>
 
@@ -49,7 +50,7 @@
     <section class="mac-window">
       <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Switch apps</span></div>
       <div class="window-body figure">
-        <svg viewBox="0 0 156 88" width="624" height="352" shape-rendering="crispEdges" role="img" aria-label="Abstract switcher: a row of five app icons with the middle one highlighted, and three window previews shown beneath it.">
+        <svg id="demo-apps" viewBox="0 0 156 88" width="624" height="352" shape-rendering="crispEdges" role="img" data-sel="2" data-strip="2" aria-label="Interactive demo of the switcher: a row of five app icons. Hover or tap an icon to select it; window previews of the selected app appear beneath.">
           <defs>
             <pattern id="dA" width="2" height="2" patternUnits="userSpaceOnUse">
               <rect width="1" height="1" fill="currentColor"/>
@@ -76,13 +77,508 @@
           <rect x="124" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
           <rect x="128" y="15" width="8" height="2" fill="currentColor"/>
           <rect x="128" y="19" width="8" height="2" fill="currentColor"/>
-          <!-- selection around the third icon -->
-          <rect x="63" y="5" width="26" height="26" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
-          <!-- window previews: a strip aligned to the panel's left edge,
-               like the real app -->
-          <use href="#mwA" x="12" y="46"/>
-          <use href="#mwA" x="46" y="46"/>
-          <use href="#mwA" x="80" y="46"/>
+          <!-- the selection ring, at home around the third icon; demo.js
+               glides it between icons with a CSS transform -->
+          <rect class="demo-selector" x="63" y="5" width="26" height="26" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+          <!-- window previews: one pre-rendered strip per app, aligned
+               to the panel's left edge like the real app; only the
+               selected app's strip is shown -->
+          <g class="demo-strip" data-app="0">
+            <use href="#mwA" x="12" y="46"/>
+            <!-- movie: the sky cycle: sunrise, sunset, then the moon. -->
+            <g transform="translate(46,46)">
+              <rect x="0" y="0" width="26" height="20" style="fill: var(--paper)" stroke="currentColor"/>
+              <rect x="1" y="5" width="24" height="1" fill="currentColor"/>
+              <rect x="3" y="2" width="20" height="1" fill="currentColor" opacity=".6"/>
+              <g class="movie frames-10" style="--slot: 0.5s" transform="translate(2,7) scale(0.5)" fill="currentColor">
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="10" y="2" width="1" height="1"/>
+                  <rect x="2" y="15" width="3" height="1"/>
+                  <rect x="1" y="16" width="5" height="1"/>
+                  <rect x="40" y="15" width="2" height="1"/>
+                  <rect x="39" y="16" width="3" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="10" y="6" width="4" height="1"/>
+                  <rect x="9" y="7" width="6" height="3"/>
+                  <rect x="10" y="10" width="4" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="19" y="1" width="4" height="1"/>
+                  <rect x="18" y="2" width="6" height="3"/>
+                  <rect x="19" y="5" width="4" height="1"/>
+                  <rect x="20" y="0" width="2" height="1"/>
+                  <rect x="16" y="3" width="1" height="1"/>
+                  <rect x="25" y="3" width="1" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="28" y="6" width="4" height="1"/>
+                  <rect x="27" y="7" width="6" height="3"/>
+                  <rect x="28" y="10" width="4" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="39" y="15" width="3" height="1"/>
+                  <rect x="38" y="16" width="5" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="33" y="3" width="1" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="33" y="3" width="1" height="1"/>
+                  <rect x="10" y="2" width="1" height="1"/>
+                  <rect x="2" y="14" width="3" height="1"/>
+                  <rect x="2" y="15" width="2" height="1"/>
+                  <rect x="2" y="16" width="3" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="33" y="3" width="1" height="1"/>
+                  <rect x="10" y="2" width="1" height="1"/>
+                  <rect x="25" y="6" width="1" height="1"/>
+                  <rect x="41" y="5" width="1" height="1"/>
+                  <rect x="11" y="5" width="3" height="1"/>
+                  <rect x="10" y="6" width="2" height="3"/>
+                  <rect x="11" y="9" width="3" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="33" y="3" width="1" height="1"/>
+                  <rect x="10" y="2" width="1" height="1"/>
+                  <rect x="25" y="6" width="1" height="1"/>
+                  <rect x="41" y="5" width="1" height="1"/>
+                  <rect x="5" y="6" width="1" height="1"/>
+                  <rect x="16" y="4" width="1" height="1"/>
+                  <rect x="29" y="9" width="1" height="1"/>
+                  <rect x="20" y="0" width="3" height="1"/>
+                  <rect x="19" y="1" width="2" height="3"/>
+                  <rect x="20" y="4" width="3" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="17" width="42" height="5"/>
+                  <rect x="8" y="14" width="2" height="3"/>
+                  <rect x="6" y="11" width="6" height="3"/>
+                  <rect x="7" y="10" width="4" height="1"/>
+                  <rect x="22" y="16" width="8" height="1"/>
+                  <rect x="24" y="15" width="4" height="1"/>
+                  <rect x="15" y="14" width="4" height="1"/>
+                  <rect x="14" y="15" width="6" height="2"/>
+                  <rect x="10" y="2" width="1" height="1"/>
+                  <rect x="25" y="6" width="1" height="1"/>
+                  <rect x="5" y="6" width="1" height="1"/>
+                  <rect x="30" y="6" width="3" height="1"/>
+                  <rect x="29" y="7" width="2" height="3"/>
+                  <rect x="30" y="10" width="3" height="1"/>
+                </g>
+              </g>
+            </g>
+          </g>
+          <g class="demo-strip" data-app="1">
+            <use href="#mwA" x="12" y="46"/>
+          </g>
+          <g class="demo-strip" data-app="2">
+            <use href="#mwA" x="12" y="46"/>
+            <!-- movie: two stick figures in a lively scrap. -->
+            <g transform="translate(46,46)">
+              <rect x="0" y="0" width="26" height="20" style="fill: var(--paper)" stroke="currentColor"/>
+              <rect x="1" y="5" width="24" height="1" fill="currentColor"/>
+              <rect x="3" y="2" width="20" height="1" fill="currentColor" opacity=".6"/>
+              <g class="movie frames-6" style="--slot: 0.28s" transform="translate(2,7) scale(0.5)" fill="currentColor">
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="1"/>
+                  <rect x="9" y="3" width="3" height="3"/>
+                  <rect x="9" y="6" width="3" height="6"/>
+                  <rect x="12" y="7" width="2" height="2"/>
+                  <rect x="13" y="5" width="2" height="2"/>
+                  <rect x="7" y="7" width="2" height="2"/>
+                  <rect x="6" y="5" width="2" height="2"/>
+                  <rect x="7" y="12" width="2" height="8"/>
+                  <rect x="11" y="12" width="2" height="8"/>
+                  <rect x="32" y="3" width="3" height="3"/>
+                  <rect x="32" y="6" width="3" height="6"/>
+                  <rect x="30" y="7" width="2" height="2"/>
+                  <rect x="29" y="5" width="2" height="2"/>
+                  <rect x="35" y="7" width="2" height="2"/>
+                  <rect x="36" y="5" width="2" height="2"/>
+                  <rect x="30" y="12" width="2" height="8"/>
+                  <rect x="34" y="12" width="2" height="8"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="1"/>
+                  <rect x="12" y="3" width="3" height="3"/>
+                  <rect x="12" y="6" width="3" height="6"/>
+                  <rect x="15" y="5" width="10" height="2"/>
+                  <rect x="10" y="7" width="2" height="2"/>
+                  <rect x="10" y="12" width="2" height="4"/>
+                  <rect x="9" y="16" width="2" height="4"/>
+                  <rect x="14" y="12" width="2" height="8"/>
+                  <rect x="34" y="3" width="3" height="3"/>
+                  <rect x="33" y="6" width="3" height="6"/>
+                  <rect x="30" y="5" width="2" height="2"/>
+                  <rect x="31" y="7" width="2" height="2"/>
+                  <rect x="36" y="5" width="2" height="2"/>
+                  <rect x="31" y="12" width="2" height="3"/>
+                  <rect x="30" y="15" width="2" height="5"/>
+                  <rect x="34" y="12" width="2" height="8"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="1"/>
+                  <rect x="12" y="3" width="3" height="3"/>
+                  <rect x="12" y="6" width="3" height="6"/>
+                  <rect x="15" y="6" width="4" height="2"/>
+                  <rect x="10" y="5" width="2" height="3"/>
+                  <rect x="10" y="12" width="2" height="4"/>
+                  <rect x="9" y="16" width="2" height="4"/>
+                  <rect x="14" y="12" width="2" height="8"/>
+                  <rect x="37" y="3" width="3" height="2"/>
+                  <rect x="36" y="5" width="2" height="2"/>
+                  <rect x="35" y="7" width="2" height="2"/>
+                  <rect x="34" y="9" width="2" height="2"/>
+                  <rect x="32" y="11" width="4" height="2"/>
+                  <rect x="33" y="5" width="2" height="3"/>
+                  <rect x="39" y="5" width="2" height="3"/>
+                  <rect x="31" y="13" width="2" height="3"/>
+                  <rect x="30" y="16" width="2" height="4"/>
+                  <rect x="34" y="12" width="2" height="8"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="1"/>
+                  <rect x="10" y="4" width="3" height="3"/>
+                  <rect x="11" y="6" width="3" height="3"/>
+                  <rect x="12" y="9" width="3" height="3"/>
+                  <rect x="13" y="7" width="3" height="2"/>
+                  <rect x="15" y="4" width="2" height="4"/>
+                  <rect x="11" y="12" width="2" height="8"/>
+                  <rect x="14" y="12" width="2" height="8"/>
+                  <rect x="34" y="3" width="3" height="3"/>
+                  <rect x="33" y="6" width="3" height="6"/>
+                  <rect x="25" y="9" width="8" height="2"/>
+                  <rect x="23" y="8" width="2" height="3"/>
+                  <rect x="34" y="12" width="2" height="8"/>
+                  <rect x="31" y="4" width="2" height="3"/>
+                  <rect x="36" y="7" width="3" height="2"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="1"/>
+                  <rect x="11" y="3" width="3" height="3"/>
+                  <rect x="11" y="6" width="3" height="6"/>
+                  <rect x="14" y="8" width="7" height="2"/>
+                  <rect x="9" y="7" width="2" height="2"/>
+                  <rect x="13" y="11" width="2" height="1"/>
+                  <rect x="10" y="12" width="2" height="8"/>
+                  <rect x="14" y="12" width="2" height="8"/>
+                  <rect x="34" y="3" width="3" height="3"/>
+                  <rect x="34" y="6" width="3" height="6"/>
+                  <rect x="32" y="10" width="3" height="2"/>
+                  <rect x="31" y="12" width="2" height="2"/>
+                  <rect x="29" y="14" width="2" height="2"/>
+                  <rect x="35" y="12" width="2" height="8"/>
+                  <rect x="32" y="7" width="2" height="2"/>
+                  <rect x="37" y="5" width="2" height="3"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="1"/>
+                  <rect x="8" y="3" width="3" height="3"/>
+                  <rect x="8" y="6" width="3" height="6"/>
+                  <rect x="7" y="11" width="5" height="1"/>
+                  <rect x="6" y="12" width="2" height="7"/>
+                  <rect x="11" y="12" width="2" height="7"/>
+                  <rect x="11" y="7" width="2" height="2"/>
+                  <rect x="12" y="5" width="2" height="2"/>
+                  <rect x="6" y="7" width="2" height="2"/>
+                  <rect x="5" y="5" width="2" height="2"/>
+                  <rect x="33" y="3" width="3" height="3"/>
+                  <rect x="33" y="6" width="3" height="6"/>
+                  <rect x="31" y="11" width="5" height="1"/>
+                  <rect x="30" y="12" width="2" height="7"/>
+                  <rect x="35" y="12" width="2" height="7"/>
+                  <rect x="31" y="7" width="2" height="2"/>
+                  <rect x="30" y="5" width="2" height="2"/>
+                  <rect x="36" y="7" width="2" height="2"/>
+                  <rect x="37" y="5" width="2" height="2"/>
+                </g>
+              </g>
+            </g>
+            <use href="#mwA" x="80" y="46"/>
+          </g>
+          <g class="demo-strip" data-app="3">
+            <!-- movie: a cow, grazing. -->
+            <g transform="translate(12,46)">
+              <rect x="0" y="0" width="26" height="20" style="fill: var(--paper)" stroke="currentColor"/>
+              <rect x="1" y="5" width="24" height="1" fill="currentColor"/>
+              <rect x="3" y="2" width="20" height="1" fill="currentColor" opacity=".6"/>
+              <g class="movie frames-4" style="--slot: 0.6s" transform="translate(2,7) scale(0.5)" fill="currentColor">
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="2"/>
+                  <rect x="4" y="18" width="3" height="2"/>
+                  <rect x="37" y="18" width="3" height="2"/>
+                  <rect x="13" y="19" width="2" height="1"/>
+                  <rect x="16" y="8" width="18" height="6"/>
+                  <rect x="17" y="14" width="2" height="6"/>
+                  <rect x="21" y="14" width="2" height="6"/>
+                  <rect x="28" y="14" width="2" height="6"/>
+                  <rect x="31" y="14" width="2" height="6"/>
+                  <rect x="34" y="9" width="1" height="6"/>
+                  <rect x="34" y="15" width="2" height="2"/>
+                  <rect x="13" y="5" width="4" height="4"/>
+                  <rect x="8" y="4" width="6" height="4"/>
+                  <rect x="6" y="5" width="2" height="3"/>
+                  <rect x="12" y="3" width="2" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="2"/>
+                  <rect x="4" y="18" width="3" height="2"/>
+                  <rect x="37" y="18" width="3" height="2"/>
+                  <rect x="13" y="19" width="2" height="1"/>
+                  <rect x="16" y="8" width="18" height="6"/>
+                  <rect x="17" y="14" width="2" height="6"/>
+                  <rect x="21" y="14" width="2" height="6"/>
+                  <rect x="28" y="14" width="2" height="6"/>
+                  <rect x="31" y="14" width="2" height="6"/>
+                  <rect x="34" y="9" width="1" height="6"/>
+                  <rect x="34" y="15" width="2" height="2"/>
+                  <rect x="13" y="9" width="4" height="4"/>
+                  <rect x="10" y="12" width="4" height="3"/>
+                  <rect x="6" y="13" width="5" height="4"/>
+                  <rect x="4" y="15" width="3" height="3"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="2"/>
+                  <rect x="4" y="18" width="3" height="2"/>
+                  <rect x="37" y="18" width="3" height="2"/>
+                  <rect x="13" y="19" width="2" height="1"/>
+                  <rect x="16" y="8" width="18" height="6"/>
+                  <rect x="17" y="14" width="2" height="6"/>
+                  <rect x="21" y="14" width="2" height="6"/>
+                  <rect x="28" y="14" width="2" height="6"/>
+                  <rect x="31" y="14" width="2" height="6"/>
+                  <rect x="34" y="8" width="2" height="2"/>
+                  <rect x="36" y="6" width="2" height="3"/>
+                  <rect x="13" y="9" width="4" height="4"/>
+                  <rect x="10" y="12" width="4" height="4"/>
+                  <rect x="6" y="14" width="5" height="4"/>
+                  <rect x="4" y="16" width="3" height="3"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="20" width="42" height="2"/>
+                  <rect x="4" y="18" width="3" height="2"/>
+                  <rect x="37" y="18" width="3" height="2"/>
+                  <rect x="13" y="19" width="2" height="1"/>
+                  <rect x="16" y="8" width="18" height="6"/>
+                  <rect x="17" y="14" width="2" height="6"/>
+                  <rect x="21" y="14" width="2" height="6"/>
+                  <rect x="28" y="14" width="2" height="6"/>
+                  <rect x="31" y="14" width="2" height="6"/>
+                  <rect x="34" y="9" width="1" height="6"/>
+                  <rect x="34" y="15" width="2" height="2"/>
+                  <rect x="13" y="5" width="4" height="4"/>
+                  <rect x="8" y="4" width="6" height="4"/>
+                  <rect x="13" y="2" width="2" height="2"/>
+                  <rect x="6" y="6" width="2" height="3"/>
+                </g>
+              </g>
+            </g>
+            <use href="#mwA" x="46" y="46"/>
+            <use href="#mwA" x="80" y="46"/>
+            <!-- movie: the disco man: big hair, diagonal arm, no shame. -->
+            <g transform="translate(114,46)">
+              <rect x="0" y="0" width="26" height="20" style="fill: var(--paper)" stroke="currentColor"/>
+              <rect x="1" y="5" width="24" height="1" fill="currentColor"/>
+              <rect x="3" y="2" width="20" height="1" fill="currentColor" opacity=".6"/>
+              <g class="movie frames-4" style="--slot: 0.32s" transform="translate(2,7) scale(0.5)" fill="currentColor">
+                <g class="frame">
+                  <rect x="1" y="21" width="42" height="1"/>
+                  <rect x="17" y="1" width="8" height="1"/>
+                  <rect x="16" y="2" width="10" height="1"/>
+                  <rect x="15" y="3" width="11" height="1"/>
+                  <rect x="16" y="4" width="10" height="1"/>
+                  <rect x="17" y="5" width="8" height="1"/>
+                  <rect x="19" y="6" width="5" height="1"/>
+                  <rect x="19" y="7" width="6" height="6"/>
+                  <rect x="17" y="8" width="2" height="2"/>
+                  <rect x="16" y="10" width="2" height="2"/>
+                  <rect x="25" y="6" width="2" height="2"/>
+                  <rect x="27" y="4" width="2" height="2"/>
+                  <rect x="29" y="2" width="2" height="2"/>
+                  <rect x="31" y="1" width="1" height="1"/>
+                  <rect x="16" y="13" width="8" height="1"/>
+                  <rect x="16" y="14" width="3" height="1"/>
+                  <rect x="17" y="15" width="3" height="2"/>
+                  <rect x="21" y="14" width="3" height="1"/>
+                  <rect x="22" y="15" width="3" height="2"/>
+                  <rect x="17" y="17" width="4" height="2"/>
+                  <rect x="16" y="19" width="5" height="2"/>
+                  <rect x="23" y="17" width="4" height="2"/>
+                  <rect x="23" y="19" width="5" height="2"/>
+                  <rect x="5" y="3" width="1" height="1"/>
+                  <rect x="38" y="8" width="1" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="21" width="42" height="1"/>
+                  <rect x="17" y="1" width="8" height="1"/>
+                  <rect x="16" y="2" width="10" height="1"/>
+                  <rect x="15" y="3" width="11" height="1"/>
+                  <rect x="16" y="4" width="10" height="1"/>
+                  <rect x="17" y="5" width="8" height="1"/>
+                  <rect x="19" y="6" width="5" height="1"/>
+                  <rect x="19" y="7" width="6" height="6"/>
+                  <rect x="17" y="8" width="2" height="2"/>
+                  <rect x="16" y="10" width="2" height="2"/>
+                  <rect x="25" y="9" width="3" height="1"/>
+                  <rect x="26" y="10" width="4" height="1"/>
+                  <rect x="28" y="11" width="3" height="1"/>
+                  <rect x="30" y="12" width="1" height="1"/>
+                  <rect x="18" y="13" width="8" height="1"/>
+                  <rect x="18" y="14" width="3" height="3"/>
+                  <rect x="23" y="14" width="3" height="3"/>
+                  <rect x="17" y="17" width="4" height="2"/>
+                  <rect x="16" y="19" width="5" height="2"/>
+                  <rect x="23" y="17" width="4" height="2"/>
+                  <rect x="23" y="19" width="5" height="2"/>
+                  <rect x="8" y="6" width="1" height="1"/>
+                  <rect x="36" y="3" width="1" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="21" width="42" height="1"/>
+                  <rect x="17" y="1" width="8" height="1"/>
+                  <rect x="16" y="2" width="10" height="1"/>
+                  <rect x="15" y="3" width="11" height="1"/>
+                  <rect x="16" y="4" width="10" height="1"/>
+                  <rect x="17" y="5" width="8" height="1"/>
+                  <rect x="19" y="6" width="5" height="1"/>
+                  <rect x="19" y="7" width="6" height="6"/>
+                  <rect x="17" y="8" width="2" height="2"/>
+                  <rect x="16" y="10" width="2" height="2"/>
+                  <rect x="25" y="9" width="2" height="3"/>
+                  <rect x="21" y="9" width="2" height="2"/>
+                  <rect x="19" y="10" width="2" height="2"/>
+                  <rect x="16" y="12" width="2" height="1"/>
+                  <rect x="17" y="12" width="2" height="2"/>
+                  <rect x="15" y="14" width="2" height="2"/>
+                  <rect x="13" y="16" width="2" height="2"/>
+                  <rect x="12" y="18" width="1" height="1"/>
+                  <rect x="20" y="13" width="8" height="1"/>
+                  <rect x="20" y="14" width="3" height="1"/>
+                  <rect x="19" y="15" width="3" height="1"/>
+                  <rect x="18" y="16" width="3" height="1"/>
+                  <rect x="25" y="14" width="3" height="1"/>
+                  <rect x="24" y="15" width="3" height="1"/>
+                  <rect x="23" y="16" width="3" height="1"/>
+                  <rect x="17" y="17" width="4" height="2"/>
+                  <rect x="16" y="19" width="5" height="2"/>
+                  <rect x="23" y="17" width="4" height="2"/>
+                  <rect x="23" y="19" width="5" height="2"/>
+                  <rect x="6" y="10" width="1" height="1"/>
+                  <rect x="37" y="4" width="1" height="1"/>
+                </g>
+                <g class="frame">
+                  <rect x="1" y="21" width="42" height="1"/>
+                  <rect x="17" y="1" width="8" height="1"/>
+                  <rect x="16" y="2" width="10" height="1"/>
+                  <rect x="15" y="3" width="11" height="1"/>
+                  <rect x="16" y="4" width="10" height="1"/>
+                  <rect x="17" y="5" width="8" height="1"/>
+                  <rect x="19" y="6" width="5" height="1"/>
+                  <rect x="19" y="7" width="6" height="6"/>
+                  <rect x="17" y="8" width="2" height="2"/>
+                  <rect x="16" y="10" width="2" height="2"/>
+                  <rect x="25" y="9" width="3" height="1"/>
+                  <rect x="26" y="10" width="4" height="1"/>
+                  <rect x="28" y="11" width="3" height="1"/>
+                  <rect x="30" y="12" width="1" height="1"/>
+                  <rect x="18" y="13" width="8" height="1"/>
+                  <rect x="18" y="14" width="3" height="3"/>
+                  <rect x="23" y="14" width="3" height="3"/>
+                  <rect x="17" y="17" width="4" height="2"/>
+                  <rect x="16" y="19" width="5" height="2"/>
+                  <rect x="23" y="17" width="4" height="2"/>
+                  <rect x="23" y="19" width="5" height="2"/>
+                  <rect x="10" y="2" width="1" height="1"/>
+                  <rect x="35" y="10" width="1" height="1"/>
+                </g>
+              </g>
+            </g>
+          </g>
+          <g class="demo-strip" data-app="4">
+            <use href="#mwA" x="12" y="46"/>
+            <use href="#mwA" x="46" y="46"/>
+          </g>
+          <!-- contiguous invisible hover/tap bands over the icon row
+               (transparent fill so they still hit-test) -->
+          <rect class="demo-hit" data-app="0" x="6" y="4" width="28" height="28" fill="transparent"/>
+          <rect class="demo-hit" data-app="1" x="34" y="4" width="28" height="28" fill="transparent"/>
+          <rect class="demo-hit" data-app="2" x="62" y="4" width="28" height="28" fill="transparent"/>
+          <rect class="demo-hit" data-app="3" x="90" y="4" width="28" height="28" fill="transparent"/>
+          <rect class="demo-hit" data-app="4" x="118" y="4" width="28" height="28" fill="transparent"/>
         </svg>
       </div>
     </section>
@@ -90,7 +586,7 @@
     <section class="mac-window">
       <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Switch windows</span></div>
       <div class="window-body figure">
-        <svg viewBox="0 0 156 88" width="624" height="352" shape-rendering="crispEdges" role="img" aria-label="Abstract windows view: a grid of six window previews with the second one highlighted. Just windows, no app icons.">
+        <svg id="demo-windows" viewBox="0 0 156 88" width="624" height="352" shape-rendering="crispEdges" role="img" data-sel="1" aria-label="Interactive demo of the windows view: a grid of six window previews, no app icons. Hover or tap a window to select it. One preview plays a tiny animated scene, a nod to live previews.">
           <defs>
             <pattern id="dB" width="2" height="2" patternUnits="userSpaceOnUse">
               <rect width="1" height="1" fill="currentColor"/>
@@ -110,9 +606,184 @@
           <use href="#mwB" x="108" y="17"/>
           <use href="#mwB" x="20" y="52"/>
           <use href="#mwB" x="64" y="52"/>
-          <use href="#mwB" x="108" y="52"/>
-          <!-- selection around the second window -->
-          <rect x="60" y="13" width="34" height="28" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+          <!-- the bottom-right window is drawn inline, not from the
+               shared def: its content area plays a movie - the
+               live-preview hint: a desk globe, spinning. -->
+          <g transform="translate(108,52)">
+            <rect x="0" y="0" width="26" height="20" style="fill: var(--paper)" stroke="currentColor"/>
+            <rect x="1" y="5" width="24" height="1" fill="currentColor"/>
+            <rect x="3" y="2" width="20" height="1" fill="currentColor" opacity=".6"/>
+            <g class="movie frames-4" style="--slot: 0.35s" transform="translate(2,7) scale(0.5)" fill="currentColor">
+              <g class="frame">
+                <rect x="1" y="21" width="42" height="1"/>
+                <rect x="14" y="7" width="2" height="5"/>
+                <rect x="15" y="12" width="2" height="2"/>
+                <rect x="15" y="5" width="8" height="1"/>
+                <rect x="15" y="6" width="9" height="1"/>
+                <rect x="15" y="20" width="13" height="1"/>
+                <rect x="16" y="14" width="3" height="1"/>
+                <rect x="16" y="4" width="6" height="1"/>
+                <rect x="17" y="3" width="9" height="1"/>
+                <rect x="17" y="15" width="9" height="1"/>
+                <rect x="17" y="19" width="9" height="1"/>
+                <rect x="18" y="7" width="5" height="1"/>
+                <rect x="19" y="9" width="2" height="1"/>
+                <rect x="19" y="8" width="3" height="1"/>
+                <rect x="19" y="2" width="5" height="1"/>
+                <rect x="19" y="16" width="5" height="1"/>
+                <rect x="23" y="18" width="2" height="1"/>
+                <rect x="24" y="1" width="2" height="1"/>
+                <rect x="24" y="17" width="2" height="1"/>
+                <rect x="24" y="4" width="3" height="1"/>
+                <rect x="24" y="14" width="3" height="1"/>
+                <rect x="24" y="12" width="4" height="1"/>
+                <rect x="24" y="11" width="5" height="1"/>
+                <rect x="25" y="2" width="2" height="1"/>
+                <rect x="25" y="16" width="2" height="1"/>
+                <rect x="25" y="6" width="3" height="1"/>
+                <rect x="25" y="13" width="3" height="1"/>
+                <rect x="25" y="10" width="4" height="1"/>
+                <rect x="26" y="5" width="2" height="1"/>
+                <rect x="26" y="7" width="3" height="1"/>
+                <rect x="27" y="3" width="2" height="1"/>
+                <rect x="27" y="8" width="2" height="2"/>
+                <rect x="27" y="15" width="2" height="1"/>
+                <rect x="28" y="4" width="2" height="1"/>
+                <rect x="28" y="14" width="2" height="1"/>
+                <rect x="29" y="5" width="2" height="2"/>
+                <rect x="29" y="12" width="2" height="2"/>
+                <rect x="30" y="7" width="2" height="5"/>
+              </g>
+              <g class="frame">
+                <rect x="1" y="21" width="42" height="1"/>
+                <rect x="14" y="10" width="2" height="2"/>
+                <rect x="14" y="9" width="3" height="1"/>
+                <rect x="14" y="8" width="4" height="1"/>
+                <rect x="14" y="7" width="5" height="1"/>
+                <rect x="15" y="12" width="2" height="2"/>
+                <rect x="15" y="5" width="4" height="1"/>
+                <rect x="15" y="6" width="5" height="1"/>
+                <rect x="15" y="20" width="13" height="1"/>
+                <rect x="16" y="4" width="3" height="1"/>
+                <rect x="16" y="14" width="3" height="1"/>
+                <rect x="17" y="3" width="9" height="1"/>
+                <rect x="17" y="15" width="9" height="1"/>
+                <rect x="17" y="19" width="9" height="1"/>
+                <rect x="19" y="2" width="5" height="1"/>
+                <rect x="19" y="16" width="5" height="1"/>
+                <rect x="20" y="11" width="6" height="1"/>
+                <rect x="20" y="12" width="8" height="1"/>
+                <rect x="21" y="6" width="4" height="1"/>
+                <rect x="21" y="10" width="4" height="1"/>
+                <rect x="21" y="13" width="4" height="1"/>
+                <rect x="22" y="7" width="2" height="1"/>
+                <rect x="22" y="5" width="3" height="1"/>
+                <rect x="22" y="14" width="5" height="1"/>
+                <rect x="23" y="18" width="2" height="1"/>
+                <rect x="24" y="1" width="2" height="1"/>
+                <rect x="24" y="17" width="2" height="1"/>
+                <rect x="24" y="4" width="3" height="1"/>
+                <rect x="25" y="2" width="2" height="1"/>
+                <rect x="25" y="16" width="2" height="1"/>
+                <rect x="26" y="5" width="2" height="2"/>
+                <rect x="26" y="13" width="2" height="1"/>
+                <rect x="27" y="3" width="2" height="1"/>
+                <rect x="27" y="7" width="2" height="5"/>
+                <rect x="27" y="15" width="2" height="1"/>
+                <rect x="28" y="4" width="2" height="1"/>
+                <rect x="28" y="14" width="2" height="1"/>
+                <rect x="29" y="5" width="2" height="2"/>
+                <rect x="29" y="12" width="2" height="2"/>
+                <rect x="30" y="7" width="2" height="5"/>
+              </g>
+              <g class="frame">
+                <rect x="1" y="21" width="42" height="1"/>
+                <rect x="14" y="7" width="2" height="4"/>
+                <rect x="14" y="11" width="8" height="1"/>
+                <rect x="15" y="5" width="2" height="1"/>
+                <rect x="15" y="6" width="6" height="1"/>
+                <rect x="15" y="13" width="6" height="1"/>
+                <rect x="15" y="12" width="7" height="1"/>
+                <rect x="15" y="20" width="13" height="1"/>
+                <rect x="16" y="4" width="3" height="1"/>
+                <rect x="16" y="14" width="4" height="1"/>
+                <rect x="17" y="10" width="4" height="1"/>
+                <rect x="17" y="3" width="9" height="1"/>
+                <rect x="17" y="15" width="9" height="1"/>
+                <rect x="17" y="19" width="9" height="1"/>
+                <rect x="18" y="7" width="2" height="1"/>
+                <rect x="18" y="5" width="3" height="1"/>
+                <rect x="19" y="2" width="5" height="1"/>
+                <rect x="19" y="16" width="5" height="1"/>
+                <rect x="23" y="18" width="2" height="1"/>
+                <rect x="24" y="1" width="2" height="1"/>
+                <rect x="24" y="17" width="2" height="1"/>
+                <rect x="24" y="4" width="3" height="1"/>
+                <rect x="24" y="14" width="3" height="1"/>
+                <rect x="25" y="2" width="2" height="1"/>
+                <rect x="25" y="16" width="2" height="1"/>
+                <rect x="25" y="5" width="3" height="2"/>
+                <rect x="26" y="12" width="2" height="2"/>
+                <rect x="26" y="7" width="3" height="1"/>
+                <rect x="27" y="3" width="2" height="1"/>
+                <rect x="27" y="8" width="2" height="4"/>
+                <rect x="27" y="15" width="2" height="1"/>
+                <rect x="28" y="4" width="2" height="1"/>
+                <rect x="28" y="14" width="2" height="1"/>
+                <rect x="29" y="5" width="2" height="2"/>
+                <rect x="29" y="12" width="2" height="2"/>
+                <rect x="30" y="7" width="2" height="5"/>
+              </g>
+              <g class="frame">
+                <rect x="1" y="21" width="42" height="1"/>
+                <rect x="14" y="7" width="2" height="3"/>
+                <rect x="14" y="10" width="3" height="1"/>
+                <rect x="14" y="11" width="4" height="1"/>
+                <rect x="15" y="5" width="2" height="2"/>
+                <rect x="15" y="13" width="2" height="1"/>
+                <rect x="15" y="12" width="3" height="1"/>
+                <rect x="15" y="20" width="13" height="1"/>
+                <rect x="16" y="4" width="3" height="1"/>
+                <rect x="16" y="14" width="3" height="1"/>
+                <rect x="17" y="3" width="9" height="1"/>
+                <rect x="17" y="15" width="9" height="1"/>
+                <rect x="17" y="19" width="9" height="1"/>
+                <rect x="19" y="2" width="5" height="1"/>
+                <rect x="19" y="16" width="5" height="1"/>
+                <rect x="21" y="5" width="7" height="2"/>
+                <rect x="22" y="4" width="5" height="1"/>
+                <rect x="22" y="7" width="7" height="1"/>
+                <rect x="23" y="9" width="2" height="1"/>
+                <rect x="23" y="18" width="2" height="1"/>
+                <rect x="23" y="8" width="3" height="1"/>
+                <rect x="24" y="1" width="2" height="1"/>
+                <rect x="24" y="17" width="2" height="1"/>
+                <rect x="24" y="14" width="3" height="1"/>
+                <rect x="25" y="2" width="2" height="1"/>
+                <rect x="25" y="16" width="2" height="1"/>
+                <rect x="26" y="12" width="2" height="2"/>
+                <rect x="27" y="3" width="2" height="1"/>
+                <rect x="27" y="8" width="2" height="4"/>
+                <rect x="27" y="15" width="2" height="1"/>
+                <rect x="28" y="4" width="2" height="1"/>
+                <rect x="28" y="14" width="2" height="1"/>
+                <rect x="29" y="5" width="2" height="2"/>
+                <rect x="29" y="12" width="2" height="2"/>
+                <rect x="30" y="7" width="2" height="5"/>
+              </g>
+            </g>
+          </g>
+          <!-- the selection ring, at home around the second window;
+               demo.js glides it between windows with a CSS transform -->
+          <rect class="demo-selector" x="60" y="13" width="34" height="28" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+          <!-- contiguous invisible hover/tap cells over the 3x2 grid
+               (transparent fill so they still hit-test) -->
+          <rect class="demo-hit" data-win="0" x="8" y="8" width="47" height="36" fill="transparent"/>
+          <rect class="demo-hit" data-win="1" x="55" y="8" width="44" height="36" fill="transparent"/>
+          <rect class="demo-hit" data-win="2" x="99" y="8" width="49" height="36" fill="transparent"/>
+          <rect class="demo-hit" data-win="3" x="8" y="44" width="47" height="36" fill="transparent"/>
+          <rect class="demo-hit" data-win="4" x="55" y="44" width="44" height="36" fill="transparent"/>
+          <rect class="demo-hit" data-win="5" x="99" y="44" width="49" height="36" fill="transparent"/>
         </svg>
       </div>
     </section>
