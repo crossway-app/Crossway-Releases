@@ -2,6 +2,8 @@
 
 [![Latest release](https://img.shields.io/github/v/release/crossway-app/Crossway-Releases?label=latest%20release)](https://github.com/crossway-app/Crossway-Releases/releases/latest)
 
+**Website: [crosswayapp.com](https://crosswayapp.com/)**
+
 **A fast ⌘Tab window switcher for macOS.**
 
 Crossway replaces the built-in app switcher with one that understands *windows*, not just apps:
