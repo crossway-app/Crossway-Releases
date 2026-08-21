@@ -120,6 +120,94 @@ html.day { color-scheme: light; }
   background-size: 4px 4px;
 }
 
+/* ---------- the cameo (cameo.js flourish) ---------- */
+
+/* A second secret word summons a visitor (the script draws him and
+   plays the scene; keep this word a secret too). cameo.js builds the
+   scenery on demand: a fixed, click-through stage over the whole
+   page; each actor is a zero-size anchor on the stage floor with its
+   sprite centered above it, so the actor's translate(Xvw, -Yvh)
+   scale(s) reads as feet-position plus distance from the camera.
+   Transform and opacity only — the glides ride the compositor, and
+   the sprite frames cut hard (steps), period-correct. The sprite
+   keeps its exact colors in night mode, like the pixel heart. */
+.cameo-stage {
+  position: fixed;
+  inset: 0;
+  z-index: 95;              /* over the UI, under the night dissolve */
+  pointer-events: none;
+  --cameo-size: min(42vh, 56vw);
+}
+.cameo-actor {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 0;
+  height: 0;
+  will-change: transform;
+  transition-property: transform;
+}
+.cameo-actor svg {
+  position: absolute;
+  left: calc(var(--cameo-size) / -2);
+  bottom: 0;
+  width: var(--cameo-size);
+  height: var(--cameo-size);
+}
+
+/* Poses: one sprite sheet per actor, one pose group showing at a
+   time, picked by data-pose on the actor. */
+.cameo-actor .pose { visibility: hidden; }
+.cameo-actor[data-pose="idle"] .p-idle,
+.cameo-actor[data-pose="sideIdle"] .p-sideIdle,
+.cameo-actor[data-pose="swingA"] .p-swingA,
+.cameo-actor[data-pose="swingB"] .p-swingB,
+.cameo-actor[data-pose="slump"] .p-slump,
+.cameo-actor[data-pose="kneel"] .p-kneel,
+.cameo-actor[data-pose="dead"] .p-dead { visibility: visible; }
+
+/* Two-frame gaits: both frames on, opacity alternating in hard cuts.
+   --cameo-gait is the full stride cycle, set per scene by cameo.js. */
+.cameo-actor[data-pose="walk"] .p-walkA,
+.cameo-actor[data-pose="walk"] .p-walkB,
+.cameo-actor[data-pose="run"] .p-runA,
+.cameo-actor[data-pose="run"] .p-runB,
+.cameo-actor[data-pose="front"] .p-frontA,
+.cameo-actor[data-pose="front"] .p-frontB {
+  visibility: visible;
+  animation: cameo-flip-b var(--cameo-gait, 0.5s) steps(1, end) infinite;
+}
+.cameo-actor[data-pose="walk"] .p-walkA,
+.cameo-actor[data-pose="run"] .p-runA,
+.cameo-actor[data-pose="front"] .p-frontA {
+  animation-name: cameo-flip-a;
+}
+@keyframes cameo-flip-a {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+@keyframes cameo-flip-b {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* The melee's contact flash, one beat over the standing sprite. */
+.cameo-actor .p-hit { visibility: hidden; }
+.cameo-actor.hit .p-hit { visibility: visible; }
+
+/* Shaking it off: a quick settling wobble about the boots. */
+.cameo-actor.shake svg {
+  transform-origin: 50% 100%;
+  animation: cameo-shake 0.6s ease-in-out;
+}
+@keyframes cameo-shake {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-7deg); }
+  40% { transform: rotate(6deg); }
+  60% { transform: rotate(-4deg); }
+  80% { transform: rotate(2deg); }
+}
+
 @font-face {
   font-family: "ChicagoFLF";
   src: url("assets/ChicagoFLF.ttf") format("truetype");
