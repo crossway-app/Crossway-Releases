@@ -36,11 +36,12 @@
 
 * { box-sizing: border-box; }
 
+/* Anchor jumps are INSTANT on purpose: smooth scrolling miscalculates
+   against iOS Safari's collapsing toolbar (tapping a nav link from the
+   bottom of the page stops short), and a System 7 desktop never eased
+   anyway. scroll-padding keeps targets clear of the sticky menu bar. */
 html {
-  scroll-padding-top: 52px; /* clear the sticky menu bar on anchor jumps */
-}
-@media (prefers-reduced-motion: no-preference) {
-  html { scroll-behavior: smooth; }
+  scroll-padding-top: 52px;
 }
 
 body {
