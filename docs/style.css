@@ -193,6 +193,35 @@ code, kbd {
 .window-body.flush { padding: 0; }
 .window-body.flush img { display: block; width: 100%; height: auto; }
 
+/* two windows side by side on the desktop (the hero illustrations) */
+.window-duo {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+}
+.window-body.figure { padding: 20px 22px 14px; }
+.window-body.figure svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.figcaption {
+  margin-top: 12px;
+  text-align: center;
+}
+
+/* terminal command block (Troubleshooting page) */
+pre.cmd {
+  border: var(--border) solid var(--ink);
+  background: var(--paper);
+  padding: 10px 14px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  margin: 10px 0 0;
+}
+
 /* ---------- buttons ---------- */
 
 .btn {
@@ -356,6 +385,7 @@ code, kbd {
   h1 { font-size: 26px; }
   .desktop { padding: 24px 12px 56px; }
   .desktop > * + * { margin-top: 28px; }
+  .window-duo { grid-template-columns: 1fr; gap: 28px; }
   .window-body { padding: 20px 18px; }
   .dialog-body {
     grid-template-columns: 1fr;
