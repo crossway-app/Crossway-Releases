@@ -2,7 +2,9 @@
    A System 7 shareware page, executed with modern polish.
    Design system: the page is a classic Mac desktop with a menu bar on
    top and every content section, Donate included, as a titled window.
-   Single deliberate appearance (Platinum light) — this is a period piece.
+   Single deliberate appearance (Platinum light) — this is a period
+   piece. (One secret exception: night.js can flip the html.night token
+   block below. Keep that a secret.)
    No frameworks, no build step, no external requests: every asset is
    served from this site. */
 
@@ -22,6 +24,33 @@
   --font-mono: "Monaco", "Menlo", "Courier New", monospace;
   --border: 1.5px;           /* the classic 1px frame, at today's densities */
   --radius-btn: 9px;
+}
+
+/* ---------- night (the secret appearance) ---------- */
+
+/* Toggled by night.js when someone types the magic word; persisted by
+   the inline head snippet. Same design system, tokens swapped: a dark
+   Platinum desktop. The pixel heart keeps its exact red. */
+html.night {
+  --ink: #e8e8e8;
+  --paper: #141414;
+  --desktop-a: #2e2e2e;
+  --desktop-b: #1f1f1f;
+  --dim: #6f6f6f;
+  --muted: #a9a9a9;
+  --link: #7aa2ff;
+  --link-visited: #b391e0;
+}
+html.night body {
+  background-color: #262626; /* the dark twin of the light fallback */
+}
+html.night .notice {
+  background-image: repeating-conic-gradient(
+    rgba(255, 255, 255, 0.05) 0% 25%, transparent 0% 50%);
+}
+html.night .btn.is-disabled {
+  background-image: repeating-conic-gradient(
+    rgba(0, 0, 0, 0.55) 0% 25%, transparent 0% 50%);
 }
 
 @font-face {
