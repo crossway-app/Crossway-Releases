@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Crossway — ⌘Tab window switcher for macOS</title>
+<meta name="description" content="Crossway replaces the Mac's ⌘Tab switcher with one that understands windows, not just apps. Free, signed &amp; notarized, records nothing.">
+<meta property="og:title" content="Crossway">
+<meta property="og:description" content="A fast ⌘Tab window switcher for macOS. Free, signed &amp; notarized, records nothing.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://crosswayapp.com/">
+<meta property="og:image" content="https://crosswayapp.com/assets/switcher.png">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<nav class="menubar" aria-label="Site">
+  <span class="apptitle"><span class="cmdglyph" aria-hidden="true">⌘</span>Crossway</span>
+  <span class="spacer"></span>
+  <a href="#download">Download</a>
+  <a href="#shortcuts">Keyboard</a>
+  <a href="#readme">Read&nbsp;Me</a>
+  <a href="#privacy">Privacy</a>
+  <a href="#donate">Donate</a>
+  <a href="https://github.com/crossway-app/Crossway-Releases" rel="noopener">GitHub</a>
+</nav>
+
+<main class="desktop" id="top">
+
+  <section class="lede" id="download">
+    <h1>Crossway</h1>
+    <p class="tagline">A fast ⌘Tab window switcher for macOS.
+    It replaces the built-in app switcher with one that understands
+    <em>windows</em>, not just apps.</p>
+    <div class="btn-row">
+      <a class="btn btn-default" href="https://github.com/crossway-app/Crossway-Releases/releases/latest/download/Crossway.zip">Download Crossway.zip</a>
+    </div>
+    <p class="caption">Free&ensp;·&ensp;Signed &amp; notarized&ensp;·&ensp;macOS 14+&ensp;·&ensp;Universal</p>
+  </section>
+
+  <section class="mac-window">
+    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Crossway.app</span></div>
+    <div class="window-body flush">
+      <img src="assets/switcher.png" width="1480" height="394" alt="The Crossway switcher: a row of app icons with live window previews beneath the highlighted app.">
+    </div>
+  </section>
+
+  <section class="mac-window" id="shortcuts">
+    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Keyboard</span></div>
+    <div class="window-body">
+      <div class="shortcut-table">
+        <span class="chord"><span class="key">⌘</span><span class="key">⇥</span></span>
+        <p class="what"><strong>Switch apps</strong> — exactly like the native
+        switcher. Hold a beat longer and live previews of the highlighted
+        app's windows bloom beneath it.</p>
+
+        <span class="chord"><span class="key">⌘</span><span class="key">`</span></span>
+        <p class="what"><strong>Switch windows</strong> — cycle through the
+        highlighted app's windows and jump straight to the one you want,
+        without touching the trackpad.</p>
+
+        <span class="chord"><span class="key">⌥</span><span class="key">⇥</span></span>
+        <p class="what"><strong>See everything</strong> — an exposé-style grid
+        of every open window, with titles and Dock badges.</p>
+
+        <span class="chord"><span class="key">⌥</span><span class="key">`</span></span>
+        <p class="what"><strong>See this app</strong> — the same grid, scoped
+        to the current app's windows.</p>
+      </div>
+      <p class="caption" style="margin-top: 22px">Quick taps behave exactly like
+      native macOS — Crossway's UI appears only when you <em>hold</em>.
+      Arrow keys work on every surface, and the mouse is welcome too:
+      hover selects, click activates.</p>
+    </div>
+  </section>
+
+  <section class="mac-window" id="readme">
+    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Read Me</span></div>
+    <div class="window-body">
+      <ol class="steps">
+        <li><a href="https://github.com/crossway-app/Crossway-Releases/releases/latest/download/Crossway.zip">Download
+        <code>Crossway.zip</code></a> and unzip it (double-click).</li>
+        <li>Drag <code>Crossway.app</code> into your <code>/Applications</code> folder.</li>
+        <li>Open it. Crossway lives in the <strong>menu bar</strong> — there is no Dock icon.</li>
+        <li>Grant the two permissions it asks for in
+        <strong>System&nbsp;Settings → Privacy&nbsp;&amp;&nbsp;Security</strong>:
+        <em>Accessibility</em> (to take over ⌘Tab and raise the window you pick)
+        and <em>Screen&nbsp;Recording</em> (for the window previews).</li>
+        <li>Relaunch Crossway after granting — the app walks you through
+        this on first run.</li>
+      </ol>
+      <div class="notice">
+        <p><strong>Always download in a web browser</strong>, from this page or
+        the <a href="https://github.com/crossway-app/Crossway-Releases/releases" rel="noopener">Releases
+        page</a>. Files passed around through chat apps arrive with a
+        quarantine flag that stops them from ever launching.</p>
+      </div>
+      <p class="caption" style="margin-top: 18px">Requires macOS 14 (Sonoma)
+      or later — Sequoia and Tahoe included. Apple Silicon and Intel
+      (the app is universal).</p>
+    </div>
+  </section>
+
+  <section class="mac-window" id="privacy">
+    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Privacy</span></div>
+    <div class="window-body">
+      <p><strong>Crossway records nothing and uploads nothing.</strong></p>
+      <p>The app makes exactly one kind of network request, and only when you
+      ask it to: <em>menu&nbsp;bar → Check&nbsp;for&nbsp;Updates…</em> fetches
+      the latest release info from GitHub and tells you if a newer build is
+      available. That is the entire network surface — no telemetry, no
+      automatic or background checks, nothing uploaded, ever.</p>
+      <p>Every build is signed with an Apple Developer&nbsp;ID certificate and
+      notarized by Apple, and installing an update is always your move:
+      download in the browser, replace the app.</p>
+    </div>
+  </section>
+
+  <section class="mac-dialog" id="donate" aria-label="Donate">
+    <div class="dialog-body">
+      <div class="dialog-icon">
+        <svg width="64" height="64" viewBox="0 0 16 16" shape-rendering="crispEdges" fill="currentColor" role="img" aria-label="A pixel-art cup of coffee, steaming">
+          <rect x="4" y="0" width="1" height="1"/><rect x="3" y="1" width="1" height="1"/><rect x="4" y="2" width="1" height="1"/>
+          <rect x="7" y="0" width="1" height="1"/><rect x="6" y="1" width="1" height="1"/><rect x="7" y="2" width="1" height="1"/>
+          <rect x="1" y="4" width="10" height="1"/>
+          <rect x="1" y="5" width="1" height="6"/><rect x="10" y="5" width="1" height="6"/>
+          <rect x="2" y="6" width="8" height="1" opacity="0.45"/>
+          <rect x="2" y="11" width="8" height="1"/>
+          <rect x="11" y="5" width="2" height="1"/><rect x="13" y="6" width="1" height="3"/><rect x="11" y="9" width="2" height="1"/>
+          <rect x="0" y="13" width="12" height="1"/><rect x="2" y="14" width="8" height="1"/>
+        </svg>
+      </div>
+      <div>
+        <h2>Crossway is free.</h2>
+        <p>No nags, no unlock codes, no Pro tier. If it has earned a place
+        in your muscle memory, you can buy the developer a coffee — the
+        classic shareware deal: pay only if you love it.</p>
+        <p class="caption">Donations aren't wired up yet — check back soon.</p>
+      </div>
+      <!-- FLIP-LIVE checklist (when donations are wired up):
+           1. GitHub Sponsors: replace the first span below with
+              <a class="btn" href="https://github.com/sponsors/crossway-app">GitHub Sponsors</a>
+           2. Stripe: replace the second span with
+              <a class="btn btn-default" href="PAYMENT_LINK">Buy a coffee</a>
+              and remove the btn-default ring from Later.
+           3. Delete the "aren't wired up yet" caption above.
+           4. Add `github: crossway-app` to FUNDING.yml (ORG-level only —
+              the personal handle never appears; brand-surface rule). -->
+      <div class="dialog-actions btn-row right">
+        <span class="btn is-disabled" role="button" aria-disabled="true">GitHub Sponsors</span>
+        <span class="btn is-disabled" role="button" aria-disabled="true">Buy a coffee</span>
+        <a class="btn btn-default" href="#top">Later</a>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="links">
+      <a href="https://github.com/crossway-app/Crossway-Releases/releases" rel="noopener">Releases</a>
+      &ensp;·&ensp;
+      <a href="https://github.com/crossway-app/Crossway-Releases#readme" rel="noopener">Troubleshooting</a>
+      &ensp;·&ensp;
+      <a href="https://github.com/crossway-app/Crossway-Releases" rel="noopener">GitHub</a>
+    </p>
+    <p class="fineprint">© 2026 Crossway&ensp;·&ensp;No analytics on this page.</p>
+  </footer>
+
+</main>
+
+</body>
+</html>
