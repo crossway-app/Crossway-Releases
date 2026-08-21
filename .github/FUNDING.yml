@@ -1,0 +1,9 @@
+# Synced to crossway-app/Crossway-Releases:.github/FUNDING.yml (primary
+# repo only) by scripts/publish-release.sh sync_docs — renders the repo's
+# Sponsor button.
+#
+# Sponsors enrollment, if it ever happens, is ORG-level:
+#   github: crossway-app
+# The personal handle never appears in public content (brand-surface
+# rule, 2026-08-20).
+custom: ["https://crosswayapp.com/donate/"]
