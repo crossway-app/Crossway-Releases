@@ -200,7 +200,7 @@ code, kbd {
   gap: 32px;
   align-items: start;
 }
-.window-body.figure { padding: 20px 22px 14px; }
+.window-body.figure { padding: 20px 22px; }
 .window-body.figure svg {
   display: block;
   width: 100%;
