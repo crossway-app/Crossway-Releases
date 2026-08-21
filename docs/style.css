@@ -346,6 +346,14 @@ pre.cmd {
   margin-top: 18px;
 }
 
+/* the Donate window's inner layout: the dialog grid without the
+   dialog frame (the section is a regular titled window now) */
+.donate-grid {
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 8px 24px;
+}
+
 /* ---------- read-me list ---------- */
 
 .steps {
@@ -408,6 +416,7 @@ pre.cmd {
     grid-template-columns: 1fr;
     padding: 26px 22px 24px;
   }
+  .donate-grid { grid-template-columns: 1fr; }
   .dialog-icon { grid-row: auto; }
   .dialog-actions { grid-column: 1; }
   .shortcut-table { gap: 14px 16px; }
