@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Troubleshooting — Crossway</title>
+<meta name="description" content="Fixes for the common Crossway install problems, and how to check which version you're running.">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+
+<nav class="menubar" aria-label="Site">
+  <span class="apptitle"><span class="cmdglyph" aria-hidden="true">⌘</span>Crossway</span>
+  <span class="spacer"></span>
+  <a href="../#download">Download</a>
+  <a href="../#shortcuts">Keyboard</a>
+  <a href="../#readme">Read&nbsp;Me</a>
+  <a href="../#privacy">Privacy</a>
+  <a href="../#donate">Donate</a>
+</nav>
+
+<main class="desktop">
+
+  <section class="mac-window">
+    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Troubleshooting</span></div>
+    <div class="window-body">
+
+      <h3>"The application "Crossway.app" can't be opened." (a plain dialog with only an OK button)</h3>
+      <p>The zip most likely reached your Mac through a chat app (WhatsApp,
+      Telegram, and similar). macOS marks files saved by those apps so they
+      can never run, no matter how the app is signed. Paste this into
+      Terminal, then open the app again:</p>
+      <pre class="cmd">xattr -r -d com.apple.quarantine /Applications/Crossway.app</pre>
+      <p class="caption" style="margin-top: 10px">To avoid this entirely,
+      <a href="../#download">download the zip in your browser</a> instead of
+      receiving it through a messenger.</p>
+
+      <h3 style="margin-top: 28px">"Crossway is damaged and can't be opened."</h3>
+      <p>The zip was modified on its way to you. Delete the app and
+      <a href="../#download">re-download it</a>.</p>
+
+      <h3 style="margin-top: 28px">"Crossway can't be opened because Apple cannot check it for malicious software."</h3>
+      <p>Same cause — a re-zipped or mangled copy.
+      <a href="../#download">Re-download</a> in a browser.</p>
+
+      <h3 style="margin-top: 28px">"Crossway requires macOS 14.0 or later."</h3>
+      <p>Your Mac runs an older macOS. Crossway needs macOS 14 (Sonoma) or
+      newer; there is no workaround.</p>
+
+      <h3 style="margin-top: 28px">"Crossway was not downloaded from the App Store."</h3>
+      <p>Your Gatekeeper setting allows App Store apps only. In
+      <strong>System&nbsp;Settings → Privacy&nbsp;&amp;&nbsp;Security</strong>, set
+      "Allow applications downloaded from" to <strong>App&nbsp;Store and
+      identified developers</strong> (on newer macOS: "App&nbsp;Store &amp;
+      Known Developers").</p>
+
+    </div>
+  </section>
+
+  <section class="mac-window">
+    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Which version am I running?</span></div>
+    <div class="window-body">
+      <p><strong>Once installed:</strong> click the Crossway menu-bar icon →
+      <em>Settings…</em> — your version is shown at the bottom of the
+      Settings window. Or select <code>/Applications/Crossway.app</code> in
+      Finder and press ⌘I (Get&nbsp;Info).</p>
+      <p><strong>To see if you're current:</strong> click the menu-bar icon →
+      <em>Check&nbsp;for&nbsp;Updates…</em> — Crossway compares your build
+      against the newest release and offers the download if there's
+      something newer.</p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <p class="links">
+      <a href="../">Home</a>
+      &ensp;·&ensp;
+      <a href="https://github.com/crossway-app/Crossway-Releases" rel="noopener">GitHub</a>
+    </p>
+    <p class="fineprint">© 2026 Crossway&ensp;·&ensp;No analytics on this page.</p>
+  </footer>
+
+</main>
+
+</body>
+</html>
