@@ -25,7 +25,6 @@
   <a href="#readme">Read&nbsp;Me</a>
   <a href="#privacy">Privacy</a>
   <a href="#donate">Donate</a>
-  <a href="https://github.com/crossway-app/Crossway-Releases" rel="noopener">GitHub</a>
 </nav>
 
 <main class="desktop" id="top">
@@ -41,12 +40,82 @@
     <p class="caption">Free&ensp;·&ensp;Signed &amp; notarized&ensp;·&ensp;macOS 14+&ensp;·&ensp;Universal</p>
   </section>
 
-  <section class="mac-window">
-    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Crossway.app</span></div>
-    <div class="window-body flush">
-      <img src="assets/switcher.png" width="1480" height="394" alt="The Crossway switcher: a row of app icons with live window previews beneath the highlighted app.">
-    </div>
-  </section>
+  <div class="window-duo">
+    <section class="mac-window">
+      <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Switch apps</span></div>
+      <div class="window-body figure">
+        <svg viewBox="0 0 156 88" width="624" height="352" shape-rendering="crispEdges" role="img" aria-label="Abstract switcher: a row of five app icons with the middle one highlighted, and three window previews shown beneath it.">
+          <defs>
+            <pattern id="dA" width="2" height="2" patternUnits="userSpaceOnUse">
+              <rect width="1" height="1" fill="currentColor"/>
+              <rect x="1" y="1" width="1" height="1" fill="currentColor"/>
+            </pattern>
+            <g id="mwA">
+              <rect x="0" y="0" width="26" height="20" fill="#fff" stroke="currentColor"/>
+              <rect x="1" y="5" width="24" height="1" fill="currentColor"/>
+              <rect x="3" y="2" width="20" height="1" fill="currentColor" opacity=".6"/>
+              <rect x="2" y="7" width="22" height="11" fill="url(#dA)" opacity=".28"/>
+            </g>
+          </defs>
+          <rect x="2" y="2" width="152" height="84" rx="5" fill="#fff" stroke="currentColor" stroke-width="2"/>
+          <!-- app icon row -->
+          <rect x="12" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
+          <circle cx="20" cy="18" r="4" fill="currentColor"/>
+          <rect x="40" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
+          <rect x="44" y="14" width="8" height="8" fill="currentColor"/>
+          <rect x="46" y="16" width="4" height="4" fill="#fff"/>
+          <rect x="68" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
+          <polygon points="76,13 81,22 71,22" fill="currentColor"/>
+          <rect x="96" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
+          <polygon points="104,12 110,18 104,24 98,18" fill="currentColor"/>
+          <rect x="124" y="10" width="16" height="16" fill="none" stroke="currentColor"/>
+          <rect x="128" y="15" width="8" height="2" fill="currentColor"/>
+          <rect x="128" y="19" width="8" height="2" fill="currentColor"/>
+          <!-- selection around the third icon -->
+          <rect x="63" y="5" width="26" height="26" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+          <!-- window previews under the highlighted app -->
+          <use href="#mwA" x="31" y="46"/>
+          <use href="#mwA" x="65" y="46"/>
+          <use href="#mwA" x="99" y="46"/>
+        </svg>
+        <p class="caption figcaption"><span class="chord"><span class="key">⌘</span><span class="key">⇥</span></span>&ensp;Hold to see the highlighted app's windows.</p>
+      </div>
+    </section>
+
+    <section class="mac-window">
+      <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Switch windows</span></div>
+      <div class="window-body figure">
+        <svg viewBox="0 0 156 88" width="624" height="352" shape-rendering="crispEdges" role="img" aria-label="Abstract windows-only view: one app icon above a strip of four window previews, with the second preview highlighted.">
+          <defs>
+            <pattern id="dB" width="2" height="2" patternUnits="userSpaceOnUse">
+              <rect width="1" height="1" fill="currentColor"/>
+              <rect x="1" y="1" width="1" height="1" fill="currentColor"/>
+            </pattern>
+            <g id="mwB">
+              <rect x="0" y="0" width="26" height="20" fill="#fff" stroke="currentColor"/>
+              <rect x="1" y="5" width="24" height="1" fill="currentColor"/>
+              <rect x="3" y="2" width="20" height="1" fill="currentColor" opacity=".6"/>
+              <rect x="2" y="7" width="22" height="11" fill="url(#dB)" opacity=".28"/>
+            </g>
+          </defs>
+          <rect x="2" y="2" width="152" height="84" rx="5" fill="#fff" stroke="currentColor" stroke-width="2"/>
+          <!-- the front app -->
+          <rect x="12" y="12" width="16" height="16" fill="none" stroke="currentColor"/>
+          <polygon points="20,15 25,24 15,24" fill="currentColor"/>
+          <rect x="36" y="15" width="58" height="3" fill="currentColor" opacity=".55"/>
+          <rect x="36" y="22" width="38" height="3" fill="currentColor" opacity=".3"/>
+          <!-- its windows -->
+          <use href="#mwB" x="12" y="48"/>
+          <use href="#mwB" x="46" y="48"/>
+          <use href="#mwB" x="80" y="48"/>
+          <use href="#mwB" x="114" y="48"/>
+          <!-- selection around the second window -->
+          <rect x="42" y="44" width="34" height="28" rx="4" fill="none" stroke="currentColor" stroke-width="2"/>
+        </svg>
+        <p class="caption figcaption"><span class="chord"><span class="key">⌘</span><span class="key">`</span></span>&ensp;Step straight to the window you want.</p>
+      </div>
+    </section>
+  </div>
 
   <section class="mac-window" id="shortcuts">
     <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Keyboard</span></div>
@@ -93,10 +162,10 @@
         this on first run.</li>
       </ol>
       <div class="notice">
-        <p><strong>Always download in a web browser</strong>, from this page or
-        the <a href="https://github.com/crossway-app/Crossway-Releases/releases" rel="noopener">Releases
-        page</a>. Files passed around through chat apps arrive with a
-        quarantine flag that stops them from ever launching.</p>
+        <p><strong>Always download in a web browser</strong>, from this page.
+        Files passed around through chat apps arrive with a quarantine flag
+        that stops them from ever launching — the fix is on the
+        <a href="troubleshooting/">Troubleshooting</a> page.</p>
       </div>
       <p class="caption" style="margin-top: 18px">Requires macOS 14 (Sonoma)
       or later — Sequoia and Tahoe included. Apple Silicon and Intel
@@ -144,23 +213,19 @@
               <a class="btn" href="https://github.com/sponsors/crossway-app">GitHub Sponsors</a>
            2. Stripe: replace the second span with
               <a class="btn btn-default" href="PAYMENT_LINK">Buy a coffee</a>
-              and remove the btn-default ring from Later.
            3. Delete the "aren't wired up yet" caption above.
            4. Add `github: crossway-app` to FUNDING.yml (ORG-level only —
               the personal handle never appears; brand-surface rule). -->
       <div class="dialog-actions btn-row right">
         <span class="btn is-disabled" role="button" aria-disabled="true">GitHub Sponsors</span>
         <span class="btn is-disabled" role="button" aria-disabled="true">Buy a coffee</span>
-        <a class="btn btn-default" href="#top">Later</a>
       </div>
     </div>
   </section>
 
   <footer class="footer">
     <p class="links">
-      <a href="https://github.com/crossway-app/Crossway-Releases/releases" rel="noopener">Releases</a>
-      &ensp;·&ensp;
-      <a href="https://github.com/crossway-app/Crossway-Releases#readme" rel="noopener">Troubleshooting</a>
+      <a href="troubleshooting/">Troubleshooting</a>
       &ensp;·&ensp;
       <a href="https://github.com/crossway-app/Crossway-Releases" rel="noopener">GitHub</a>
     </p>
