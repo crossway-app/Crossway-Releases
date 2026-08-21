@@ -121,10 +121,17 @@ code, kbd {
   overflow-x: auto;
 }
 .menubar a {
+  display: inline-flex;
+  align-items: center;
   color: var(--ink);
   text-decoration: none;
   padding: 5px 10px;
   white-space: nowrap;
+}
+.menubar .navmug {
+  width: 14px;
+  height: 14px;
+  margin-right: 5px;
 }
 .menubar a:visited { color: var(--ink); }
 .menubar a:hover, .menubar a:focus-visible {
