@@ -1,7 +1,15 @@
 /* crosswayapp.com's secret: type the magic word anywhere on the page to
-   toggle the night appearance. Progressive enhancement only; without
-   this file the site is exactly its light self. The listener never
-   prevents default behavior, so typing can't break anything. */
+   toggle the night appearance. Progressive enhancement only; with
+   JavaScript off the site simply follows the system appearance. The
+   listener never prevents default behavior, so typing can't break
+   anything.
+
+   Three states, shared with style.css and the pages' inline head
+   snippets: no class on <html> follows the system, .night forces dark,
+   .day forces light. localStorage "crossway-night" holds "1" (night) or
+   "0" (day) only while an override is in force; a toggle that lands
+   back on the system's own side clears it, so the page tracks live
+   system flips again. */
 (function () {
   "use strict";
 
@@ -9,26 +17,45 @@
   var KEY = "crossway-night";
   var buffer = "";
   var busy = false;
-  var reduced = window.matchMedia
-    ? window.matchMedia("(prefers-reduced-motion: reduce)")
-    : null;
 
-  function persist(on) {
+  function media(query) {
+    return window.matchMedia ? window.matchMedia(query) : null;
+  }
+  var reduced = media("(prefers-reduced-motion: reduce)");
+  var systemNight = media("(prefers-color-scheme: dark)");
+
+  function persist(value) {
     try {
-      if (on) {
-        localStorage.setItem(KEY, "1");
-      } else {
+      if (value === null) {
         localStorage.removeItem(KEY);
+      } else {
+        localStorage.setItem(KEY, value);
       }
     } catch (e) {
       /* storage unavailable: session-only is fine */
     }
   }
 
+  /* The appearance showing right now: a forced class wins, otherwise
+     it's whatever the system prefers. */
+  function isNight() {
+    var root = document.documentElement.classList;
+    if (root.contains("night")) { return true; }
+    if (root.contains("day")) { return false; }
+    return !!(systemNight && systemNight.matches);
+  }
+
   function toggle() {
-    var on = !document.documentElement.classList.contains("night");
-    document.documentElement.classList.toggle("night", on);
-    persist(on);
+    var toNight = !isNight();
+    var root = document.documentElement.classList;
+    root.remove("night");
+    root.remove("day");
+    if (systemNight && systemNight.matches === toNight) {
+      persist(null); /* back on the system's side: follow it again */
+    } else {
+      root.add(toNight ? "night" : "day");
+      persist(toNight ? "1" : "0");
+    }
   }
 
   /* The flourish: cover the view in square tiles wearing the OUTGOING
@@ -36,7 +63,7 @@
      away. Transform/opacity only, so it stays on the compositor. */
   function dissolve() {
     busy = true;
-    var wasNight = document.documentElement.classList.contains("night");
+    var wasNight = isNight();
     var overlay = document.createElement("div");
     overlay.className = "dissolve " + (wasNight ? "from-night" : "from-light");
     overlay.setAttribute("aria-hidden", "true");
@@ -115,11 +142,30 @@
     }
   });
 
-  /* Safety net: the inline head snippet normally applied the stored
-     class before first paint; re-assert in case it was stripped. */
-  try {
-    if (localStorage.getItem(KEY) === "1") {
-      document.documentElement.classList.add("night");
+  /* Sync the classes to storage — the full re-derive, removals
+     included. The inline head snippet already did the add before first
+     paint on a fresh load; this covers a stripped snippet and, via
+     pageshow, bfcache restores whose frozen classes predate a toggle
+     made on another page. */
+  function applyStored() {
+    var stored;
+    try {
+      stored = localStorage.getItem(KEY);
+    } catch (e) {
+      return; /* storage unavailable: session-only classes stand */
     }
-  } catch (e) { /* fine */ }
+    var root = document.documentElement.classList;
+    root.remove("night");
+    root.remove("day");
+    if (stored === "1") {
+      root.add("night");
+    } else if (stored === "0") {
+      root.add("day");
+    }
+  }
+
+  applyStored();
+  window.addEventListener("pageshow", function (e) {
+    if (e.persisted) { applyStored(); }
+  });
 })();
