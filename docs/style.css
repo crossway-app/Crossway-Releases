@@ -89,6 +89,209 @@ html.night .btn.is-disabled {
 html.night { color-scheme: dark; }
 html.day { color-scheme: light; }
 
+/* ---------- the terminal (a third appearance) ---------- */
+
+/* A third state, layered OVER the other two: .hacker wins whatever the
+   system prefers or a forced class says, and removing it drops the
+   visitor back into exactly the appearance they were in. Its own secret
+   word owns it, and as ever the word lives only in its own script.
+
+   ORDER IS LOAD-BEARING. html.hacker and html:not(.day) have the SAME
+   specificity (0,1,1), so nothing but source order separates them —
+   declared above the media block this whole section would silently lose
+   to system dark mode, and it would only misbehave on a Mac set to
+   dark. Keep it below both.
+
+   The palette is the same six-step ramp as the other two appearances,
+   re-cut in phosphor rather than flattened to two tones: the ground is
+   the deepest step, windows sit just above it, and dim/muted/ink keep
+   their tonal ordering, so disabled chrome still reads as disabled and
+   captions still recede from body copy. Measured against --paper: ink
+   12.6:1, muted 6.0:1, dim 3.0:1. A near-black with a green cast
+   instead of #000 and a phosphor ink instead of #0f0 — pure primaries
+   are what make this kind of effect look cheap. */
+html.hacker {
+  --ink: #7bec93;            /* primary text and rules */
+  --paper: #101b12;          /* window fill, the lit surface */
+  --desktop-a: #0c140d;      /* phosphor dither, cell A */
+  --desktop-b: #080d09;      /* cell B */
+  --dim: #2e6b42;            /* disabled chrome */
+  --muted: #58a06b;          /* captions, fine print */
+  --link: #a6ffbe;           /* the brightest step */
+  --link-visited: #5cbf7c;
+  color-scheme: dark;        /* pin the UA's own scrollbars and chrome */
+  /* A terminal sets its own type. The mono stack is already a token, so
+     the whole page changes voice by re-pointing the other two at it —
+     no new font, no new request. */
+  --font-display: var(--font-mono);
+  --font-body: var(--font-mono);
+}
+html.hacker body {
+  background-color: #050806; /* the deepest step, behind the dither */
+}
+
+/* These two washes are hardcoded per appearance rather than tokenised,
+   so the terminal needs its own pair or a light wash sits over the dark
+   ground. Both stay monochrome: a faint phosphor lift on the notice, and
+   the ground knocked back over a disabled face so it still reads as
+   disabled. (The dissolve's tiles need no terminal variant — the night
+   word is inert while the terminal is on, so they never render here.) */
+html.hacker .notice {
+  background-image: repeating-conic-gradient(
+    rgba(123, 236, 147, 0.06) 0% 25%, transparent 0% 50%);
+}
+html.hacker .btn.is-disabled {
+  background-image: repeating-conic-gradient(
+    rgba(5, 8, 6, 0.6) 0% 25%, transparent 0% 50%);
+}
+
+/* The shortcut labels earn their emphasis from the TYPEFACE normally —
+   display against body — which is a distinction the terminal spends by
+   putting everything in one face. Give the weight back, or the labels
+   flatten into the sentence that follows them. */
+html.hacker .shortcut-table .what strong {
+  font-weight: bold;
+}
+
+/* The glass: fine scanlines and a soft corner vignette, so the phosphor
+   reads as light coming THROUGH a tube rather than green ink on paper.
+   One fixed, click-through pseudo-element — out of flow, so it can never
+   change the document's width or height, and pointer-events: none so the
+   hero demos underneath still hover and click.
+
+   It sits at 90: over the page and its sticky menu bar (10), under the
+   cameo's stage (95) and the dissolve (100). Deliberately under the
+   cameo — the sprite is crisp pixel art on a 32-unit grid, and a 3px
+   scanline period across it moirés against those pixels. The visitor
+   reads him as a figure on the screen rather than behind the glass, and
+   that is the better trade. */
+html.hacker body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  background-image:
+    radial-gradient(ellipse at center,
+      transparent 58%, rgba(0, 0, 0, 0.38) 100%),
+    repeating-linear-gradient(180deg,
+      rgba(0, 0, 0, 0.20) 0 1px, transparent 1px 3px);
+}
+
+/* Phosphor bloom: real phosphor bleeds a little into the glass, and it
+   is the thing that stops green-on-dark reading as printed ink.
+   currentColor rather than a fixed green, so every step of the ramp
+   blooms in its OWN tone — a muted caption glows muted, and the
+   hierarchy survives the effect instead of being flattened by it.
+
+   Two strengths, because one does not fit. Display type gets a halo you
+   notice; body copy gets barely more than a softened edge. A paragraph
+   carrying a heading's glow is tiring to read, and this page has real
+   paragraphs in it — that is the whole reason the bloom is split. */
+html.hacker body {
+  text-shadow: 0 0 0.08em currentColor;
+}
+html.hacker h1,
+html.hacker h2,
+html.hacker h3,
+html.hacker .display,
+html.hacker .titlebar .title,
+html.hacker .menubar,
+html.hacker .btn,
+html.hacker .key {
+  text-shadow: 0 0 0.3em currentColor;
+}
+
+/* Selection needs no colours of its own: it is already inverse video
+   from the tokens, a phosphor block with the ground punched out of it,
+   which is exactly what a terminal does. It only needs the bloom taken
+   back off, or the glow smears across the bright block. */
+html.hacker ::selection {
+  text-shadow: none;
+}
+
+/* The pixel heart is the one bit of colour on the page the tokens never
+   reach: its red is a fill attribute on the <svg>, its shine two more on
+   the rects. A presentation attribute loses to any CSS rule, so the
+   terminal re-cuts it without touching the markup. Body on the ink step,
+   shine on the brightest, so it still reads as a heart with a highlight
+   rather than a flat green blob — the same relationship the red one has.
+   The rects carrying their own fill are the shine, hence the attribute
+   selector; the rest inherit from the svg and come along for free. */
+html.hacker .dialog-icon svg { fill: var(--ink); }
+html.hacker .dialog-icon svg rect[fill="#fff"] { fill: var(--link); }
+
+/* The cameo's visitor, re-cut for a monochrome screen. His eight tones
+   map onto eight phosphor steps in the SAME luminance order they had, so
+   he stays a figure — armour reading against undersuit, visor brightest,
+   rifle its own mid grey — rather than collapsing into a silhouette.
+
+   The dark end is lifted more than a straight proportional map would
+   give. His outline is the darkest structural tone, and a faithful
+   translation of it lands within a hair of the window it walks over;
+   at #21492e it holds the silhouette at 1.73x against paper. Painted
+   art has a light page to sit on, a terminal does not. */
+html.hacker .cameo-actor .c-k { fill: #0b1710; } /* undersuit */
+html.hacker .cameo-actor .c-q { fill: #163020; } /* rifle, dark */
+html.hacker .cameo-actor .c-d { fill: #21492e; } /* outline */
+html.hacker .cameo-actor .c-r { fill: #35704a; } /* rifle, steel */
+html.hacker .cameo-actor .c-g { fill: #4a9a62; } /* armour, mid */
+html.hacker .cameo-actor .c-l { fill: #6fc487; } /* armour, light */
+html.hacker .cameo-actor .c-v { fill: #9cf5b4; } /* visor */
+html.hacker .cameo-actor .c-w { fill: #d6ffe4; } /* visor glint */
+
+/* ---------- powering on (hacker.js flourish) ---------- */
+
+/* An opaque cover, a phosphor beam, and nothing else. The appearance
+   swaps behind the cover, then the beam blooms open as the cover clears
+   — so the switch reads as a screen coming on rather than a cross-fade.
+   Leaving runs the beam the other way and the picture collapses to a
+   line, which is what a tube actually does when you cut its power.
+
+   Transform and opacity only, and the whole thing is fixed and
+   click-through, so it can never reflow or block the page underneath.
+   It sits at 100, above the glass (90) and the cameo's stage (95): the
+   screen switching off covers everything on it, sprite included. */
+.crt {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  pointer-events: none;
+  background-color: #050806;
+  opacity: 1;
+  transition: opacity 0.34s ease-out 0.2s;
+}
+.crt.go { opacity: 0; }
+
+.crt .beam {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 44vh;
+  margin-top: -22vh;
+  opacity: 0.95;
+  transform: scaleY(0.014);   /* a hairline across the middle */
+  background-image: radial-gradient(ellipse at center,
+    rgba(198, 255, 214, 0.95) 0%,
+    rgba(123, 236, 147, 0.45) 38%,
+    transparent 72%);
+  transition: transform 0.36s cubic-bezier(0.16, 0.9, 0.28, 1),
+              opacity 0.36s ease-out;
+}
+.crt.go .beam {
+  transform: scaleY(1);
+  opacity: 0;
+}
+
+/* On the way out the beam starts open and shuts. Declared after the
+   rules above so it wins on source order at equal specificity. */
+.crt.crt-off .beam { transform: scaleY(1); }
+.crt.crt-off.go .beam {
+  transform: scaleY(0.014);
+  opacity: 0;
+}
+
 /* ---------- the dissolve (night.js flourish) ---------- */
 
 /* A viewport of square tiles in the outgoing desktop pattern that fall
