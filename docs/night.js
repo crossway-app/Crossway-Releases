@@ -119,6 +119,14 @@
   }
 
   function trigger() {
+    /* The terminal owns the appearance while it is on: its tokens beat
+       every light and dark value here, so flipping the state would play
+       the whole dissolve and change nothing the visitor can see. Stay
+       inert and let the terminal's own word be the way out. The state
+       itself is untouched, so it is still there to come back to. */
+    if (document.documentElement.classList.contains("hacker")) {
+      return;
+    }
     if (busy) {
       return;
     }
@@ -146,7 +154,9 @@
      included. The inline head snippet already did the add before first
      paint on a fresh load; this covers a stripped snippet and, via
      pageshow, bfcache restores whose frozen classes predate a toggle
-     made on another page. */
+     made on another page. Removals are BY NAME on purpose: a third
+     appearance also lives on this element, and clearing the class list
+     wholesale here would strip it. */
   function applyStored() {
     var stored;
     try {
