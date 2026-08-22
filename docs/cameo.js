@@ -569,6 +569,11 @@
         r.setAttribute("width", x - x0);
         r.setAttribute("height", 1);
         r.setAttribute("fill", PALETTE[ch]);
+        /* The tone also goes on as a class, so a stylesheet can re-cut
+           him for an appearance that is not full colour without a second
+           palette living in here to drift out of step. The fill above is
+           untouched and still wins everywhere no such rule exists. */
+        r.setAttribute("class", "c-" + ch);
         g.appendChild(r);
       }
     }
