@@ -17,11 +17,12 @@
 <meta name="twitter:image" content="https://crosswayapp.com/assets/social-card.png">
 <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32.png">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
-<script>try{var v=localStorage.getItem("crossway-night");if(v==="1")document.documentElement.classList.add("night");else if(v==="0")document.documentElement.classList.add("day")}catch(e){}</script>
+<script>try{var v=localStorage.getItem("crossway-night");if(v==="1")document.documentElement.classList.add("night");else if(v==="0")document.documentElement.classList.add("day");if(localStorage.getItem("crossway-hacker")==="1")document.documentElement.classList.add("hacker")}catch(e){}</script>
 <link rel="stylesheet" href="style.css">
 <script src="night.js" defer></script>
 <script src="demo.js" defer></script>
 <script src="cameo.js" defer></script>
+<script src="hacker.js" defer></script>
 </head>
 <body>
 
@@ -875,7 +876,7 @@
     <div class="window-body">
     <div class="donate-grid">
       <div class="dialog-icon">
-        <svg width="64" height="48" viewBox="0 0 8 6" shape-rendering="crispEdges" fill="#cc0000" role="img" aria-label="A red pixel-art heart with a white shine">
+        <svg width="64" height="48" viewBox="0 0 8 6" shape-rendering="crispEdges" fill="#cc0000" role="img" aria-label="A pixel-art heart with a shine">
           <rect x="1" y="0" width="2" height="1"/><rect x="5" y="0" width="2" height="1"/>
           <rect x="0" y="1" width="8" height="2"/>
           <rect x="1" y="3" width="6" height="1"/>
