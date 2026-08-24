@@ -221,24 +221,6 @@ html.hacker ::selection {
 html.hacker .dialog-icon svg { fill: var(--ink); }
 html.hacker .dialog-icon svg rect[fill="#fff"] { fill: var(--link); }
 
-/* The menubar app icon, re-cut. Unlike the heart and the cameo below it,
-   this one is a PNG: its near-white tile and dark panes are pixels, so no
-   token reaches them and the terminal would otherwise wear a lit white
-   rectangle in its corner. The filter desaturates to luminance and ramps
-   that luminance across the phosphor, both ends taken from the tokens —
-   the dark panes land on --paper, the same surface the windows use, and
-   the white ground lands on --link, the brightest step, exactly where the
-   heart's shine goes. Luminance ORDER is preserved, so the panes keep
-   reading against the ground instead of flattening to a blob. Alpha is
-   untouched, so the rounded corners stay rounded.
-
-   The filter lives in each page's <body>; the pages that omit it simply
-   never match this rule. */
-html.hacker .menubar .appicon { filter: url(#phosphor-icon); }
-
-/* Inert, and out of the layout without display:none. */
-.phosphor-defs { position: absolute; width: 0; height: 0; }
-
 /* The cameo's visitor, re-cut for a monochrome screen. His eight tones
    map onto eight phosphor steps in the SAME luminance order they had, so
    he stays a figure — armour reading against undersuit, visor brightest,
@@ -788,6 +770,64 @@ pre.cmd {
 }
 .lede .btn-row { justify-content: center; margin-bottom: 14px; }
 
+/* ---------- agent install (hero) ---------- */
+
+/* The quiet second option under the download button: the same install, handed
+   to a coding agent instead of to a Finder window. Every value comes from a
+   token, so light, dark and the terminal all fall out with no
+   appearance-specific rule in this section. There should never be one. */
+
+.agent-install {
+  max-width: 38em;
+  margin: 20px auto 16px;
+}
+.agent-install > p { margin-bottom: 12px; }
+
+/* The paste chip. The Copy button inside it ships hidden and copy.js reveals
+   it, so with JavaScript off there is no control that does nothing. */
+.paste-chip {
+  display: inline-flex;
+  align-items: stretch;
+  max-width: 100%;
+  color: var(--ink);
+  background: var(--paper);
+  border: var(--border) solid var(--ink);
+  border-radius: var(--radius-btn);
+  overflow: hidden;
+}
+.paste-chip code {
+  padding: 10px 16px;
+  font-family: var(--font-mono);
+  font-size: 14px;
+  line-height: 1.35;
+  white-space: nowrap;
+  align-self: center;
+  -webkit-user-select: text;
+  user-select: text;
+}
+.paste-chip-copy {
+  flex: none;
+  margin: 0;
+  padding: 0 16px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  line-height: 1.3;
+  color: var(--ink);
+  background: var(--paper);
+  border: 0;
+  border-left: var(--border) solid var(--ink);
+  border-radius: 0;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.paste-chip-copy:hover { background: var(--desktop-b); }
+.paste-chip-copy:active {          /* the same press inversion the buttons use */
+  background: var(--ink);
+  color: var(--paper);
+}
+.paste-chip-copy:focus-visible { outline-offset: -4px; }
+
 /* ---------- footer ---------- */
 
 .footer {
@@ -967,4 +1007,21 @@ pre.cmd {
   .dialog-icon { grid-row: auto; }
   .dialog-actions { grid-column: 1; }
   .shortcut-table { gap: 14px 16px; }
+
+  /* Phones stack the chip. The string gets a whole line and wraps at the space
+     after the colon rather than breaking the URL, and the Copy button becomes a
+     full-width footer under it, which is a far better thumb target than a
+     narrow column beside the text. */
+  .paste-chip { flex-direction: column; align-items: stretch; }
+  .paste-chip code {
+    padding: 10px 12px;
+    font-size: 13px;
+    white-space: normal;
+    text-align: center;
+  }
+  .paste-chip-copy {
+    padding: 9px 12px;
+    border-left: 0;
+    border-top: var(--border) solid var(--ink);
+  }
 }
