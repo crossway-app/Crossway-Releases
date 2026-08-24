@@ -25,6 +25,12 @@ Crossway replaces the built-in app switcher with one that understands *windows*,
 
 ### [⬇️ Download the latest Crossway.zip](https://github.com/crossway-app/Crossway-Releases/releases/latest/download/Crossway.zip)
 
+Or let an agent install it for you. Paste this into Claude Code, Codex, or another agent:
+
+```
+Install Crossway: https://crosswayapp.com/SKILL.md
+```
+
 Every build is signed with an Apple Developer ID certificate and notarized by Apple. Older versions and release notes are on the [Releases page](https://github.com/crossway-app/Crossway-Releases/releases).
 
 **Always download in a web browser from this page.** Don't pass the zip around through chat apps — macOS marks files saved by messenger apps so they can never run (see Troubleshooting below).
@@ -37,9 +43,10 @@ Every build is signed with an Apple Developer ID certificate and notarized by Ap
 4. Grant the two permissions it asks for in **System Settings → Privacy & Security**:
    - **Accessibility** — needed to take over ⌘Tab and to raise the window you pick.
    - **Screen Recording** — needed for the window thumbnail previews.
-5. Relaunch Crossway after granting (the app walks you through this on first run).
+5. Follow the in-app setup. Crossway notices the grants and completes any required
+   relaunch itself; you do not need to relaunch it manually.
 
-Crossway records nothing and uploads nothing. The app makes exactly one kind of network request, and only when you ask it to: **menu-bar icon → Check for Updates…** fetches the latest release info from this repository and tells you if a newer build is available, with a download button. That is the app's entire network surface — no telemetry, no automatic or background checks, nothing uploaded, ever. Installing an update is still manual: download the new zip (from this page or via that button) and replace the app.
+Crossway records nothing and uploads nothing. The app makes exactly one kind of network request, and only when you ask it to: **menu-bar icon → Check for Updates…** fetches the latest release info from this repository and tells you if a newer build is available, with a download button. That is the app's entire network surface — no telemetry, no automatic or background checks, nothing uploaded, ever. Crossway contains no updater and installs nothing. The ordinary update path remains downloading the zip and replacing the app yourself.
 
 ## Troubleshooting
 
