@@ -1,0 +1,918 @@
+#!/usr/bin/osascript -l JavaScript
+
+ObjC.import('Foundation');
+ObjC.import('AppKit');
+
+const RELEASE_REPOSITORY = 'crossway-app/Crossway-Releases';
+const MAX_RELEASE_BYTES = 262144;
+const MAX_ASSET_BYTES = 268435456;
+const MAX_ZIP_ENTRIES = 4096;
+const MAX_ZIP_ENTRY_BYTES = 268435456;
+const MAX_ZIP_EXPANDED_BYTES = 536870912;
+const MAX_ZIP_NAME_BYTES = 512;
+
+function isSafeInteger(value) {
+    return typeof value === 'number' && isFinite(value) &&
+        Math.floor(value) === value && Math.abs(value) <= 9007199254740991;
+}
+
+function fail(code, message) {
+    const error = new Error(message);
+    error.crosswayCode = code;
+    throw error;
+}
+
+function assertObject(value) {
+    if (value === null || Array.isArray(value) || typeof value !== 'object') {
+        fail('invalid_request', 'request must be a JSON object');
+    }
+}
+
+function assertExactKeys(object, expected) {
+    const actual = Object.keys(object).sort();
+    const wanted = expected.slice().sort();
+    if (actual.length !== wanted.length) {
+        fail('invalid_request', 'request has missing or unknown fields');
+    }
+    for (let index = 0; index < wanted.length; index += 1) {
+        if (actual[index] !== wanted[index]) {
+            fail('invalid_request', 'request has missing or unknown fields');
+        }
+    }
+}
+
+function requireString(value, field) {
+    if (typeof value !== 'string' || value.length === 0) {
+        fail('invalid_request', field + ' must be a non-empty string');
+    }
+    return value;
+}
+
+function decodeUtf8Base64(value, field) {
+    const encoded = requireString(value, field);
+    if (!/^(?:[A-Za-z0-9+\/]{4})*(?:[A-Za-z0-9+\/]{2}==|[A-Za-z0-9+\/]{3}=)?$/.test(encoded)) {
+        fail('invalid_request', field + ' is not canonical base64');
+    }
+
+    const data = $.NSData.alloc.initWithBase64EncodedStringOptions($(encoded), 0);
+    if (!data) {
+        fail('invalid_request', field + ' could not be decoded');
+    }
+    const decoded = $.NSString.alloc.initWithDataEncoding(data, $.NSUTF8StringEncoding);
+    if (!decoded) {
+        fail('invalid_request', field + ' is not UTF-8');
+    }
+
+    const roundTrip = ObjC.unwrap(data.base64EncodedStringWithOptions(0));
+    if (roundTrip !== encoded) {
+        fail('invalid_request', field + ' is not canonical base64');
+    }
+    return ObjC.unwrap(decoded);
+}
+
+function optionalString(dictionary, key) {
+    const value = dictionary.objectForKey($(key));
+    if (!value) {
+        return null;
+    }
+    return ObjC.unwrap(value.description);
+}
+
+function pathFromUrl(url) {
+    if (!url) {
+        return null;
+    }
+    return ObjC.unwrap(url.path);
+}
+
+function pathDetails(path) {
+    if (!path) {
+        return {original: null, standardized: null, resolved: null};
+    }
+    const standardized = ObjC.unwrap($(path).stringByStandardizingPath);
+    const url = $.NSURL.fileURLWithPath($(standardized));
+    return {
+        original: path,
+        standardized: standardized,
+        resolved: pathFromUrl(url.URLByResolvingSymlinksInPath)
+    };
+}
+
+function canonicalizePath(request) {
+    assertExactKeys(request, ['version', 'action', 'pathB64']);
+    const input = decodeUtf8Base64(request.pathB64, 'pathB64');
+    const expanded = ObjC.unwrap($(input).stringByExpandingTildeInPath);
+    const standardized = ObjC.unwrap($(expanded).stringByStandardizingPath);
+    if (standardized.length === 0 || standardized.charAt(0) !== '/') {
+        fail('invalid_request', 'path must resolve to an absolute path');
+    }
+    const url = $.NSURL.fileURLWithPath($(standardized));
+    const resolved = pathFromUrl(url.URLByResolvingSymlinksInPath);
+    return {
+        inputPath: input,
+        standardizedPath: standardized,
+        resolvedPath: resolved
+    };
+}
+
+function readBundleInfo(request) {
+    assertExactKeys(request, ['version', 'action', 'pathB64']);
+    const bundlePath = decodeUtf8Base64(request.pathB64, 'pathB64');
+    const standardized = ObjC.unwrap($(bundlePath).stringByStandardizingPath);
+    const plistPath = ObjC.unwrap($(standardized).stringByAppendingPathComponent('Contents/Info.plist'));
+    const dictionary = $.NSDictionary.dictionaryWithContentsOfFile($(plistPath));
+    if (!dictionary) {
+        fail('plist_unreadable', 'bundle Info.plist could not be read');
+    }
+    return {
+        bundlePath: standardized,
+        plistPath: plistPath,
+        bundleIdentifier: optionalString(dictionary, 'CFBundleIdentifier'),
+        shortVersion: optionalString(dictionary, 'CFBundleShortVersionString'),
+        buildVersion: optionalString(dictionary, 'CFBundleVersion'),
+        minimumSystemVersion: optionalString(dictionary, 'LSMinimumSystemVersion'),
+        executable: optionalString(dictionary, 'CFBundleExecutable')
+    };
+}
+
+function parseVersionParts(shortVersion, buildVersion) {
+    const shortText = requireString(shortVersion, 'shortVersion').trim();
+    const buildText = requireString(buildVersion, 'buildVersion').trim();
+    const marketingParts = shortText.split('.');
+    if (marketingParts.length === 0 || !marketingParts.every(function (part) { return /^[0-9]+$/.test(part); })) {
+        fail('invalid_version', 'marketing version must contain numeric components');
+    }
+    if (!/^[0-9]+$/.test(buildText)) {
+        fail('invalid_version', 'build version must be a non-negative integer');
+    }
+    const marketing = marketingParts.map(function (part) { return Number(part); });
+    const build = Number(buildText);
+    if (!marketing.every(isSafeInteger) || !isSafeInteger(build)) {
+        fail('invalid_version', 'version component is outside the safe integer range');
+    }
+    return {marketing: marketing, marketingString: marketing.join('.'), build: build};
+}
+
+function parseReleaseTag(tag) {
+    const text = requireString(tag, 'tag');
+    const match = /^v([0-9]+\.[0-9]+(?:\.[0-9]+)*)-b([0-9]+)$/.exec(text);
+    if (!match) {
+        fail('invalid_release', 'release tag must be v<X.Y[.Z...]>-b<N>');
+    }
+    return parseVersionParts(match[1], match[2]);
+}
+
+function compareParsedVersions(left, right) {
+    const count = Math.max(left.marketing.length, right.marketing.length);
+    for (let index = 0; index < count; index += 1) {
+        const leftPart = index < left.marketing.length ? left.marketing[index] : 0;
+        const rightPart = index < right.marketing.length ? right.marketing[index] : 0;
+        if (leftPart < rightPart) { return -1; }
+        if (leftPart > rightPart) { return 1; }
+    }
+    if (left.build < right.build) { return -1; }
+    if (left.build > right.build) { return 1; }
+    return 0;
+}
+
+function readUtf8File(path, maximumBytes) {
+    const data = $.NSData.dataWithContentsOfFile($(path));
+    if (!data) {
+        fail('file_unreadable', 'JSON file could not be read');
+    }
+    const length = Number(data.length);
+    if (!isSafeInteger(length) || length < 1 || length > maximumBytes) {
+        fail('invalid_release', 'JSON file size is outside the accepted range');
+    }
+    const text = $.NSString.alloc.initWithDataEncoding(data, $.NSUTF8StringEncoding);
+    if (!text) {
+        fail('invalid_release', 'JSON file is not UTF-8');
+    }
+    return ObjC.unwrap(text);
+}
+
+function parseReleaseFile(request) {
+    assertExactKeys(request, ['version', 'action', 'pathB64']);
+    const path = decodeUtf8Base64(request.pathB64, 'pathB64');
+    let release;
+    try {
+        release = JSON.parse(readUtf8File(path, MAX_RELEASE_BYTES));
+    } catch (error) {
+        if (error.crosswayCode) { throw error; }
+        fail('invalid_release', 'release metadata is not valid JSON');
+    }
+    assertObject(release);
+    if (release.draft !== false || release.prerelease !== false) {
+        fail('invalid_release', 'latest release must be published and non-prerelease');
+    }
+
+    const tag = requireString(release.tag_name, 'tag_name');
+    const version = parseReleaseTag(tag);
+    if (!Array.isArray(release.assets)) {
+        fail('invalid_release', 'assets must be an array');
+    }
+    const namedAssets = release.assets.filter(function (asset) {
+        return asset && typeof asset === 'object' && asset.name === 'Crossway.zip';
+    });
+    if (namedAssets.length !== 1) {
+        fail('invalid_release', 'release must contain exactly one Crossway.zip asset');
+    }
+    const asset = namedAssets[0];
+    if (asset.state !== 'uploaded') {
+        fail('invalid_release', 'Crossway.zip is not uploaded');
+    }
+    if (!isSafeInteger(asset.size) || asset.size < 1 || asset.size > MAX_ASSET_BYTES) {
+        fail('invalid_release', 'Crossway.zip size is outside the accepted range');
+    }
+    const digest = requireString(asset.digest, 'asset.digest');
+    if (!/^sha256:[a-f0-9]{64}$/.test(digest)) {
+        fail('invalid_release', 'Crossway.zip digest must be lowercase SHA-256');
+    }
+    const expectedUrl = 'https://github.com/' + RELEASE_REPOSITORY + '/releases/download/' + tag + '/Crossway.zip';
+    if (asset.browser_download_url !== expectedUrl) {
+        fail('invalid_release', 'Crossway.zip URL does not match the selected repository and tag');
+    }
+
+    let bodyDigest = null;
+    if (typeof release.body === 'string') {
+        const mentionsChecksum = /SHA-256/i.test(release.body) && /Crossway\.zip/.test(release.body);
+        const bodyMatch = /SHA-256[^\r\n]*Crossway\.zip[^\r\n]*?([A-Fa-f0-9]{64})/.exec(release.body);
+        if (mentionsChecksum && !bodyMatch) {
+            fail('invalid_release', 'release-body Crossway.zip checksum is malformed');
+        }
+        if (bodyMatch) {
+            bodyDigest = 'sha256:' + bodyMatch[1].toLowerCase();
+            if (bodyDigest !== digest) {
+                fail('invalid_release', 'release-body checksum disagrees with the asset digest');
+            }
+        }
+    }
+
+    return {
+        tag: tag,
+        marketingVersion: version.marketingString,
+        build: version.build,
+        assetDigest: digest,
+        assetSize: asset.size,
+        assetUrl: expectedUrl,
+        bodyDigest: bodyDigest
+    };
+}
+
+function compareVersions(request) {
+    assertExactKeys(request, [
+        'version', 'action', 'leftShortB64', 'leftBuildB64',
+        'rightShortB64', 'rightBuildB64'
+    ]);
+    const left = parseVersionParts(
+        decodeUtf8Base64(request.leftShortB64, 'leftShortB64'),
+        decodeUtf8Base64(request.leftBuildB64, 'leftBuildB64'));
+    const right = parseVersionParts(
+        decodeUtf8Base64(request.rightShortB64, 'rightShortB64'),
+        decodeUtf8Base64(request.rightBuildB64, 'rightBuildB64'));
+    return {
+        order: compareParsedVersions(left, right),
+        marketingEqual: compareParsedVersions(
+            {marketing: left.marketing, build: 0},
+            {marketing: right.marketing, build: 0}) === 0,
+        leftMarketing: left.marketingString,
+        rightMarketing: right.marketingString
+    };
+}
+
+function zipByte(bytes, offset) {
+    return Number(bytes[offset]);
+}
+
+function zipU16(bytes, offset) {
+    return zipByte(bytes, offset) + zipByte(bytes, offset + 1) * 256;
+}
+
+function zipU32(bytes, offset) {
+    return zipByte(bytes, offset) + zipByte(bytes, offset + 1) * 256 +
+        zipByte(bytes, offset + 2) * 65536 + zipByte(bytes, offset + 3) * 16777216;
+}
+
+function zipSignature(bytes, offset, signature) {
+    return zipU32(bytes, offset) === signature;
+}
+
+function zipSliceEquals(bytes, leftOffset, rightOffset, length) {
+    for (let index = 0; index < length; index += 1) {
+        if (zipByte(bytes, leftOffset + index) !== zipByte(bytes, rightOffset + index)) {
+            return false;
+        }
+    }
+    return true;
+}
+
+function zipUtf8(data, offset, length) {
+    const slice = data.subdataWithRange($.NSMakeRange(offset, length));
+    const text = $.NSString.alloc.initWithDataEncoding(slice, $.NSUTF8StringEncoding);
+    if (!text) {
+        fail('invalid_archive', 'ZIP entry name is not UTF-8');
+    }
+    return ObjC.unwrap(text);
+}
+
+function validateZipExtraFields(bytes, offset, length) {
+    const end = offset + length;
+    let cursor = offset;
+    while (cursor < end) {
+        if (cursor + 4 > end) {
+            fail('invalid_archive', 'ZIP extra field is truncated');
+        }
+        const identifier = zipU16(bytes, cursor);
+        const fieldLength = zipU16(bytes, cursor + 2);
+        cursor += 4;
+        if (cursor + fieldLength > end) {
+            fail('invalid_archive', 'ZIP extra field exceeds its entry');
+        }
+        if (identifier === 0x0001 || identifier === 0x9901 ||
+            identifier === 0x7075 || identifier === 0x6375) {
+            fail('invalid_archive', 'ZIP64, AES, and alternate-name extensions are not accepted');
+        }
+        cursor += fieldLength;
+    }
+}
+
+function validateZipEntryName(name, directory) {
+    if (name.length === 0 || name.charAt(0) === '/' || name.indexOf('\\') !== -1) {
+        fail('invalid_archive', 'ZIP entry has an absolute, empty, or backslash path');
+    }
+    if (directory !== /\/$/.test(name)) {
+        fail('invalid_archive', 'ZIP entry type and trailing slash disagree');
+    }
+    const body = directory ? name.slice(0, -1) : name;
+    const parts = body.split('/');
+    if (parts.length === 0 || parts[0] !== 'Crossway.app') {
+        fail('invalid_archive', 'ZIP contains a sibling outside Crossway.app');
+    }
+    parts.forEach(function (part) {
+        if (!/^[A-Za-z0-9_+@.-]+$/.test(part) || part === '.' || part === '..' ||
+            part.indexOf('._') === 0) {
+            fail('invalid_archive', 'ZIP entry path is not in the portable allowlist');
+        }
+    });
+    if (parts[0] === '__MACOSX') {
+        fail('invalid_archive', 'ZIP contains AppleDouble metadata');
+    }
+    return parts;
+}
+
+function validateZipFile(request) {
+    assertExactKeys(request, ['version', 'action', 'pathB64']);
+    const path = decodeUtf8Base64(request.pathB64, 'pathB64');
+    const data = $.NSData.dataWithContentsOfFile($(path));
+    if (!data) {
+        fail('file_unreadable', 'ZIP file could not be read');
+    }
+    const length = Number(data.length);
+    if (!isSafeInteger(length) || length < 22 || length > MAX_ASSET_BYTES) {
+        fail('invalid_archive', 'ZIP file size is outside the accepted range');
+    }
+    const bytes = data.bytes;
+    const searchStart = Math.max(0, length - 65557);
+    let eocd = -1;
+    for (let offset = length - 22; offset >= searchStart; offset -= 1) {
+        if (zipSignature(bytes, offset, 0x06054b50)) {
+            const commentLength = zipU16(bytes, offset + 20);
+            if (offset + 22 + commentLength === length) {
+                eocd = offset;
+                break;
+            }
+        }
+    }
+    if (eocd < 0) {
+        fail('invalid_archive', 'ZIP end-of-central-directory record is missing');
+    }
+    if (zipU16(bytes, eocd + 4) !== 0 || zipU16(bytes, eocd + 6) !== 0) {
+        fail('invalid_archive', 'multi-disk ZIP archives are not accepted');
+    }
+    const entriesOnDisk = zipU16(bytes, eocd + 8);
+    const entryCount = zipU16(bytes, eocd + 10);
+    const centralSize = zipU32(bytes, eocd + 12);
+    const centralOffset = zipU32(bytes, eocd + 16);
+    if (entriesOnDisk !== entryCount || entryCount < 1 || entryCount > MAX_ZIP_ENTRIES ||
+        entryCount === 0xffff || centralSize === 0xffffffff || centralOffset === 0xffffffff) {
+        fail('invalid_archive', 'ZIP entry count or central directory is outside accepted limits');
+    }
+    if (zipU16(bytes, eocd + 20) !== 0 || centralOffset + centralSize !== eocd ||
+        centralOffset < 0 || centralSize < 46) {
+        fail('invalid_archive', 'ZIP central directory boundaries are not canonical');
+    }
+
+    const entries = [];
+    const seenNames = {};
+    const seenFoldedNames = {};
+    const seenLocalOffsets = {};
+    let cursor = centralOffset;
+    let totalExpanded = 0;
+    let totalCompressed = 0;
+    for (let index = 0; index < entryCount; index += 1) {
+        if (cursor + 46 > eocd || !zipSignature(bytes, cursor, 0x02014b50)) {
+            fail('invalid_archive', 'ZIP central directory entry is missing or truncated');
+        }
+        const madeBy = zipU16(bytes, cursor + 4);
+        const origin = Math.floor(madeBy / 256);
+        const flags = zipU16(bytes, cursor + 8);
+        const method = zipU16(bytes, cursor + 10);
+        const compressed = zipU32(bytes, cursor + 20);
+        const expanded = zipU32(bytes, cursor + 24);
+        const nameLength = zipU16(bytes, cursor + 28);
+        const extraLength = zipU16(bytes, cursor + 30);
+        const commentLength = zipU16(bytes, cursor + 32);
+        const diskStart = zipU16(bytes, cursor + 34);
+        const externalAttributes = zipU32(bytes, cursor + 38);
+        const localOffset = zipU32(bytes, cursor + 42);
+        const entryEnd = cursor + 46 + nameLength + extraLength + commentLength;
+        if (entryEnd > eocd || nameLength < 1 || nameLength > MAX_ZIP_NAME_BYTES ||
+            commentLength !== 0 || diskStart !== 0) {
+            fail('invalid_archive', 'ZIP entry metadata is outside accepted limits');
+        }
+        if ((flags & ~(0x000e | 0x0800)) !== 0 || (flags & 0x0001) !== 0 ||
+            (method !== 0 && method !== 8) || (method === 0 && (flags & 0x0006) !== 0)) {
+            fail('invalid_archive', 'ZIP entry uses encryption or an unsupported compression feature');
+        }
+        if (compressed > MAX_ASSET_BYTES || expanded > MAX_ZIP_ENTRY_BYTES) {
+            fail('invalid_archive', 'ZIP entry size exceeds accepted limits');
+        }
+        totalExpanded += expanded;
+        totalCompressed += compressed;
+        if (!isSafeInteger(totalExpanded) || totalExpanded > MAX_ZIP_EXPANDED_BYTES ||
+            !isSafeInteger(totalCompressed) || totalCompressed > MAX_ASSET_BYTES) {
+            fail('invalid_archive', 'ZIP expanded or compressed total exceeds accepted limits');
+        }
+        if (expanded > 1048576 && (compressed === 0 || compressed * 1000 < expanded)) {
+            fail('invalid_archive', 'ZIP entry has an unsafe expansion ratio');
+        }
+        if (origin !== 3 && origin !== 19) {
+            fail('invalid_archive', 'ZIP entry type is not Unix-compatible');
+        }
+        const unixMode = Math.floor(externalAttributes / 65536) & 0xffff;
+        const fileType = unixMode & 0xf000;
+        const directory = fileType === 0x4000;
+        if (!directory && fileType !== 0x8000) {
+            fail('invalid_archive', 'ZIP contains a link, device, or ambiguous entry type');
+        }
+        if (directory && (compressed !== 0 || expanded !== 0)) {
+            fail('invalid_archive', 'ZIP directory carries file data');
+        }
+        const nameOffset = cursor + 46;
+        const name = zipUtf8(data, nameOffset, nameLength);
+        const parts = validateZipEntryName(name, directory);
+        const nameKey = '$' + name;
+        const foldedKey = '$' + name.toLowerCase();
+        if (seenNames[nameKey] || seenFoldedNames[foldedKey]) {
+            fail('invalid_archive', 'ZIP contains duplicate or case-colliding paths');
+        }
+        seenNames[nameKey] = true;
+        seenFoldedNames[foldedKey] = true;
+        validateZipExtraFields(bytes, nameOffset + nameLength, extraLength);
+
+        if (localOffset + 30 > centralOffset || !zipSignature(bytes, localOffset, 0x04034b50)) {
+            fail('invalid_archive', 'ZIP local header is missing or outside the data region');
+        }
+        const localFlags = zipU16(bytes, localOffset + 6);
+        const localMethod = zipU16(bytes, localOffset + 8);
+        const localCrc = zipU32(bytes, localOffset + 14);
+        const localCompressed = zipU32(bytes, localOffset + 18);
+        const localExpanded = zipU32(bytes, localOffset + 22);
+        const localNameLength = zipU16(bytes, localOffset + 26);
+        const localExtraLength = zipU16(bytes, localOffset + 28);
+        const localNameOffset = localOffset + 30;
+        const dataOffset = localNameOffset + localNameLength + localExtraLength;
+        if (localFlags !== flags || localMethod !== method || localNameLength !== nameLength ||
+            dataOffset + compressed > centralOffset ||
+            !zipSliceEquals(bytes, nameOffset, localNameOffset, nameLength)) {
+            fail('invalid_archive', 'ZIP local and central headers disagree');
+        }
+        const centralCrc = zipU32(bytes, cursor + 16);
+        if ((flags & 0x0008) === 0) {
+            if (localCrc !== centralCrc || localCompressed !== compressed ||
+                localExpanded !== expanded) {
+                fail('invalid_archive', 'ZIP local sizes or checksum disagree with the central directory');
+            }
+        } else if ((localCrc !== 0 && localCrc !== centralCrc) ||
+            (localCompressed !== 0 && localCompressed !== compressed) ||
+            (localExpanded !== 0 && localExpanded !== expanded)) {
+            fail('invalid_archive', 'ZIP data-descriptor entry has contradictory local metadata');
+        }
+        validateZipExtraFields(bytes, localNameOffset + localNameLength, localExtraLength);
+        const offsetKey = '$' + String(localOffset);
+        if (seenLocalOffsets[offsetKey]) {
+            fail('invalid_archive', 'ZIP entries share a local header');
+        }
+        seenLocalOffsets[offsetKey] = true;
+        entries.push({
+            name: name,
+            parts: parts,
+            directory: directory,
+            localOffset: localOffset,
+            dataEnd: dataOffset + compressed
+        });
+        cursor = entryEnd;
+    }
+    if (cursor !== eocd) {
+        fail('invalid_archive', 'ZIP central directory length does not match its entries');
+    }
+
+    const entryByName = {};
+    entries.forEach(function (entry) { entryByName['$' + entry.name] = entry; });
+    const root = entryByName['$Crossway.app/'];
+    if (!root || !root.directory) {
+        fail('invalid_archive', 'ZIP must contain one explicit Crossway.app root');
+    }
+    entries.forEach(function (entry) {
+        if (entry.name === 'Crossway.app/') { return; }
+        const body = entry.directory ? entry.name.slice(0, -1) : entry.name;
+        const slash = body.lastIndexOf('/');
+        const parentName = body.slice(0, slash + 1);
+        const parent = entryByName['$' + parentName];
+        if (!parent || !parent.directory) {
+            fail('invalid_archive', 'ZIP entry is missing an explicit parent directory');
+        }
+    });
+    const executable = entryByName['$Crossway.app/Contents/MacOS/Crossway'];
+    const plist = entryByName['$Crossway.app/Contents/Info.plist'];
+    if (!executable || executable.directory || !plist || plist.directory) {
+        fail('invalid_archive', 'ZIP is missing the executable or Info.plist');
+    }
+    const orderedRanges = entries.slice().sort(function (left, right) {
+        return left.localOffset - right.localOffset;
+    });
+    if (orderedRanges[0].localOffset !== 0) {
+        fail('invalid_archive', 'ZIP carries data before its first local entry');
+    }
+    for (let index = 1; index < orderedRanges.length; index += 1) {
+        if (orderedRanges[index - 1].dataEnd > orderedRanges[index].localOffset) {
+            fail('invalid_archive', 'ZIP local entry ranges overlap');
+        }
+    }
+    return {
+        entryCount: entryCount,
+        expandedBytes: totalExpanded,
+        compressedBytes: totalCompressed,
+        candidateRelativePath: 'Crossway.app'
+    };
+}
+
+function binaryU32Little(bytes, offset) {
+    return zipU32(bytes, offset);
+}
+
+function binaryU32Big(bytes, offset) {
+    return zipByte(bytes, offset) * 16777216 + zipByte(bytes, offset + 1) * 65536 +
+        zipByte(bytes, offset + 2) * 256 + zipByte(bytes, offset + 3);
+}
+
+function architectureName(cpuType) {
+    if (cpuType === 0x0100000c) { return 'arm64'; }
+    if (cpuType === 0x01000007) { return 'x86_64'; }
+    fail('invalid_binary', 'Crossway executable contains an unsupported architecture');
+}
+
+function readMachOArchitectures(request) {
+    assertExactKeys(request, ['version', 'action', 'pathB64']);
+    const path = decodeUtf8Base64(request.pathB64, 'pathB64');
+    const data = $.NSData.dataWithContentsOfFile($(path));
+    if (!data) {
+        fail('file_unreadable', 'Crossway executable could not be read');
+    }
+    const length = Number(data.length);
+    if (!isSafeInteger(length) || length < 8 || length > MAX_ZIP_ENTRY_BYTES) {
+        fail('invalid_binary', 'Crossway executable size is outside accepted limits');
+    }
+    const bytes = data.bytes;
+    const magicLittle = binaryU32Little(bytes, 0);
+    const magicBig = binaryU32Big(bytes, 0);
+    const architectures = [];
+    if (magicLittle === 0xfeedfacf && length >= 32) {
+        architectures.push(architectureName(binaryU32Little(bytes, 4)));
+    } else if (magicBig === 0xcafebabe || magicBig === 0xcafebabf) {
+        const count = binaryU32Big(bytes, 4);
+        const wide = magicBig === 0xcafebabf;
+        const recordSize = wide ? 32 : 20;
+        if (!isSafeInteger(count) || count < 1 || count > 16 || 8 + count * recordSize > length) {
+            fail('invalid_binary', 'fat Mach-O architecture table is malformed');
+        }
+        for (let index = 0; index < count; index += 1) {
+            const record = 8 + index * recordSize;
+            const name = architectureName(binaryU32Big(bytes, record));
+            if (architectures.indexOf(name) !== -1) {
+                fail('invalid_binary', 'fat Mach-O repeats an architecture');
+            }
+            const sliceOffsetHigh = wide ? binaryU32Big(bytes, record + 8) : 0;
+            const sliceOffsetLow = binaryU32Big(bytes, record + (wide ? 12 : 8));
+            const sliceSizeHigh = wide ? binaryU32Big(bytes, record + 16) : 0;
+            const sliceSizeLow = binaryU32Big(bytes, record + (wide ? 20 : 12));
+            if (sliceOffsetHigh !== 0 || sliceSizeHigh !== 0 || sliceSizeLow < 32 ||
+                sliceOffsetLow + sliceSizeLow > length) {
+                fail('invalid_binary', 'fat Mach-O slice is outside the executable');
+            }
+            const sliceMagic = binaryU32Little(bytes, sliceOffsetLow);
+            const sliceCpu = binaryU32Little(bytes, sliceOffsetLow + 4);
+            if (sliceMagic !== 0xfeedfacf ||
+                architectureName(sliceCpu) !== name) {
+                fail('invalid_binary', 'fat Mach-O slice header disagrees with its table');
+            }
+            architectures.push(name);
+        }
+    } else {
+        fail('invalid_binary', 'Crossway executable is not a supported Mach-O file');
+    }
+    architectures.sort();
+    return {
+        count: architectures.length,
+        architectures: architectures,
+        arm64: architectures.indexOf('arm64') !== -1,
+        x86_64: architectures.indexOf('x86_64') !== -1
+    };
+}
+
+function runningApplications(request) {
+    assertExactKeys(request, ['version', 'action', 'bundleIdB64']);
+    const bundleId = decodeUtf8Base64(request.bundleIdB64, 'bundleIdB64');
+    const applications = $.NSRunningApplication.runningApplicationsWithBundleIdentifier($(bundleId));
+    const result = [];
+    const count = Number(applications.count);
+    for (let index = 0; index < count; index += 1) {
+        const application = applications.objectAtIndex(index);
+        const bundle = pathDetails(pathFromUrl(application.bundleURL));
+        result.push({
+            pid: Number(application.processIdentifier),
+            terminated: Boolean(application.terminated),
+            bundleIdentifier: application.bundleIdentifier ? ObjC.unwrap(application.bundleIdentifier) : null,
+            bundlePath: bundle.original,
+            standardizedBundlePath: bundle.standardized,
+            resolvedBundlePath: bundle.resolved,
+            executablePath: pathFromUrl(application.executableURL),
+            localizedName: application.localizedName ? ObjC.unwrap(application.localizedName) : null
+        });
+    }
+    result.sort(function (left, right) { return left.pid - right.pid; });
+    return {bundleIdentifier: bundleId, count: result.length, applications: result};
+}
+
+function requireProcessIdentifier(value) {
+    if (!isSafeInteger(value) || value < 1 || value > 2147483647) {
+        fail('invalid_request', 'pid must be a positive process identifier');
+    }
+    return value;
+}
+
+function processApplicationDetails(application) {
+    const bundle = pathDetails(pathFromUrl(application.bundleURL));
+    return {
+        pid: Number(application.processIdentifier),
+        terminated: Boolean(application.terminated),
+        bundleIdentifier: application.bundleIdentifier ? ObjC.unwrap(application.bundleIdentifier) : null,
+        bundlePath: bundle.original,
+        standardizedBundlePath: bundle.standardized,
+        resolvedBundlePath: bundle.resolved,
+        executablePath: pathFromUrl(application.executableURL),
+        localizedName: application.localizedName ? ObjC.unwrap(application.localizedName) : null
+    };
+}
+
+function processDetails(request) {
+    assertExactKeys(request, ['version', 'action', 'pid']);
+    const pid = requireProcessIdentifier(request.pid);
+    const application = $.NSRunningApplication.runningApplicationWithProcessIdentifier(pid);
+    if (!application || Boolean(application.terminated)) {
+        return {pid: pid, running: false, application: null};
+    }
+    return {pid: pid, running: true, application: processApplicationDetails(application)};
+}
+
+function terminateExactProcess(request) {
+    assertExactKeys(request, ['version', 'action', 'pid', 'bundleIdB64', 'bundlePathB64']);
+    const pid = requireProcessIdentifier(request.pid);
+    const bundleId = decodeUtf8Base64(request.bundleIdB64, 'bundleIdB64');
+    const expectedPath = decodeUtf8Base64(request.bundlePathB64, 'bundlePathB64');
+    const application = $.NSRunningApplication.runningApplicationWithProcessIdentifier(pid);
+    if (!application || Boolean(application.terminated)) {
+        return {pid: pid, running: false, terminationRequested: false};
+    }
+    const details = processApplicationDetails(application);
+    const expectedExecutable = expectedPath + '/Contents/MacOS/Crossway';
+    if (details.bundleIdentifier !== bundleId ||
+        details.bundlePath !== expectedPath ||
+        details.standardizedBundlePath !== expectedPath ||
+        details.resolvedBundlePath !== expectedPath ||
+        details.executablePath !== expectedExecutable) {
+        fail('process_identity_changed', 'PID no longer belongs to the exact Crossway bundle');
+    }
+    return {
+        pid: pid,
+        running: true,
+        terminationRequested: Boolean(application.terminate())
+    };
+}
+
+function durableWriteUtf8(path, text) {
+    const data = $(text).dataUsingEncoding($.NSUTF8StringEncoding);
+    if (!data || !Boolean(data.writeToFileAtomically($(path), true))) {
+        fail('journal_write_failed', 'transaction journal could not be written atomically');
+    }
+    const handle = $.NSFileHandle.fileHandleForWritingAtPath($(path));
+    if (!handle) {
+        fail('journal_write_failed', 'transaction journal could not be opened for synchronization');
+    }
+    handle.synchronizeFile;
+    handle.closeFile;
+    const parent = ObjC.unwrap($(path).stringByDeletingLastPathComponent);
+    synchronizeDirectory(parent);
+}
+
+function synchronizeDirectory(path) {
+    const directoryHandle = $.NSFileHandle.fileHandleForReadingAtPath($(path));
+    if (!directoryHandle) {
+        fail('directory_sync_failed', 'transaction directory could not be opened');
+    }
+    directoryHandle.synchronizeFile;
+    directoryHandle.closeFile;
+}
+
+function syncTransactionParent(request) {
+    assertExactKeys(request, ['version', 'action', 'parentPathB64']);
+    const parent = validatedTransactionPath(
+        decodeUtf8Base64(request.parentPathB64, 'parentPathB64'),
+        'parentPath', 'invalid_request');
+    synchronizeDirectory(parent);
+    return {parent: parent, synchronized: true};
+}
+
+function validatedTransactionPath(value, field, errorCode) {
+    if (typeof value !== 'string' || value.length === 0 ||
+        /[\u0000-\u001f\u007f]/.test(value)) {
+        fail(errorCode, field + ' is not a safe absolute path');
+    }
+    const standardized = ObjC.unwrap($(value).stringByStandardizingPath);
+    if (value.charAt(0) !== '/' || value !== standardized) {
+        fail(errorCode, field + ' is not a canonical absolute path');
+    }
+    return value;
+}
+
+function validateTransactionLayout(journalPath, target, stage, rollback, errorCode) {
+    const validatedJournal = validatedTransactionPath(
+        journalPath, 'journalPath', errorCode);
+    const validatedTarget = validatedTransactionPath(target, 'target', errorCode);
+    const validatedStage = validatedTransactionPath(stage, 'stage', errorCode);
+    const validatedRollback = validatedTransactionPath(
+        rollback, 'rollback', errorCode);
+    const parent = ObjC.unwrap($(validatedTarget).stringByDeletingLastPathComponent);
+    const expected = {
+        target: ObjC.unwrap($(parent).stringByAppendingPathComponent('Crossway.app')),
+        stage: ObjC.unwrap($(parent).stringByAppendingPathComponent('.Crossway.agent-stage')),
+        rollback: ObjC.unwrap($(parent).stringByAppendingPathComponent('.Crossway.agent-rollback')),
+        journal: ObjC.unwrap($(parent).stringByAppendingPathComponent('.Crossway.agent-journal'))
+    };
+    if (validatedTarget !== expected.target || validatedStage !== expected.stage ||
+        validatedRollback !== expected.rollback || validatedJournal !== expected.journal) {
+        fail(errorCode, 'transaction paths do not share the fixed sibling layout');
+    }
+}
+
+function writeTransactionJournal(request) {
+    assertExactKeys(request, [
+        'version', 'action', 'journalPathB64', 'targetPathB64', 'stagePathB64',
+        'rollbackPathB64', 'installedFingerprintB64', 'installedTreeFingerprintB64',
+        'candidateFingerprintB64', 'priorRunning', 'priorPid', 'phase'
+    ]);
+    const phase = requireString(request.phase, 'phase');
+    if (['staged', 'old-moving', 'new-moving', 'new-at-target', 'commit-ready'].indexOf(phase) === -1) {
+        fail('invalid_request', 'journal phase is unsupported');
+    }
+    if (typeof request.priorRunning !== 'boolean' ||
+        (request.priorPid !== null && (!isSafeInteger(request.priorPid) || request.priorPid < 1))) {
+        fail('invalid_request', 'journal process state is invalid');
+    }
+    if (request.priorRunning !== (request.priorPid !== null)) {
+        fail('invalid_request', 'journal running state and PID disagree');
+    }
+    const installedFingerprint = decodeUtf8Base64(
+        request.installedFingerprintB64, 'installedFingerprintB64');
+    const candidateFingerprint = decodeUtf8Base64(
+        request.candidateFingerprintB64, 'candidateFingerprintB64');
+    const installedTreeFingerprint = decodeUtf8Base64(
+        request.installedTreeFingerprintB64, 'installedTreeFingerprintB64');
+    if (!/^[a-f0-9]{64}$/.test(installedFingerprint) ||
+        !/^[a-f0-9]{64}$/.test(candidateFingerprint) ||
+        !(/^[a-f0-9]{64}$/.test(installedTreeFingerprint) ||
+          installedTreeFingerprint === 'absent')) {
+        fail('invalid_request', 'journal fingerprints must be SHA-256');
+    }
+    const target = decodeUtf8Base64(request.targetPathB64, 'targetPathB64');
+    const stage = decodeUtf8Base64(request.stagePathB64, 'stagePathB64');
+    const rollback = decodeUtf8Base64(request.rollbackPathB64, 'rollbackPathB64');
+    const journalPath = decodeUtf8Base64(request.journalPathB64, 'journalPathB64');
+    validateTransactionLayout(journalPath, target, stage, rollback, 'invalid_request');
+    const journal = {
+        version: 1,
+        phase: phase,
+        target: target,
+        stage: stage,
+        rollback: rollback,
+        installedFingerprint: installedFingerprint,
+        installedTreeFingerprint: installedTreeFingerprint,
+        candidateFingerprint: candidateFingerprint,
+        priorRunning: request.priorRunning,
+        priorPid: request.priorPid
+    };
+    durableWriteUtf8(journalPath, JSON.stringify(journal) + '\n');
+    return {journalPath: journalPath, phase: phase};
+}
+
+function readTransactionJournal(request) {
+    assertExactKeys(request, ['version', 'action', 'journalPathB64']);
+    const journalPath = decodeUtf8Base64(request.journalPathB64, 'journalPathB64');
+    let journal;
+    try {
+        journal = JSON.parse(readUtf8File(journalPath, 16384));
+    } catch (error) {
+        if (error.crosswayCode) { throw error; }
+        fail('invalid_journal', 'transaction journal is not valid JSON');
+    }
+    assertObject(journal);
+    assertExactKeys(journal, [
+        'version', 'phase', 'target', 'stage', 'rollback', 'installedFingerprint',
+        'installedTreeFingerprint', 'candidateFingerprint', 'priorRunning', 'priorPid'
+    ]);
+    if (journal.version !== 1 ||
+        ['staged', 'old-moving', 'new-moving', 'new-at-target', 'commit-ready'].indexOf(journal.phase) === -1 ||
+        typeof journal.target !== 'string' || typeof journal.stage !== 'string' ||
+        typeof journal.rollback !== 'string' || !/^[a-f0-9]{64}$/.test(journal.installedFingerprint) ||
+        !(/^[a-f0-9]{64}$/.test(journal.installedTreeFingerprint) ||
+          journal.installedTreeFingerprint === 'absent') ||
+        !/^[a-f0-9]{64}$/.test(journal.candidateFingerprint) ||
+        typeof journal.priorRunning !== 'boolean' ||
+        (journal.priorPid !== null && (!isSafeInteger(journal.priorPid) || journal.priorPid < 1)) ||
+        journal.priorRunning !== (journal.priorPid !== null)) {
+        fail('invalid_journal', 'transaction journal failed its strict schema');
+    }
+    validateTransactionLayout(
+        journalPath, journal.target, journal.stage, journal.rollback, 'invalid_journal');
+    return journal;
+}
+
+function dispatch(request) {
+    assertObject(request);
+    if (request.version !== 1) {
+        fail('invalid_request', 'unsupported request version');
+    }
+    requireString(request.action, 'action');
+
+    switch (request.action) {
+    case 'ping':
+        assertExactKeys(request, ['version', 'action']);
+        return {adapterVersion: 1};
+    case 'canonicalize_path':
+        return canonicalizePath(request);
+    case 'read_bundle_info':
+        return readBundleInfo(request);
+    case 'running_applications':
+        return runningApplications(request);
+    case 'parse_release_file':
+        return parseReleaseFile(request);
+    case 'compare_versions':
+        return compareVersions(request);
+    case 'validate_zip_file':
+        return validateZipFile(request);
+    case 'read_macho_architectures':
+        return readMachOArchitectures(request);
+    case 'process_details':
+        return processDetails(request);
+    case 'terminate_exact_process':
+        return terminateExactProcess(request);
+    case 'write_transaction_journal':
+        return writeTransactionJournal(request);
+    case 'read_transaction_journal':
+        return readTransactionJournal(request);
+    case 'sync_transaction_parent':
+        return syncTransactionParent(request);
+    default:
+        fail('invalid_request', 'unknown action');
+    }
+}
+
+function run(argv) {
+    try {
+        if (argv.length !== 1) {
+            fail('invalid_request', 'expected exactly one JSON request argument');
+        }
+        const request = JSON.parse(argv[0]);
+        const payload = dispatch(request);
+        return JSON.stringify({ok: true, result: payload});
+    } catch (error) {
+        const code = error.crosswayCode || (error instanceof SyntaxError ? 'invalid_json' : 'native_error');
+        return JSON.stringify({
+            ok: false,
+            error: {
+                code: String(code),
+                message: String(error.message || error)
+            }
+        });
+    }
+}
