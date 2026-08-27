@@ -2099,6 +2099,9 @@
       if (screen && screen.style) { screen.style.setProperty("--cw-blur", BLUR_STEPS[i]); }
       var out = root.querySelector ? root.querySelector("#cw-blur-now") : null;
       if (out) { out.textContent = BLUR_NAMES[i]; }
+      /* The scale printed over the wheel marks the word the cap is under. */
+      var wheel = root.querySelector ? root.querySelector(".cw-slider") : null;
+      if (wheel && wheel.setAttribute) { wheel.setAttribute("data-blur", String(i)); }
       return i;
     }
 
@@ -2199,7 +2202,7 @@
   }
 
   /* ====================================================================
-     DEMO MODE
+     THE AUTOMATIC DEMO
 
      Left alone, the demo demonstrates itself: an autopilot drives the
      same keypad a visitor clicks, at a visitor's pace (a little uneven,
@@ -2217,11 +2220,17 @@
 
      Targets are named, not counted: a tap is repeated until the named
      app or window is selected, so a scene still lands if the visitor
-     left the desktop rearranged. Native has no ⌥ and no strip, so the
-     autopilot waits while the switch says Native; it also waits while
-     the demo is scrolled away or the tab is hidden. The visitor's first
-     real click on the keys, the screen or the switch turns demo mode
-     off; the box over the keys turns it back on.
+     left the desktop rearranged.
+
+     macOS Native has its own nine (DEMO_SCENES_NATIVE, below): the
+     system has no ⌥ chords and no strip to read, so those scenes are
+     ⌘ alone and their targets name the window left IN FRONT rather
+     than a selection. The switch chooses which loop runs, and flipping
+     it between scenes starts the other from ITS first scene, since a
+     loop only closes when it runs whole. The autopilot waits while the
+     demo is scrolled away or the tab is hidden. The visitor's first
+     real click on the keys, the screen or the switch turns the
+     automatic demo off; the box over the keys turns it back on.
      ==================================================================== */
   var DEMO_SCENES = [
     /* ⌘Tab along the row to the film: its tile is seen playing, and
@@ -2242,6 +2251,30 @@
     { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm1" }] },
     { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa1" }] },
   ];
+  /* The same demo without Crossway, in what the system has: Command-Tab
+     lands on an app's front window, and Command-backtick raises the
+     front app's next window at once, with no session to read, so those
+     targets name the window that must be IN FRONT afterwards.
+
+     Nine scenes that close the loop, checked by walking them: the raises
+     are tm1, tm2, qt1, tm2, tm1, sa1, sa2, sa1, tm1, sa1, and the five
+     that survive to the top of the stack are the opening stack's first
+     five, deepest first (qt1, tm2, sa2, tm1, sa1) — spread over scenes
+     3, 4, 7 and 8/9 rather than gathered in the last five as the
+     Crossway list's are, because ⌘` here raises at once and a scene can
+     carry two. Every raise is a Safari, QuickTime or Terminal window,
+     so nothing else can drift. */
+  var DEMO_SCENES_NATIVE = [
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "tm2" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "quicktime" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "tm1" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "safari" }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "sa2" }, { key: "tick", front: "sa1" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "safari" }] },
+  ];
   /* A visitor's pace, in ms, and an unhurried one: the modifier goes
      down and is seen down before the first tap, the taps come at a
      stroll (each well past the preview delay, so every strip is seen to
@@ -2257,12 +2290,17 @@
   function createAutopilot(o) {
     o = o || {};
     var keys = o.keys, controller = o.controller;
-    var scenes = o.scenes || DEMO_SCENES, pace = o.pace || DEMO_PACE;
+    var scenes = o.scenes || DEMO_SCENES, nativeScenes = o.nativeScenes || DEMO_SCENES_NATIVE;
+    var pace = o.pace || DEMO_PACE;
     var later = o.setTimeout || function (fn, ms) { return setTimeout(fn, ms); };
     var cancel = o.clearTimeout || function (h) { clearTimeout(h); };
     var paused = o.paused || function () { return false; };
     var random = o.random || Math.random;
     var running = false, handle = null, scene = 0, step = 0, taps = 0, loops = 0;
+    var world = null;   /* which switcher the last scene ran under */
+
+    /* The scenes of the world the switch is set to. */
+    function current() { return controller.state.crosswayEnabled ? scenes : nativeScenes; }
 
     /* A hand does not tap on a metronome. */
     function jittered(ms) { return ms + (random() * 2 - 1) * (pace.jitter || 0); }
@@ -2270,16 +2308,23 @@
     function onTarget(t) {
       if (t.app) { var a = controller.stage.selectedApp(); return !!a && a.id === t.app; }
       if (t.win) { var w = controller.stage.selectedWindow(); return !!w && w.id === t.win; }
+      /* A raise with no session to read: the window is simply in front. */
+      if (t.front) { var f = controller.state.windows[0]; return !!f && f.id === t.front; }
       return true;
     }
     function schedule(fn, ms) {
       handle = later(function () { handle = null; if (running) { fn(); } }, ms);
     }
-    /* The modifier goes down. Native has none of this, and a demo nobody
-       is looking at can wait: both just try again after a rest. */
+    /* The modifier goes down. A demo nobody is looking at can wait: it
+       just tries again after a rest. */
     function begin() {
-      if (paused() || !controller.state.crosswayEnabled) { schedule(begin, pace.rest); return; }
-      var sc = scenes[scene];
+      if (paused()) { schedule(begin, pace.rest); return; }
+      /* The switch was flipped between scenes: the other world's loop,
+         from its first scene, since a loop closes only when run whole. */
+      var w = controller.state.crosswayEnabled;
+      if (world !== null && w !== world) { scene = 0; }
+      world = w;
+      var sc = current()[scene];
       step = 0; taps = 0;
       keys.hold(sc.hold);
       if (keys._held() !== sc.hold) { next(); return; }
@@ -2288,7 +2333,8 @@
     /* One tap of the scene's current key; on to the next key once its
        named target is selected. */
     function tapNext() {
-      var sc = scenes[scene], t = sc.taps[step];
+      var sc = current()[scene], t = sc ? sc.taps[step] : null;
+      if (!sc) { next(); return; }
       /* The latch can be dropped under a running scene (a rebuild at
          the breakpoint, a switch flipped from the keyboard): then the
          scene is over, not sixteen taps of nothing. */
@@ -2301,19 +2347,19 @@
     }
     /* The modifier goes up, which commits, exactly as a visitor's does. */
     function letGo() {
-      var sc = scenes[scene];
-      if (keys._held() === sc.hold) { keys.hold(sc.hold); }
+      var sc = current()[scene];
+      if (sc && keys._held() === sc.hold) { keys.hold(sc.hold); }
       next();
     }
     function next() {
-      scene = (scene + 1) % scenes.length;
+      scene = (scene + 1) % current().length;
       if (scene === 0) { loops += 1; }
       schedule(begin, pace.rest);
     }
     function start() {
       if (running) { return; }
       running = true;
-      scene = 0;
+      scene = 0; world = null;
       schedule(begin, pace.rest);
     }
     /* Stopping mid-scene abandons the session rather than committing a
@@ -2335,12 +2381,14 @@
   /* The box over the keys. Checked runs the autopilot; a real press on
      any of `stops` (the keys, the screen, the switch, the bezel's
      settings) unchecks it, so the visitor's first click takes over and
-     never fights the demo. Two events, because the keys are buttons
-     wired on click so Enter and Space work: a pointer press, and a click
-     in the CAPTURE phase, which runs before the key's own handler and so
-     ends the autopilot's session before the visitor's begins. The
-     autopilot itself never sends DOM events, so every one is the
-     visitor. */
+     never fights the demo. Three events, because a visitor reaches these
+     surfaces three ways: a pointer press; a click in the CAPTURE phase,
+     which runs before the key's own handler and so ends the autopilot's
+     session before the visitor's begins (the keys are buttons wired on
+     click, so Enter and Space arrive that way); and a keydown, also in
+     capture, for the switch, whose arrow keys move the knob without
+     ever producing a click. The autopilot itself never sends DOM
+     events, so every one is the visitor. */
   function wireDemoMode(box, autopilot, stops) {
     if (!box) { return { _wired: false }; }
     function sync() {
@@ -2365,6 +2413,7 @@
       if (!el || !el.addEventListener) { return; }
       el.addEventListener("pointerdown", takeOver);
       el.addEventListener("click", takeOver, true);
+      el.addEventListener("keydown", takeOver, true);
     });
     sync();
     return { _wired: true, sync: sync };
@@ -2509,7 +2558,8 @@
     }
     attend();
 
-    /* Demo mode: the autopilot on the same keys, and the box that runs it. */
+    /* The automatic demo: the autopilot on the same keys, and the box
+       that runs it. */
     var autopilot = opts.autopilot || createAutopilot({
       keys: keys,
       controller: proxy,
@@ -2579,7 +2629,10 @@
     wireToggle: wireToggle,
     wireDemoMode: wireDemoMode,
     createAutopilot: createAutopilot,
+    BLUR_NAMES: BLUR_NAMES,
+    BLUR_STEPS: BLUR_STEPS,
     DEMO_SCENES: DEMO_SCENES,
+    DEMO_SCENES_NATIVE: DEMO_SCENES_NATIVE,
     DEMO_PACE: DEMO_PACE,
     GRID_COLUMNS: GRID_COLUMNS,
     TILE_ASPECT: TILE_ASPECT,
