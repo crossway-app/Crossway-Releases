@@ -1640,8 +1640,10 @@ pre.cmd {
      thumbnail strip blooms below it (SwitcherPanel.swift:1064). Centring
      the whole pane instead made the row slide upward the moment the
      previews appeared, and slide again on every tab. The offset centres
-     the ROW, and everything else grows downward from it. */
-  top: calc(50% - (var(--cw-row-h) + 2 * var(--cw-pane-pad)) / 2);
+     the ROW, and everything else grows downward from it. A touch above
+     the middle (44%), because the pane is drawn larger than life and
+     grows downward: centred on the row it sat low on the screen. */
+  top: calc(44% - (var(--cw-row-h) + 2 * var(--cw-pane-pad)) / 2);
   z-index: 500;                 /* above every window, below the CRT glass */
   display: none;
   flex-direction: column;
@@ -2072,6 +2074,27 @@ pre.cmd {
 /* The Dock badge rides the corner of that icon, exactly as it does on
    the real grid tile. App-level, so every window of an app shows it —
    macOS has no per-window badge. */
+/* The Dock's own badge, on the app whose row and grid marks carry one:
+   the Dock is where a badge lives on a Mac, so the three agree. In cqw,
+   like the Dock. */
+.cw-dock-badge {
+  position: absolute;
+  z-index: 2;
+  top: -0.7cqw;
+  right: -0.7cqw;
+  min-width: 2.3cqw;
+  height: 2.3cqw;
+  padding: 0 0.5cqw;
+  box-sizing: border-box;
+  border-radius: 1.15cqw;
+  background: var(--dock-badge);
+  color: var(--dock-badge-ink);
+  font-family: var(--font-body);
+  font-size: 1.5cqw;
+  font-weight: 600;
+  line-height: 2.3cqw;
+  text-align: center;
+}
 .cw-gdot {
   position: absolute;
   top: -3px;
@@ -2353,7 +2376,6 @@ pre.cmd {
    columns have to answer to the width of something above it. */
 .cw-hero { container-type: inline-size; }
 .cw-stage {
-  position: relative;          /* the demo-mode box hangs off its corner */
   display: grid;
   grid-template-columns: minmax(0, 1fr) 440px;
   grid-template-rows: auto auto;
@@ -2361,12 +2383,12 @@ pre.cmd {
   row-gap: 14px;
   align-items: center;
 }
-/* Demo mode, in the corner over the keys: out of the grid entirely, so
-   it moves nothing, and left of nothing. */
+/* Demo mode, in the keys box's top-right corner, on the line of "Click
+   the keys": out of the box's grid entirely, so it moves nothing. */
 .cw-demo-mode {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 18px;
+  right: 22px;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2413,6 +2435,7 @@ pre.cmd {
   grid-column: 2;
   grid-row: 2;
   align-self: center;
+  position: relative;          /* the demo-mode box hangs off its corner */
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
