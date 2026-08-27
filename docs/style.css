@@ -2464,7 +2464,7 @@ pre.cmd {
 .cw-subtitle {
   margin: 0;
   font-family: var(--font-body);
-  font-size: clamp(12px, 2.1cqb, 14px);   /* one line at the smallest window, so it wraps only where there is room */
+  font-size: clamp(12px, calc(2.1 * var(--cw-dens)), 14px);   /* one line at the smallest window, so it wraps only where there is room */
   line-height: 1.3;
   color: var(--muted);
 }
@@ -2475,10 +2475,11 @@ pre.cmd {
    rows over what is left, and the small print sits at the foot.
    Beside the display it is a SIZE container: its height is the
    display's, never its content's, so the legend's type and rows can be
-   cut to that height (cqb) and the window reads dense at every height
-   the fold allows rather than airy at the tallest. Under the display
-   (the container block) it is as tall as its content, so there it is
-   no size container and the cqb units fall to their clamps. */
+   cut to that height and the window reads dense at every height the
+   fold allows rather than airy at the tallest. Every formula reads one
+   token, `--cw-dens`, so the stacked layout — where the window is as
+   tall as its content and can be no size container — can pin it instead
+   of leaving `cqb` to fall back to the viewport. */
 .cw-controls {
   grid-column: 2;
   grid-row: 1;
@@ -2486,6 +2487,13 @@ pre.cmd {
   flex-direction: column;
   min-height: 0;
   container-type: size;
+  /* The reference every density formula in this window is cut to. Beside
+     the display it is the window's own height, which is the display's;
+     the formulas below are lines from the smallest window that layout
+     produces to the largest. It is a TOKEN rather than `cqb` written out
+     ten times because the stacked layout has to change it: see the
+     container query. */
+  --cw-dens: 1cqb;
 }
 .cw-controls .titlebar .title { margin: 0; font-weight: normal; }
 .cw-keys-body {
@@ -2497,7 +2505,7 @@ pre.cmd {
      layout begins at 1121px, where the display beside this window is
      ~490px tall, and runs up to a ~740px window; every one of these is
      a line from its floor at ~500px to its full size at ~710px. */
-  gap: clamp(6px, calc(4.8cqb - 18px), 16px);
+  gap: clamp(6px, calc(4.8 * var(--cw-dens) - 18px), 16px);
   padding: 16px 22px 18px;
 }
 .cw-keys-lead-row {
@@ -2575,7 +2583,18 @@ pre.cmd {
 
 @container (max-width: 1120px) {
   .cw-stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; }
-  .cw-controls { grid-column: 1; grid-row: 2; container-type: normal; }
+  /* Under the display the window is as tall as its content, so it cannot
+     be a size container (its height would depend on the type that
+     depends on its height). That leaves `cqb` with no block-axis
+     container to resolve against, and CSS then resolves it against the
+     SMALL VIEWPORT — 1% of the browser window's height — so the legend
+     silently tracked the window's height instead: measured at 1000px
+     wide, a 900px-tall window got every clamp's maximum and a 500px-tall
+     one every minimum, for no layout reason at all. Pinning the
+     reference here takes the viewport back out of it, and 10px puts
+     every formula at its maximum, which is the right answer where
+     nothing is pressing on the height. */
+  .cw-controls { grid-column: 1; grid-row: 2; container-type: normal; --cw-dens: 10px; }
   .cw-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cw-legend-what { min-height: 2.8em; }
 }
@@ -2708,7 +2727,7 @@ pre.cmd {
      side-by-side layout produces (~490px, at 1121px wide) gets 3px, a
      ~710px window and up the full 12px, so the rows fill what they have
      and never spill. The type below does the same. */
-  padding: clamp(3px, calc(4.3cqb - 18.4px), 12px) 10px clamp(4px, calc(4.3cqb - 17.4px), 13px);
+  padding: clamp(3px, calc(4.3 * var(--cw-dens) - 18.4px), 12px) 10px clamp(4px, calc(4.3 * var(--cw-dens) - 17.4px), 13px);
   border: var(--border) solid transparent;
 }
 /* Two marks on a row. READY: a modifier is held and this chord is there
@@ -2718,8 +2737,8 @@ pre.cmd {
 .cw-legend li.is-ready { border-color: var(--ink); }
 .cw-legend li.is-active { border-color: var(--ink); box-shadow: 3px 3px 0 0 var(--ink); background: var(--paper); }
 .cw-legend li.is-active .key { background: var(--ink); color: var(--paper); box-shadow: none; transform: translateY(2.5px); }
-.cw-legend .key { min-width: 26px; font-size: clamp(13px, 2.1cqb, 16px); padding: 3px 7px 4px; }
-.cw-legend-name { font-family: var(--font-display); font-size: clamp(13px, calc(1.9cqb + 3.5px), 17px); }
+.cw-legend .key { min-width: 26px; font-size: clamp(13px, calc(2.1 * var(--cw-dens)), 16px); padding: 3px 7px 4px; }
+.cw-legend-name { font-family: var(--font-display); font-size: clamp(13px, calc(1.9 * var(--cw-dens) + 3.5px), 17px); }
 .cw-legend-what {
   grid-column: 2;
   /* A line reserved: the ⌘ sentences rewrite themselves for the other
@@ -2729,7 +2748,7 @@ pre.cmd {
      on a phone) they can wrap, so two are, in the container block. */
   min-height: 1.4em;
   font-family: var(--font-body);
-  font-size: clamp(12px, calc(1.43cqb + 4.85px), 15px);
+  font-size: clamp(12px, calc(1.43 * var(--cw-dens) + 4.85px), 15px);
   line-height: 1.4;
   color: var(--muted);
 }
@@ -2749,9 +2768,9 @@ pre.cmd {
    step down, and the day and night appearances keep theirs. Measured,
    not guessed, and kept measured: the layout suite runs the terminal at
    every fold viewport and fails if the window spills. */
-html.hacker .cw-legend-what { font-size: clamp(11px, calc(1.2cqb + 4px), 13px); line-height: 1.35; }
-html.hacker .cw-legend li { padding-top: clamp(2px, calc(3cqb - 13px), 8px); padding-bottom: clamp(3px, calc(3cqb - 12px), 9px); }
-html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6cqb + 3px), 15px); }
+html.hacker .cw-legend-what { font-size: clamp(11px, calc(1.2 * var(--cw-dens) + 4px), 13px); line-height: 1.35; }
+html.hacker .cw-legend li { padding-top: clamp(2px, calc(3 * var(--cw-dens) - 13px), 8px); padding-bottom: clamp(3px, calc(3 * var(--cw-dens) - 12px), 9px); }
+html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) + 3px), 15px); }
 /* The ⌥ rows go flat with the ⌥ key, chips included, or the row dims
    around two chips that still look pressable. */
 /* Off without Crossway: faded as one, chips included, so what you
@@ -2765,10 +2784,10 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6cqb + 3px), 15px); 
 .cw-fine {
   grid-column: 1 / -1;
   margin: 0;
-  padding-top: clamp(6px, 1.7cqb, 12px);
+  padding-top: clamp(6px, calc(1.7 * var(--cw-dens)), 12px);
   border-top: var(--border) solid color-mix(in srgb, var(--ink) 30%, transparent);
   font-family: var(--font-body);
-  font-size: clamp(11px, 1.8cqb, 12.5px);
+  font-size: clamp(11px, calc(1.8 * var(--cw-dens)), 12.5px);
   line-height: 1.4;
   color: var(--muted);
 }
@@ -2934,8 +2953,17 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6cqb + 3px), 15px); 
    a minimized window at all, and its switcher's blur is not ours. Shown
    but not offered, and dimmed as one, cap and light and wheel alike. */
 .cw-settings.is-disabled .cw-bezel-ctl { opacity: 0.4; }
-.cw-settings.is-disabled .cw-engrave,
-.cw-settings.is-disabled .cw-scale i { color: var(--dim); }
+.cw-settings.is-disabled .cw-engrave { color: var(--dim); }
+/* The scale's chosen word goes with them. It needs the wheel in the
+   selector to reach the rule that inks it: `.cw-slider[data-blur="N"]
+   .cw-scale i:nth-child(N+1)` counts four class-likes and a type, and a
+   plainer `.cw-settings.is-disabled .cw-scale i` counts three, so it
+   loses and the one word stayed black and bold inside a panel that is
+   otherwise entirely grey (measured, 2026-08-27; the `<output>` this
+   scale replaced greyed correctly, so it was a regression, not an
+   omission). This selector ties on specificity and sits after, which is
+   what makes it win. */
+.cw-settings.is-disabled .cw-slider .cw-scale i { color: var(--dim); font-weight: 400; }
 .cw-settings.is-disabled .cw-set { cursor: default; }
 .cw-settings.is-disabled .cw-led { border-color: var(--dim); }
 .cw-settings.is-disabled .cw-push-row:has(input:checked) .cw-led { background: var(--dim); }
