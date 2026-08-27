@@ -1346,6 +1346,12 @@
           b.setAttribute("type", "button");
           b.dataset.app = id;
           b.appendChild(buildAppIcon(app));
+          /* The Dock wears the badge the row and the grid wear. */
+          if (app.badge) {
+            var badge = el("span", "cw-dock-badge", String(app.badge));
+            badge.setAttribute("aria-hidden", "true");
+            b.appendChild(badge);
+          }
           var dot = el("i", "cw-dock-dot");
           dot.setAttribute("aria-hidden", "true");
           b.appendChild(dot);
@@ -2176,13 +2182,16 @@
      DEMO MODE
 
      Left alone, the demo demonstrates itself: an autopilot drives the
-     same keypad a visitor clicks, at a visitor's pace, through five
-     scenes — ⌘Tab into Terminal and ⌘` to its second window, ⌥Tab to a
-     window of another app, ⌘` again, ⌥Tab again, and ⌘` home to Safari's
-     first window. The five are chosen so that their five commits, each
-     moving one window and its app to the front of the MRU, put the
-     desktop back EXACTLY where it started: the loop ends in the state it
-     began in and runs again from there, with no reset and no jump.
+     same keypad a visitor clicks, at a visitor's pace (a little uneven,
+     as a hand is), through nine scenes that use all four chords: ⌘Tab
+     and ⌘` into Terminal's second window, ⌥` across Terminal's own
+     windows, ⌥Tab over everything to a Safari window, ⌘Tab alone to the
+     film, and so on. Each commit moves one window and its app to the
+     front of the MRU, and the LAST FIVE are ordered so the desktop ends
+     EXACTLY where it started: the loop ends in the state it began in and
+     runs again from there, with no reset and no jump. Only windows of
+     Safari, QuickTime and Terminal are ever committed, so nothing else
+     can drift.
 
      Targets are named, not counted: a tap is repeated until the named
      app or window is selected, so a scene still lands if the visitor
@@ -2193,6 +2202,15 @@
      off; the box over the keys turns it back on.
      ==================================================================== */
   var DEMO_SCENES = [
+    /* ⌘Tab, ⌘`: Terminal's second window. */
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm2" }] },
+    /* ⌥`: the focused app's windows, Terminal's, to its first. */
+    { hold: "opt", taps: [{ key: "tick", win: "tm1" }] },
+    /* ⌥Tab: every window, a few along, to a Safari window. */
+    { hold: "opt", taps: [{ key: "tab", win: "sa2" }] },
+    /* ⌘Tab alone: to the film, its previews blooming under it. */
+    { hold: "cmd", taps: [{ key: "tab", app: "quicktime" }] },
+    /* And the five that close the loop, in the one order that does. */
     { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm2" }] },
     { hold: "opt", taps: [{ key: "tab", win: "sa2" }] },
     { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm1" }] },
@@ -2201,9 +2219,9 @@
   ];
   /* A visitor's pace, in ms: the modifier goes down, the taps come at a
      stroll (each one past the preview delay, so the strip is seen to
-     bloom), the last selection is looked at, and the modifier goes up;
-     then a rest before the next scene. */
-  var DEMO_PACE = { hold: 500, tap: 700, settle: 1100, rest: 1400 };
+     bloom) and a little unevenly, the last selection is looked at, and
+     the modifier goes up; then a rest before the next scene. */
+  var DEMO_PACE = { hold: 500, tap: 700, jitter: 160, settle: 1100, rest: 1400 };
   /* No scene needs more taps than this; a target that never comes
      (a rearranged desktop) is given up on rather than tapped forever. */
   var DEMO_MAX_TAPS = 16;
@@ -2215,7 +2233,11 @@
     var later = o.setTimeout || function (fn, ms) { return setTimeout(fn, ms); };
     var cancel = o.clearTimeout || function (h) { clearTimeout(h); };
     var paused = o.paused || function () { return false; };
+    var random = o.random || Math.random;
     var running = false, handle = null, scene = 0, step = 0, taps = 0, loops = 0;
+
+    /* A hand does not tap on a metronome. */
+    function jittered(ms) { return ms + (random() * 2 - 1) * (pace.jitter || 0); }
 
     function onTarget(t) {
       if (t.app) { var a = controller.stage.selectedApp(); return !!a && a.id === t.app; }
@@ -2243,7 +2265,7 @@
       keys.tap(t.key);
       taps += 1;
       if (onTarget(t) || taps >= DEMO_MAX_TAPS) { step += 1; taps = 0; }
-      schedule(tapNext, pace.tap);
+      schedule(tapNext, jittered(pace.tap));
     }
     /* The modifier goes up, which commits, exactly as a visitor's does. */
     function letGo() {
@@ -2286,10 +2308,21 @@
     function sync() {
       if (box.checked) { autopilot.start(); } else { autopilot.stop(); }
     }
+    /* The box sits inside the keys box, so a press on the box itself, or
+       on its label, is the visitor working the box, not taking over. */
+    function onTheBox(node) {
+      var label = box.parentNode || null;
+      while (node) {
+        if (node === box || (label && node === label)) { return true; }
+        node = node.parentNode;
+      }
+      return false;
+    }
     box.addEventListener("change", sync);
     (stops || []).forEach(function (el) {
       if (!el || !el.addEventListener) { return; }
-      el.addEventListener("pointerdown", function () {
+      el.addEventListener("pointerdown", function (e) {
+        if (onTheBox(e && e.target)) { return; }
         if (box.checked) { box.checked = false; autopilot.stop(); }
       });
     });
