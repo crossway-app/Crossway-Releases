@@ -2217,11 +2217,14 @@
     { hold: "opt", taps: [{ key: "tab", win: "qt1" }] },
     { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa1" }] },
   ];
-  /* A visitor's pace, in ms: the modifier goes down, the taps come at a
-     stroll (each one past the preview delay, so the strip is seen to
+  /* A visitor's pace, in ms, and an unhurried one: the modifier goes
+     down and is seen down before the first tap, the taps come at a
+     stroll (each well past the preview delay, so every strip is seen to
      bloom) and a little unevenly, the last selection is looked at, and
-     the modifier goes up; then a rest before the next scene. */
-  var DEMO_PACE = { hold: 500, tap: 700, jitter: 160, settle: 1100, rest: 1400 };
+     the modifier goes up; then a real rest before the next scene. The
+     first cut was half this and read as jarring (the user, 2026-08-27);
+     a test keeps the floors. */
+  var DEMO_PACE = { hold: 1100, tap: 1200, jitter: 220, settle: 1600, rest: 2200 };
   /* No scene needs more taps than this; a target that never comes
      (a rearranged desktop) is given up on rather than tapped forever. */
   var DEMO_MAX_TAPS = 16;
