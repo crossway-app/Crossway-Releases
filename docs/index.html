@@ -105,13 +105,8 @@
       <div class="cw-stage">
       <header class="cw-heading">
         <h2 class="cw-title" id="cw-title">Interactive demo</h2>
-        <p class="cw-subtitle">Click, drag, and interact with the windows and Dock, too!</p>
+        <p class="cw-subtitle">Click, drag, and interact with the windows, Dock, and more!</p>
       </header>
-      <!-- Demo mode: left alone, the demo demonstrates itself. An autopilot
-           clicks the same keys a visitor would, through five scenes that put
-           the desktop back exactly where it started, and the visitor's first
-           real click on the keys, the screen or the switch takes over. -->
-      <label class="cw-demo-mode"><input type="checkbox" id="cw-demo" checked> Demo mode</label>
       <div class="cw-machine cw-display">
         <!-- A 1993 Apple display, drawn as its manual would have drawn
              it: paper, the page's own ink line, and form carried by a few
@@ -220,6 +215,13 @@
              The glyphs are drawn at one weight: as text, four keys came
              from three fonts. -->
         <div class="cw-controls" role="group" aria-label="Try it on the keys">
+          <!-- Demo mode, in the box's corner: left alone, the demo
+               demonstrates itself. An autopilot clicks the same keys a
+               visitor would, through nine scenes whose commits put the
+               desktop back exactly where it started, and the visitor's
+               first real click on the keys, the screen or the switch takes
+               over. -->
+          <label class="cw-demo-mode"><input type="checkbox" id="cw-demo" checked> Demo mode</label>
           <!-- Two steps, each a labelled box, each holding the keys of that
                step drawn at MacBook Pro proportions: command is a quarter
                wider than option, tab half as wide again as backtick, and
