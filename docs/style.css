@@ -13,6 +13,10 @@
 :root {
   --ink: #000000;
   --paper: #ffffff;
+  /* The display's case. Not the page's paper: Apple's displays of the era
+     were Platinum, the warm light grey that replaced the beige in 1987,
+     and the case wears it so the monitor is not one more window. */
+  --cw-case: #d9d6cd;
   /* The two cells of the desktop dither. They were 12% of range apart
      at a 2px cell, which composites to flat grey at any normal viewing
      distance — the era's defining texture, nominally present and
@@ -94,6 +98,7 @@
   html:not(.day) {
     --ink: #e8e8e8;
     --paper: #141414;
+    --cw-case: #3d3c39;
     --desktop-a: #343434;
     --desktop-b: #141414;
     --dim: #6f6f6f;
@@ -141,6 +146,7 @@ html.night {
 html.night {
   --ink: #e8e8e8;
   --paper: #141414;
+  --cw-case: #3d3c39;
   --desktop-a: #343434;
   --desktop-b: #141414;
   --dim: #6f6f6f;
@@ -191,6 +197,7 @@ html.day { color-scheme: light; }
 html.hacker {
   --ink: #7bec93;            /* primary text and rules */
   --paper: #101b12;          /* window fill, the lit surface */
+  --cw-case: #0b2114;              /* platinum, in phosphor */
   --desktop-a: #0c140d;      /* phosphor dither, cell A */
   --desktop-b: #080d09;      /* cell B */
   --dim: #2e6b42;            /* disabled chrome */
@@ -1546,7 +1553,7 @@ pre.cmd {
 .cw-menu-key { color: color-mix(in srgb, var(--scr-ink) 50%, transparent); }
 .cw-menu-item { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); }
 .cw-menu-spacer { flex: 1; }
-.cw-menu-clock { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); }
+.cw-menu-clock { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); white-space: nowrap; }
 /* Crossway's status item, beside the clock: the switcher as a mark, an
    ink frame with the app row as one pane above three window panes, the
    drawing the display's bezel wears. Template-style, ink only. Shown
@@ -1598,8 +1605,8 @@ pre.cmd {
 /* The desktop is operable: the title bar is a handle, the lights are
    buttons, and a zoomed window fills the screen. */
 /* Blur, as the app has it: what is BEHIND the switcher goes soft, the
-   desktop and the Dock, by the amount the bezel's wheel sets. On the
-   pane's own backdrop it did nothing visible, since the pane is paper. */
+   desktop and the Dock, by the amount the bezel's wheel sets. The pane's
+   own frost is separate and constant (see .cw-panel). */
 .cw-screen.is-switching .cw-desktop,
 .cw-screen.is-switching .cw-dock { filter: blur(var(--cw-blur, 0px)); }
 @media (prefers-reduced-motion: no-preference) {
@@ -1656,12 +1663,16 @@ pre.cmd {
   gap: 10px;
   padding: var(--cw-pane-pad);
   border-radius: 16px;
-  /* A MATERIAL, not a sheet: near-opaque, with the blur governing what
-     little shows through. At 60% the desktop read through it as if the
-     windows behind were glass, which the user called out. */
-  background: color-mix(in srgb, var(--scr-paper) 92%, transparent);
-  box-shadow: 0 24px 60px color-mix(in srgb, var(--scr-shade) 26%, transparent);
-  backdrop-filter: blur(var(--cw-blur, 18px)) saturate(150%);
+  /* FROSTED GLASS, and not a window: three quarters paper over a strong
+     backdrop blur of its own (the bezel's wheel blurs the desktop behind;
+     this frost is the pane's material and does not depend on it), with
+     a hairline of light on its inner edge. The first cut was 92% paper
+     and read as one more window; plain glass at 60% read as nothing at
+     all. 2026-08-27. */
+  background: color-mix(in srgb, var(--scr-paper) 74%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--scr-paper) 60%, transparent),
+              0 24px 60px color-mix(in srgb, var(--scr-shade) 26%, transparent);
+  backdrop-filter: blur(22px) saturate(160%);
 }
 .cw-panel.is-open { display: flex; }
 
@@ -2017,10 +2028,11 @@ pre.cmd {
      three windows are three normal tiles rather than three enormous
      ones, and a short last row sits left inside a centred block. */
   border-radius: 16px;
-  /* The same material as the panel. */
-  background: color-mix(in srgb, var(--scr-paper) 92%, transparent);
-  box-shadow: 0 24px 60px color-mix(in srgb, var(--scr-shade) 26%, transparent);
-  backdrop-filter: blur(var(--cw-blur, 18px)) saturate(150%);
+  /* the same frost as the panel */
+  background: color-mix(in srgb, var(--scr-paper) 74%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--scr-paper) 60%, transparent),
+              0 24px 60px color-mix(in srgb, var(--scr-shade) 26%, transparent);
+  backdrop-filter: blur(22px) saturate(160%);
 }
 .cw-grid.is-open { display: grid; }
 
@@ -2231,6 +2243,9 @@ pre.cmd {
   border-radius: calc(var(--cw-icon) * 0.44);
   /* The dark HUD it is, and on the same terms: near-opaque. */
   background: color-mix(in srgb, var(--scr-ink) 88%, transparent);
+  /* No frost ring: the paper hairline inverts to a dark line inside the
+     light HUD at night. The HUD keeps only the depth shadow. */
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--scr-shade) 26%, transparent);
   border-color: color-mix(in srgb, var(--scr-paper) 18%, transparent);
 }
 .cw-panel.is-native .cw-approw { gap: calc(var(--cw-icon) * 0.22); }
@@ -2332,7 +2347,8 @@ pre.cmd {
   vector-effect: non-scaling-stroke;
   stroke-width: var(--border);
 }
-.cw-chassis .cw-case, .cw-chassis .cw-strip { fill: var(--paper); stroke: currentColor; }
+.cw-chassis .cw-case { fill: var(--cw-case); stroke: currentColor; }
+.cw-chassis .cw-strip { fill: var(--paper); stroke: currentColor; }
 .cw-chassis .cw-bezel-inner { fill: none; stroke: currentColor; }
 /* The recess: the screen sits INTO the case, and a manual drawing says so
    with a solid band on the two walls away from the light. It is the
@@ -2345,6 +2361,11 @@ pre.cmd {
    when the switch says Native. The stage carries the mode. */
 .cw-chassis .cw-power { fill: var(--cw-led); stroke: currentColor; }
 .cw-stage.is-native .cw-chassis .cw-power { fill: currentColor; }
+/* The bezel's mark follows the switch: Crossway's while Crossway runs
+   on the screen, Apple's own in Native. */
+.cw-chassis .cw-apple { display: none; }
+.cw-stage.is-native .cw-chassis .cw-apple { display: inline; }
+.cw-stage.is-native .cw-chassis .cw-mark { display: none; }
 
 /* Registered to the drawn well: the four numbers in the header above. */
 .cw-screen-mount {
@@ -2410,27 +2431,39 @@ pre.cmd {
   height: 14px;
   accent-color: var(--ink);
 }
-/* The heading over the whole demo: the title, and one short line under
-   it that says the screen is a desktop too. Small, and tight, because
-   every pixel here comes off the display below. */
+/* The heading over the whole demo is a VERY SMALL window of the page's
+   own kind (the title in its title bar, one line as its body), centred
+   on the demo. Small and tight, because every pixel here comes off the
+   display below. */
 .cw-heading {
   grid-column: 1 / -1;
   grid-row: 1;
+  justify-self: center;
+  width: max-content;
+  max-width: 100%;
   text-align: center;
   /* Eight pixels closer to the page above: the row shrinks with it, so
      the display and its stand ride up by the same eight. */
   margin-top: -8px;
 }
-.cw-title {
+.cw-heading .titlebar { height: 22px; }
+.cw-heading .closebox { top: 4px; width: 12px; height: 12px; }
+/* Scoped past the page-wide `.titlebar .title`, which sets 15px on a
+   28px line for the reading windows and would otherwise win here and
+   overhang the 22px bar (it did, the review caught it). */
+.cw-heading .titlebar .title {
   margin: 0;
-  font-family: var(--font-display);
-  font-size: 20px;
+  padding: 0 10px;
+  font-size: 13px;
+  /* 20, inside the bar's 22 less its 1.5px bottom rule: on the bar's own
+     height the title's paper box overhangs the rule by a pixel. */
+  line-height: 20px;
   font-weight: normal;
-  line-height: 1.2;
   color: var(--ink);
 }
 .cw-subtitle {
-  margin: 3px 0 0;
+  margin: 0;
+  padding: 4px 14px 5px;
   font-family: var(--font-body);
   font-size: 12px;
   line-height: 1.3;
@@ -2456,7 +2489,7 @@ pre.cmd {
    under it, the section's own edges. The display's height budget is the
    viewport minus this. The layout test measures the real page and fails
    loudly if this drifts from what it finds. */
-:root { --cw-fold-overhead: 101px; }
+:root { --cw-fold-overhead: 107px; }
 
 /* One exposé tile. Six of these plus their gutters is the pane's inner
    width, which is how the app arrives at ~6 per row. */
@@ -2771,7 +2804,10 @@ pre.cmd {
   background: var(--paper);
   box-shadow: 0 2px 0 0 var(--ink);
 }
-.cw-set input:checked + .cw-tick { background: var(--ink); transform: translateY(2px); box-shadow: none; }
+/* Latched: solid and flat, with its shadow gone, but NOT moved: a cap
+   that travelled 2px down sat below the switch and the wheel beside it,
+   and the three read as misaligned. */
+.cw-set input:checked + .cw-tick { background: var(--ink); box-shadow: none; }
 .cw-set input:focus-visible + .cw-tick { outline: 2px solid var(--link); outline-offset: 2px; }
 
 /* The thumbwheel: a rule, four detents, and a cap that rides it. */
@@ -2808,9 +2844,12 @@ pre.cmd {
   background: var(--paper);
 }
 .cw-slider input:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+/* Across the rule, not under it: hanging below the track they pulled the
+   wheel's visual centre down off the line the other controls sit on. */
 .cw-detents {
   position: absolute;
-  left: 5px; right: 5px; bottom: 0;
+  left: 5px; right: 5px; top: 50%;
+  transform: translateY(-50%);
   display: flex;
   justify-content: space-between;
 }
@@ -2918,6 +2957,9 @@ html.retro #demo { display: none; }
 
 @media (max-width: 700px) {
   .cw-chassis .cw-strip, .cw-chassis .cw-mark, .cw-chassis .cw-ink, .cw-chassis .cw-power { display: none; }
+  /* Said at the Native rule's own strength, or that rule outranks this
+     list and a lone Apple mark stays on the phone's blank bezel. */
+  .cw-stage.is-native .cw-chassis .cw-apple, .cw-chassis .cw-apple { display: none; }
   .cw-bezel {
     position: static;
     width: auto;
@@ -2938,6 +2980,11 @@ html.retro #demo { display: none; }
   .cw-legend { grid-template-columns: minmax(0, 1fr); }
   .cw-keypad { flex-wrap: wrap; gap: 12px; }
   .cw-keycap-btn { --cw-u: 48px; }
+
+  /* A phone's menu bar is tight: the status mark took the clock's last
+     few pixels and it wrapped. */
+  .cw-menubar { gap: 9px; padding: 0 8px; }
+  .cw-menu-mark { margin-right: 0; }
 
   /* The exposé gets bigger cells against fewer of them. */
   .cw-grid { gap: 5px; padding: 8px; }
