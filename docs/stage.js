@@ -1686,11 +1686,10 @@
      first, so the new chord starts from rest.
 
      Without Crossway the ⌥ cap is unavailable: aria-disabled rather than
-     the disabled attribute, deliberately, so it stays focusable and can
-     say why (the note under the legend); greyed rather than hidden,
-     because a key you cannot have is the pitch. The legend's rows follow
-     the same rule, light the chord in effect, and say what the chord
-     does in whichever world is on the screen.
+     the disabled attribute, deliberately, so it stays focusable; greyed
+     rather than hidden, because a key you cannot have is the pitch. The
+     legend's rows follow the same rule, light the chord in effect, and
+     say what the chord does in whichever world is on the screen.
      ==================================================================== */
   function wireKeys(rail, controller) {
     var noop = function () {};
@@ -1702,7 +1701,6 @@
       keys[b.getAttribute("data-key")] = b;
     });
     var rows = Array.prototype.slice.call(rail.querySelectorAll("[data-chord]"));
-    var note = rail.querySelector ? rail.querySelector("#cw-only-note") : null;
     var held = null;      /* "cmd", "opt", or null: the modifier being held */
     var last = null;      /* the chord the last tap made, for the legend */
     var strikes = {};
@@ -1721,8 +1719,6 @@
       });
       if (keys.opt) {
         keys.opt.setAttribute("aria-disabled", native() ? "true" : "false");
-        if (native()) { keys.opt.setAttribute("aria-describedby", "cw-only-note"); }
-        else if (keys.opt.removeAttribute) { keys.opt.removeAttribute("aria-describedby"); }
       }
       rows.forEach(function (r) {
         var chord = attr(r, "data-chord");
@@ -1739,7 +1735,6 @@
         var alt = attr(r, "data-what-native");
         if (what && alt) { what.textContent = native() ? alt : attr(r, "data-what"); }
       });
-      if (note) { note.hidden = !native(); }
     }
 
     /* A tapped cap goes down for a beat and comes back up, which is the
