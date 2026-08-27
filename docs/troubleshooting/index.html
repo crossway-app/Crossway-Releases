@@ -8,13 +8,31 @@
 <meta name="description" content="Fixes for the common Crossway install problems, and how to check which version you're running.">
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
-<script>try{var v=localStorage.getItem("crossway-night");if(v==="1")document.documentElement.classList.add("night");else if(v==="0")document.documentElement.classList.add("day");if(localStorage.getItem("crossway-hacker")==="1")document.documentElement.classList.add("hacker")}catch(e){}</script>
+<script>try{var v=localStorage.getItem("crossway-night");if(v==="1")document.documentElement.classList.add("night");else if(v==="0")document.documentElement.classList.add("day");if(localStorage.getItem("crossway-hacker")==="1")document.documentElement.classList.add("hacker");if(localStorage.getItem("crossway-retro")==="1")document.documentElement.classList.add("retro")}catch(e){}</script>
 <link rel="stylesheet" href="../style.css">
 <script src="../night.js" defer></script>
 <script src="../cameo.js" defer></script>
 <script src="../hacker.js" defer></script>
 </head>
 <body>
+
+<!-- The phosphor re-cut for the menubar app icon. It is a PNG, so no token
+     and no fill can reach it the way they reach the heart and the cameo; a
+     filter is the only lever. Kept inert and out of the layout, and never
+     referenced outside html.hacker, so the ordinary page is untouched.
+     Not display:none — that stops the filter resolving in some engines. -->
+<svg class="phosphor-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="phosphor-icon" color-interpolation-filters="sRGB">
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncR type="table" tableValues="0.063 0.651"/>
+        <feFuncG type="table" tableValues="0.106 1"/>
+        <feFuncB type="table" tableValues="0.071 0.745"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+</svg>
 
 <nav class="menubar" aria-label="Site">
   <a class="apptitle" href="../"><img class="appicon" src="../assets/favicon-32.png" width="18" height="18" alt="">Crossway</a>
@@ -76,6 +94,10 @@
       <em>Check for Updates</em> and Crossway compares your
       version with the newest release, then offers the download if there's
       something newer.</p>
+      <p><strong>For optional automatic checks:</strong> open
+      <em>Settings → General → Startup</em>, turn on <em>Auto-update</em>,
+      and choose the schedule you want. It is off until you opt in, and an
+      available update still requires a deliberate browser download.</p>
     </div>
   </section>
 
