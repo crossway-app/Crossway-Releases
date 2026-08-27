@@ -1238,6 +1238,12 @@
       menubar.appendChild(el("span", "cw-menu-item", m));
     });
     menubar.appendChild(el("span", "cw-menu-spacer"));
+    /* Crossway's own menu bar item, beside the clock where a status item
+       sits: there while Crossway runs on this screen, gone in Native, as
+       a quit menu-bar app's item is. Drawn, like every mark here. */
+    var mark = el("span", "cw-menu-mark");
+    mark.setAttribute("aria-hidden", "true");
+    menubar.appendChild(mark);
     var clock = el("span", "cw-menu-clock", clockText());
     menubar.appendChild(clock);
 
@@ -1282,6 +1288,7 @@
       menu.hidden = !menuOpen;
       quitLabel.textContent = active ? "Quit " + active.name : "";
       clock.textContent = clockText();
+      mark.hidden = !state.crosswayEnabled;
 
       /* A minimized window is off the desktop entirely, in the Dock, so
          it is not drawn. */
@@ -1495,7 +1502,7 @@
     }
 
     return {
-      render: render, desktop: desktop, menubar: menubar, clock: clock, screen: root,
+      render: render, desktop: desktop, menubar: menubar, clock: clock, mark: mark, screen: root,
       dock: dock,
       /* The switcher's surfaces, for the mouse. */
       panel: panel, approw: approw, strip: strip, grid: grid,
