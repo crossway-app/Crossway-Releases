@@ -21,5 +21,7 @@
     toggle: document.querySelector(".cw-toggle"),
     /* The film: the retro hero's own flipbooks, read out of its template. */
     reels: document.getElementById("retro-hero"),
+    /* Demo mode: the box over the keys. */
+    demo: document.getElementById("cw-demo"),
   });
 })();
