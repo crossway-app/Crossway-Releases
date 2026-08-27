@@ -754,7 +754,9 @@ code, kbd {
   display: inline-block;
   font-family: var(--font-display);
   font-size: 15px;
-  line-height: 28px;
+  /* 26 in a 28px bar that carries a 1.5px rule: on 28 the title's paper
+     box overhung the rule by a pixel and a half (review, 2026-08-27). */
+  line-height: 26px;
   background: var(--paper);
   padding: 0 12px;
 }
@@ -1472,7 +1474,15 @@ pre.cmd {
      phosphor steps. A soft light from the upper left over the gradient,
      so it reads as a lit surface rather than a slab. Both are mixes of
      the same two tokens: no third grey, nothing patterned. */
+  /* Rings over the gradient, for texture: thin concentric lines in a
+     trace of the screen's ink, spreading from a point up and to the
+     right, the way a wallpaper of the era might. Subtle: a 1.5px line
+     every 44px at a few percent, read as a pattern and never as a
+     drawing. */
   background:
+    repeating-radial-gradient(circle at 74% 26%,
+      transparent 0 42.5px,
+      color-mix(in srgb, var(--scr-ink) 7%, transparent) 42.5px 44px),
     radial-gradient(ellipse 70% 60% at 28% 18%,
       color-mix(in srgb, var(--scr-wall-a) 62%, var(--scr-paper)) 0%,
       transparent 70%),
@@ -1555,6 +1565,7 @@ pre.cmd {
 .cw-menu-item { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); }
 .cw-menu-spacer { flex: 1; }
 .cw-menu-clock { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); white-space: nowrap; }
+.cw-menu-date { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); white-space: nowrap; }
 /* Crossway's status item, beside the clock: the switcher as a mark, an
    ink frame with the app row as one pane above three window panes, the
    drawing the display's bezel wears. Template-style, ink only. Shown
@@ -2354,7 +2365,10 @@ pre.cmd {
    with a solid band on the two walls away from the light. It is the
    page's own shadow weight, 3px, never a bar that scales. */
 .cw-chassis .cw-recess { stroke: currentColor; stroke-width: 3px; }
-.cw-chassis .cw-well { stroke: currentColor; }
+/* The well under the live desktop wears the wallpaper's own tone, so
+   the desktop reads edge to edge and a sub-pixel of well at a corner can
+   never show as a different colour. */
+.cw-chassis .cw-well { fill: var(--scr-wall-b); stroke: currentColor; }
 .cw-chassis .cw-ink { fill: currentColor; stroke: none; }
 /* The mark's panes are cut out of its ink frame down to the CASE, not
    to white: the mark sits on the case. */
@@ -2407,19 +2421,14 @@ pre.cmd {
 .cw-stage {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 440px;
-  /* The heading over the keys, the keys under it, and the display down
-     the whole left column: the heading costs the display nothing. */
-  grid-template-rows: auto minmax(0, 1fr);
   column-gap: 28px;
   row-gap: 14px;
-  align-items: center;
+  /* One row: the display, and beside it ONE window as tall as it. */
+  align-items: stretch;
 }
-/* Demo mode, in the keys box's top-right corner, on the line of "Click
-   the keys": out of the box's grid entirely, so it moves nothing. */
+/* Demo mode, at the right of the "Click the keys" line. */
 .cw-demo-mode {
-  position: absolute;
-  top: 16px;
-  right: 22px;
+  flex: none;
   display: flex;
   align-items: center;
   gap: 6px;
@@ -2448,56 +2457,39 @@ pre.cmd {
     linear-gradient(-45deg, transparent 42%, var(--ink) 42% 58%, transparent 58%);
 }
 .cw-demo-mode input:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
-/* The heading is a VERY SMALL window of the page's own kind (the title
-   in its title bar, one line as its body), over the keys window in the
-   right column, centred on it. */
-.cw-heading {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: start;
-  justify-self: center;
-  width: max-content;
-  max-width: 100%;
-  text-align: center;
-}
-.cw-heading .titlebar { height: 22px; }
-.cw-heading .closebox { top: 4px; width: 12px; height: 12px; }
-/* Scoped past the page-wide `.titlebar .title`, which sets 15px on a
-   28px line for the reading windows and would otherwise win here and
-   overhang the 22px bar (it did, the review caught it). */
-.cw-heading .titlebar .title {
-  margin: 0;
-  padding: 0 10px;
-  font-size: 13px;
-  /* 20, inside the bar's 22 less its 1.5px bottom rule: on the bar's own
-     height the title's paper box overhangs the rule by a pixel. */
-  line-height: 20px;
-  font-weight: normal;
-  color: var(--ink);
-}
+/* The first line of the window's body, under its title. */
 .cw-subtitle {
   margin: 0;
-  padding: 4px 14px 5px;
   font-family: var(--font-body);
   font-size: 12px;
   line-height: 1.3;
   color: var(--muted);
 }
-.cw-machine  { grid-column: 1; grid-row: 1 / 3; }
+.cw-machine  { grid-column: 1; grid-row: 1; }
 /* A window of the page's own kind (.mac-window draws its paper, its ink
-   line and its shadow; the title bar is the markup's), with the keys as
-   its body. */
+   line and its shadow; the title bar is the markup's), as tall as the
+   display beside it: its body fills the height, the legend spreads its
+   rows over what is left, and the small print sits at the foot. */
 .cw-controls {
   grid-column: 2;
-  grid-row: 2;
-  align-self: center;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
 }
+.cw-controls .titlebar .title { margin: 0; font-weight: normal; }
 .cw-keys-body {
-  position: relative;          /* the demo-mode box hangs off its corner */
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
-  padding: 16px 22px 16px;
+  padding: 14px 22px 16px;
+}
+.cw-keys-lead-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
 }
 
 /* What stands around the display in one screen, and gets back nowhere:
@@ -2567,10 +2559,8 @@ pre.cmd {
 
 
 @container (max-width: 1120px) {
-  .cw-stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; }
-  .cw-heading { grid-column: 1; grid-row: 1; }
-  .cw-machine { grid-row: 2; }
-  .cw-controls { grid-column: 1; grid-row: 3; }
+  .cw-stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; }
+  .cw-controls { grid-column: 1; grid-row: 2; }
   .cw-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cw-legend-what { min-height: 2.8em; }
 }
@@ -2579,7 +2569,7 @@ pre.cmd {
    CLICKED. Visitors reached for the real ⌘Tab, which macOS keeps. Set
    in ink, a touch bigger than the small print, and tight to the boxes. */
 .cw-keys-lead {
-  margin: 0 0 -4px;
+  margin: 0;
   font-family: var(--font-body);
   font-size: 13px;
   line-height: 1.3;
@@ -2688,6 +2678,8 @@ pre.cmd {
   margin: 0;
   padding: 0;
   display: grid;
+  flex: 1;
+  align-content: space-evenly;   /* the rows spread over the height the display gives */
   grid-template-columns: minmax(0, 1fr);
   gap: 2px 18px;
 }
@@ -3004,6 +2996,7 @@ html.retro #demo { display: none; }
      few pixels and it wrapped. */
   .cw-menubar { gap: 9px; padding: 0 8px; }
   .cw-menu-mark { margin-right: 0; }
+  .cw-menu-date { display: none; }        /* a phone's bar has no room for it */
 
   /* The exposé gets bigger cells against fewer of them. */
   .cw-grid { gap: 5px; padding: 8px; }
