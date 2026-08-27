@@ -38,6 +38,12 @@
      selection swaps it. The demo-live class arms the bloom animation
      from the first swap on, so the initial page paint stays exactly
      the static figure. */
+  /* Wrapped so the retro easter egg can re-run it: the figures are
+     cloned out of a <template> long after this file first executed, and
+     a listener attached to the old nodes would be attached to nothing.
+     Idempotent — wiring the same figure twice only re-adds identical
+     listeners to the same elements, which the browser deduplicates. */
+  function wireHero() {
   var apps = document.getElementById("demo-apps");
   var settleTimer = null;
   wireSelection(apps, "data-app", function (idx) {
@@ -72,4 +78,8 @@
       duo.classList.toggle("offstage", !entries[0].isIntersecting);
     }).observe(duo);
   }
+  }
+
+  wireHero();
+  window.CrosswayDemo = { wire: wireHero };
 })();
