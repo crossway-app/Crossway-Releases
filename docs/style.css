@@ -2353,6 +2353,9 @@ pre.cmd {
   grid-column: 1 / -1;
   grid-row: 1;
   text-align: center;
+  /* Four pixels closer to the page above: the row shrinks with it, so
+     the display and its stand ride up by the same four. */
+  margin-top: -4px;
 }
 .cw-title {
   margin: 0;
@@ -2388,7 +2391,7 @@ pre.cmd {
    under it, the section's own edges. The display's height budget is the
    viewport minus this. The layout test measures the real page and fails
    loudly if this drifts from what it finds. */
-:root { --cw-fold-overhead: 109px; }
+:root { --cw-fold-overhead: 105px; }
 
 /* One exposé tile. Six of these plus their gutters is the pane's inner
    width, which is how the app arrives at ~6 per row. */
