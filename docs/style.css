@@ -2346,16 +2346,28 @@ pre.cmd {
   row-gap: 14px;
   align-items: center;
 }
-.cw-title {
+/* The heading over the whole demo: the title, and one short line under
+   it that says the screen is a desktop too. Small, and tight, because
+   every pixel here comes off the display below. */
+.cw-heading {
   grid-column: 1 / -1;
   grid-row: 1;
-  margin: 0;
   text-align: center;
+}
+.cw-title {
+  margin: 0;
   font-family: var(--font-display);
   font-size: 20px;
   font-weight: normal;
   line-height: 1.2;
   color: var(--ink);
+}
+.cw-subtitle {
+  margin: 3px 0 0;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--muted);
 }
 .cw-machine  { grid-column: 1; grid-row: 2; }
 .cw-controls {
@@ -2376,7 +2388,7 @@ pre.cmd {
    under it, the section's own edges. The display's height budget is the
    viewport minus this. The layout test measures the real page and fails
    loudly if this drifts from what it finds. */
-:root { --cw-fold-overhead: 90px; }
+:root { --cw-fold-overhead: 109px; }
 
 /* One exposé tile. Six of these plus their gutters is the pane's inner
    width, which is how the app arrives at ~6 per row. */
