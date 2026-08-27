@@ -13,8 +13,12 @@
 :root {
   --ink: #000000;
   --paper: #ffffff;
-  --desktop-a: #afafaf;      /* 50%-dither desktop pattern, cell A */
-  --desktop-b: #cfcfcf;      /* cell B */
+  /* The two cells of the desktop dither. They were 12% of range apart
+     at a 2px cell, which composites to flat grey at any normal viewing
+     distance — the era's defining texture, nominally present and
+     visually absent. A 1px cell and a wider delta grains instead. */
+  --desktop-a: #9c9c9c;      /* 50%-dither desktop pattern, cell A */
+  --desktop-b: #d6d6d6;      /* cell B */
   --dim: #8a8a8a;            /* disabled chrome */
   --muted: #4a4a4a;          /* captions, fine print */
   --link: #0000c8;           /* period hyperlink blue */
@@ -23,6 +27,55 @@
   --font-body: "Geneva", Verdana, -apple-system, "Helvetica Neue", Arial, sans-serif;
   --font-mono: "Monaco", "Menlo", "Courier New", monospace;
   --border: 1.5px;           /* the classic 1px frame, at today's densities */
+  /* The hero's traffic lights. The one place the live demo hardcodes
+     colour, and for the same reason the pixel heart does: they are the
+     single most recognisable macOS cue, and a monochrome set stops the
+     screen reading as a Mac at all. macOS uses the same three in light
+     and dark, so they are declared once here and re-cut once in the
+     terminal section. Debt paid, in full, in one place. */
+  --tl-close: #ff5f57;
+  --tl-min: #febc2e;
+  --tl-zoom: #28c840;
+  /* The Dock badge on an exposé tile, on the same terms as the lights
+     above: a red capsule is the whole of what a badge means, and a
+     monochrome one reads as a smudge. Declared once, re-cut once. */
+  --dock-badge: #e0483d;
+  --dock-badge-ink: #ffffff;
+
+  /* THE SCREEN. The page is 1-bit; the screen on the drawn machine is
+     2026, and the clash between them is the joke the whole hero tells.
+     Drawn from --ink over --paper it was a monochrome page containing a
+     slightly smoother monochrome rectangle — no clash, therefore no
+     joke. Its own token set, declared once here and re-cut once for the
+     terminal, so the two halves cannot bleed into each other. */
+  --scr-ink: #202020;          /* text and hairlines on the screen */
+  --scr-paper: #ffffff;        /* window fill */
+  /* Neutral, and NEUTRAL: equal red, green and blue. The screen earns
+     its "modern" from smooth gradients, real window chrome and five
+     colour app marks, not from the wallpaper, which sat against a 1-bit
+     grey page as a purple slab and read as a different website; and the
+     greys used to carry a faint blue cast, which is colour the user's
+     rule does not allow. A test reads every screen token and checks. */
+  --scr-wall-a: #a8a8a8;       /* wallpaper, top */
+  --scr-wall-b: #6f6f6f;       /* wallpaper, bottom */
+  /* A terminal is dark in BOTH appearances, so it cannot be a mix of
+     the screen's ink and paper, which trade places at night. Neutral. */
+  --scr-term: #262626;
+
+  /* The five app marks. Not Apple's art and not Apple's colours: the
+     glyphs are drawn, and these are ours. They are the only five
+     coloured icons on the page, which is exactly the point. */
+  --app-glyph: #ffffff;
+  --app-compass: #3b82f6;
+  --app-prompt: #394150;
+  --app-envelope: #12a594;
+  --app-note: #eaa221;
+  --app-beam: #e0518f;
+  --app-reel: #5b5fd6;
+  /* The display's power light: lit green with Crossway on the screen,
+     dark (ink) without. One more colour, on the user's word, and the
+     only one on the drawing. Declared once, re-cut once. */
+  --cw-led: #2fcf5a;
   --radius-btn: 9px;
 }
 
@@ -37,8 +90,8 @@
   html:not(.day) {
     --ink: #e8e8e8;
     --paper: #141414;
-    --desktop-a: #2e2e2e;
-    --desktop-b: #1f1f1f;
+    --desktop-a: #343434;
+    --desktop-b: #141414;
     --dim: #6f6f6f;
     --muted: #a9a9a9;
     --link: #7aa2ff;
@@ -57,14 +110,35 @@
   }
 }
 
+/* The screen on the drawn machine is a Mac, and a Mac follows the
+   system. In dark mode it shows dark macOS: light text on dark window
+   chrome, a darker wallpaper. The five app marks keep their colour —
+   real app icons do not change with the appearance. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not(.day) {
+    --scr-ink: #ececec;
+    --scr-paper: #2b2b2b;
+    --scr-wall-a: #4c4c4c;
+    --scr-wall-b: #242424;
+    --scr-term: #161616;
+  }
+}
+html.night {
+  --scr-ink: #ececec;
+  --scr-paper: #2b2b2b;
+  --scr-wall-a: #4c4c4c;
+  --scr-wall-b: #242424;
+  --scr-term: #161616;
+}
+
 /* The forced-night twin of the media block above — keep the two
    identical. (One shared block would take light-dark(), which the old
    Macs this site serves never got.) */
 html.night {
   --ink: #e8e8e8;
   --paper: #141414;
-  --desktop-a: #2e2e2e;
-  --desktop-b: #1f1f1f;
+  --desktop-a: #343434;
+  --desktop-b: #141414;
   --dim: #6f6f6f;
   --muted: #a9a9a9;
   --link: #7aa2ff;
@@ -149,10 +223,7 @@ html.hacker .btn.is-disabled {
    display against body — which is a distinction the terminal spends by
    putting everything in one face. Give the weight back, or the labels
    flatten into the sentence that follows them. */
-html.hacker .shortcut-table .what strong {
-  font-weight: bold;
-}
-
+html.hacker 
 /* The glass: fine scanlines and a soft corner vignette, so the phosphor
    reads as light coming THROUGH a tube rather than green ink on paper.
    One fixed, click-through pseudo-element — out of flow, so it can never
@@ -198,9 +269,12 @@ html.hacker .display,
 html.hacker .titlebar .title,
 html.hacker .menubar,
 html.hacker .btn,
-html.hacker .key {
+html.hacker .key,
+html.hacker .cw-keycap-btn {
   text-shadow: 0 0 0.3em currentColor;
 }
+/* Inverse video carries no bloom, as the selection rule below says. */
+html.hacker .cw-keycap-btn.is-held { text-shadow: none; }
 
 /* Selection needs no colours of its own: it is already inverse video
    from the tokens, a phosphor block with the ground punched out of it,
@@ -220,6 +294,54 @@ html.hacker ::selection {
    selector; the rest inherit from the svg and come along for free. */
 html.hacker .dialog-icon svg { fill: var(--ink); }
 html.hacker .dialog-icon svg rect[fill="#fff"] { fill: var(--link); }
+
+/* The menubar app icon, re-cut. Unlike the heart and the cameo below it,
+   this one is a PNG: its near-white tile and dark panes are pixels, so no
+   token reaches them and the terminal would otherwise wear a lit white
+   rectangle in its corner. The filter desaturates to luminance and ramps
+   that luminance across the phosphor, both ends taken from the tokens —
+   the dark panes land on --paper, the same surface the windows use, and
+   the white ground lands on --link, the brightest step, exactly where the
+   heart's shine goes. Luminance ORDER is preserved, so the panes keep
+   reading against the ground instead of flattening to a blob. Alpha is
+   untouched, so the rounded corners stay rounded.
+
+   The filter lives in each page's <body>; the pages that omit it simply
+   never match this rule. */
+html.hacker .menubar .appicon { filter: url(#phosphor-icon); }
+
+/* Inert, and out of the layout without display:none. */
+.phosphor-defs { position: absolute; width: 0; height: 0; }
+
+/* The hero's traffic lights, re-cut. Three phosphor steps in the SAME
+   luminance order the real ones have — red darkest, amber mid, green
+   brightest — so the cluster still reads as a cluster and the frontmost
+   window still announces itself, without a single non-phosphor pixel
+   surviving into the terminal. Same treatment as the heart above. */
+html.hacker {
+  --tl-close: #2f7a48;
+  --tl-min: #5cc47c;
+  --tl-zoom: #a6ffbe;
+  /* The badge keeps its shape but not its colour: brightest phosphor
+     capsule, deep phosphor glyph. No non-phosphor pixel survives. */
+  --dock-badge: #a6ffbe;
+  --dock-badge-ink: #05130b;
+  /* No non-phosphor pixel survives into the terminal, the screen on the
+     drawn machine included. */
+  --scr-ink: #a6ffbe;
+  --scr-paper: #08160e;
+  --scr-wall-a: #071a0f;
+  --scr-wall-b: #030d07;
+  --scr-term: #041a08;
+  --app-glyph: #04120a;
+  --app-compass: #7bec93;
+  --app-prompt: #2f7a48;
+  --app-envelope: #5cc47c;
+  --app-note: #a6ffbe;
+  --app-beam: #3f9a5c;
+  --app-reel: #4fbf6e;
+  --cw-led: #a6ffbe;
+}
 
 /* The cameo's visitor, re-cut for a monochrome screen. His eight tones
    map onto eight phosphor steps in the SAME luminance order they had, so
@@ -437,7 +559,7 @@ body {
   background-color: #c2c2c2; /* explicit ground even if gradients fail */
   background-image: repeating-conic-gradient(
     var(--desktop-a) 0% 25%, var(--desktop-b) 0% 50%);
-  background-size: 4px 4px;
+  background-size: 2px 2px;
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.6;
@@ -541,11 +663,47 @@ code, kbd {
 /* ---------- desktop layout ---------- */
 
 .desktop {
-  max-width: 780px;
+  /* Wider than the original 780. The hero is the reason: the machine
+     takes whatever the controls do not, so every pixel here goes
+     straight into the screen. Prose does NOT follow it out — see the
+     measure cap on .window-body below — because a 1000px line of body
+     text is worse to read, not better.
+
+     TWO COLUMNS, because the extra width that helped the hero left the
+     reading windows as very wide, very short slabs. The lede and the
+     demo span both; Read Me pairs with Privacy, and Contact with
+     Donate. */
+  max-width: 1320px;
   margin: 0 auto;
-  padding: 40px 20px 72px;
+  /* Tight at the top: what is spent above the demo is demo the visitor
+     has to scroll for, and the lede is only a title and two controls. */
+  padding: 24px 20px 72px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 26px;
+  align-items: start;
 }
-.desktop > * + * { margin-top: 40px; }
+.desktop > .lede,
+.desktop > #demo { grid-column: 1 / -1; }
+/* The reading windows: Read Me on the left, Privacy over Contact on the
+   right, the two columns FLUSH at the foot, and Donate across the whole
+   width under them as a bookend. As plain grid items every row was as
+   tall as its taller window and the shorter one left a hole under
+   itself. Now each column stretches to the row: a lone window fills its
+   column, and the last of a pair sits at the foot, so whichever column
+   is shorter, the feet line up. */
+.desk-col { display: flex; flex-direction: column; gap: 26px; min-width: 0; align-self: stretch; }
+.desk-col > .mac-window:only-child { flex: 1; }
+.desk-col > .mac-window:last-child:not(:only-child) { margin-top: auto; }
+.desktop > #donate { grid-column: 1 / -1; }
+
+/* Text keeps its measure while the figure takes the full width. The
+   demo's own body carries .figure and is exempt. */
+.window-body:not(.figure) {
+  max-width: 74ch;
+  margin-left: auto;
+  margin-right: auto;
+}
 
 /* ---------- window ---------- */
 
@@ -564,9 +722,14 @@ code, kbd {
 .titlebar::before {           /* the racing stripes */
   content: "";
   position: absolute;
-  inset: 6px 8px;
+  /* SIX rules of equal weight and equal gap, all on whole pixels. A
+     1.5px rule on a 4.5px period fitted only four, none of them landing
+     on the grid, so they rendered 1px/2px/2px/2px with 3/3/2 gaps — an
+     uneven barcode, repeated on every heading on the page. A 22px field
+     with a 2px-on-2px period is exactly six rules and five gaps. */
+  inset: 3px 8px;
   background: repeating-linear-gradient(
-    180deg, var(--ink) 0 1.5px, transparent 1.5px 4.5px);
+    180deg, var(--ink) 0 2px, transparent 2px 4px);
 }
 .titlebar .title {
   position: relative;
@@ -589,6 +752,10 @@ code, kbd {
 }
 
 .window-body { padding: 26px 30px; }
+/* The hero pays for its top padding in machine below the fold, and the
+   chassis draws its own bezel, so it needs less breathing room than a
+   window of prose does. */
+#demo > .window-body { padding-top: 16px; }
 .window-body.flush { padding: 0; }
 .window-body.flush img { display: block; width: 100%; height: auto; }
 
@@ -599,6 +766,11 @@ code, kbd {
   gap: 32px;
   align-items: start;
 }
+
+/* The retro hero replaces the live one, so it takes the same room: both
+   columns of the page grid. Left as a single grid item its two figures
+   split ONE column between them and came out half size. */
+#retro-mount { grid-column: 1 / -1; }
 .window-body.figure { padding: 20px 22px; }
 .window-body.figure svg {
   display: block;
@@ -655,7 +827,9 @@ pre.cmd {
   pointer-events: none;
 }
 
-/* disabled: dimmed chrome + a dither wash over the face */
+/* disabled: dimmed chrome + a dither wash over the face. The demo's
+   keys deliberately do NOT share this — see .cw-keycap-btn[aria-disabled],
+   which has to read as an absence rather than a textured surface. */
 .btn.is-disabled {
   color: var(--dim);
   border-color: var(--dim);
@@ -666,116 +840,33 @@ pre.cmd {
   background-size: 2px 2px;
 }
 
-.btn-row {
+/* ---- the two ways in ------------------------------------------------
+   Download on the left, the agent line on its right. They are peers, so
+   they sit on one line and centre as a pair rather than stacking. */
+.lede-actions {
+  /* Stacked, not side by side. The two controls are 241px and 771px
+     wide, so any arrangement that places one RELATIVE to the other is
+     visibly uneven — the mass simply is not symmetric. Stacked, each
+     centres in its own right and the difference has nowhere to show. */
   display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
+  flex-direction: column;
   align-items: center;
+  gap: 12px;
+  margin: 14px 0 8px;
 }
-.btn-row.right { justify-content: flex-end; }
-
-/* ---------- keycaps ---------- */
-
-.key {
-  display: inline-block;
-  min-width: 34px;
-  padding: 4px 10px 5px;
-  font-family: var(--font-display);
-  font-size: 15px;
-  text-align: center;
-  background: var(--paper);
-  border: var(--border) solid var(--ink);
-  border-radius: 7px;
-  box-shadow: 0 2.5px 0 0 var(--ink);
-  line-height: 1.2;
-}
-.key + .key { margin-left: 6px; }
-
-.chord {
-  white-space: nowrap;
-}
-
-.shortcut-table {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  gap: 18px 26px;
-  align-items: center;
-}
-.shortcut-table .what { margin: 0; }
-.shortcut-table .what strong { font-family: var(--font-display); font-weight: normal; }
-
-/* ---------- alert dialog ---------- */
-
-.mac-dialog {
-  position: relative;
-  background: var(--paper);
-  border: var(--border) solid var(--ink);
-  box-shadow: 3px 3px 0 0 var(--ink);
-}
-.mac-dialog::before {          /* inner frame line — the modal look */
-  content: "";
-  position: absolute;
-  inset: 4px;
-  border: var(--border) solid var(--ink);
-  pointer-events: none;
-}
-.dialog-body {
-  position: relative;
-  display: grid;
-  grid-template-columns: 72px 1fr;
-  gap: 8px 24px;
-  padding: 34px 36px 30px;
-}
-.dialog-icon { grid-row: span 2; }
-.dialog-icon svg { display: block; }
-.dialog-actions {
-  grid-column: 2;
-  margin-top: 18px;
-}
-
-/* the Donate window's inner layout: the dialog grid without the
-   dialog frame (the section is a regular titled window now) */
-.donate-grid {
-  display: grid;
-  grid-template-columns: 72px 1fr;
-  gap: 8px 24px;
-}
-
-/* ---------- read-me list ---------- */
-
-.steps {
+/* A flex ITEM here, so it carries no margin of its own — the stack's gap
+   is the only spacing, and a stray margin on top of it inflates the line
+   past its tallest child and pushes the shorter one off centre. */
+.lede-actions .btn-row {
   margin: 0;
-  padding-left: 1.4em;
+  display: flex;
+  align-items: center;
 }
-.steps li { margin-bottom: 0.7em; }
-.steps li:last-child { margin-bottom: 0; }
-
-.notice {
-  border: var(--border) solid var(--ink);
-  padding: 12px 16px;
-  margin-top: 18px;
-  background-image: repeating-conic-gradient(
-    rgba(0, 0, 0, 0.04) 0% 25%, transparent 0% 50%);
-  background-size: 2px 2px;
-}
-
-/* ---------- lede ---------- */
-
-.lede { text-align: center; }
-.lede h1 { margin-bottom: 0.35em; }
-.lede .tagline {
-  font-size: 17px;
-  max-width: 34em;
-  margin: 0 auto 1.6em;
-}
-.lede .btn-row { justify-content: center; margin-bottom: 14px; }
-
-/* ---------- agent install (hero) ---------- */
-
-/* The quiet second option under the download button: the same install, handed
-   to a coding agent instead of to a Finder window. Every value comes from a
-   token, so light, dark and the terminal all fall out with no
-   appearance-specific rule in this section. There should never be one. */
+/* Trimmed against the fold: every pixel the lede spends is a pixel of
+   demo the visitor has to scroll for. */
+.lede-actions .btn { font-size: 14px; padding: 6px 20px; }
+.lede-actions .paste-chip code { padding: 8px 14px; font-size: 13px; }
+.lede-actions .paste-chip-copy { padding: 0 14px; font-size: 13px; }
 
 .agent-install {
   max-width: 38em;
@@ -828,9 +919,143 @@ pre.cmd {
 }
 .paste-chip-copy:focus-visible { outline-offset: -4px; }
 
+/* Under the button rather than beside it, but its OWN sentence and chip
+   still share a line: that is the row the stack gives back, and it is
+   what keeps the demo below on screen without scrolling.
+
+   Three columns so the CHIP takes the centre and its sentence hangs off
+   the left. Centring sentence and chip together as one group instead
+   pushes the chip right by half the sentence, and then the page carries
+   two stacked controls that do not share a centreline. The outer columns
+   are equal and the middle one is the chip, so the chip lands on the
+   page's centre with the button above it whatever the sentence does. */
+.lede-actions .agent-install {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 0 14px;
+  align-self: stretch;
+  margin: 0;
+  max-width: none;
+  text-align: left;
+}
+.lede-actions .agent-install > p {
+  grid-column: 1;
+  justify-self: end;
+  margin: 0;
+  white-space: nowrap;
+}
+.lede-actions .paste-chip { grid-column: 2; }
+
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  align-items: center;
+}
+.btn-row.right { justify-content: flex-end; }
+
+/* ---------- keycaps ---------- */
+
+.key {
+  display: inline-block;
+  min-width: 34px;
+  padding: 4px 10px 5px;
+  font-family: var(--font-display);
+  font-size: 15px;
+  text-align: center;
+  background: var(--paper);
+  border: var(--border) solid var(--ink);
+  border-radius: 7px;
+  box-shadow: 0 2.5px 0 0 var(--ink);
+  line-height: 1.2;
+}
+.key + .key { margin-left: 6px; }
+
+.chord {
+  white-space: nowrap;
+}
+
+
+/* ---------- alert dialog ---------- */
+
+.mac-dialog {
+  position: relative;
+  background: var(--paper);
+  border: var(--border) solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+.mac-dialog::before {          /* inner frame line — the modal look */
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border: var(--border) solid var(--ink);
+  pointer-events: none;
+}
+.dialog-body {
+  position: relative;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 8px 24px;
+  padding: 34px 36px 30px;
+}
+.dialog-icon { grid-row: span 2; }
+.dialog-icon svg { display: block; }
+.dialog-actions {
+  grid-column: 2;
+  margin-top: 18px;
+}
+
+/* the Donate window's inner layout: the dialog grid without the
+   dialog frame (the section is a regular titled window now) */
+/* The bookend across the foot of the page: the heart, the words, and
+   the button in one row, using the width it was given. The body is
+   exempt from the reading measure, so the row spans the window. */
+#donate .window-body { max-width: none; }
+.donate-grid {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) auto;
+  gap: 8px 28px;
+  align-items: center;
+}
+.donate-grid .dialog-icon { grid-row: auto; }
+.donate-grid p { max-width: 62ch; }
+.donate-grid .dialog-actions { grid-column: 3; margin-top: 0; }
+
+/* ---------- read-me list ---------- */
+
+.steps {
+  margin: 0;
+  padding-left: 1.4em;
+}
+.steps li { margin-bottom: 0.7em; }
+.steps li:last-child { margin-bottom: 0; }
+
+.notice {
+  border: var(--border) solid var(--ink);
+  padding: 12px 16px;
+  margin-top: 18px;
+  background-image: repeating-conic-gradient(
+    rgba(0, 0, 0, 0.04) 0% 25%, transparent 0% 50%);
+  background-size: 2px 2px;
+}
+
+/* ---------- lede ---------- */
+
+.lede { text-align: center; }
+.lede h1 { margin-bottom: 0.35em; }
+.lede .tagline {
+  font-size: 17px;
+  max-width: 34em;
+  margin: 0 auto 1.05em;
+}
+
 /* ---------- footer ---------- */
 
 .footer {
+  /* The page is a two-column grid; without this the footer becomes one
+     column's worth and stops being centred on the page. */
+  grid-column: 1 / -1;
   text-align: center;
   font-size: 12.5px;
   color: var(--ink);
@@ -989,6 +1214,21 @@ pre.cmd {
 /* ---------- small screens ---------- */
 
 @media (max-width: 700px) {
+  .desktop { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  /* One column: the windows are grid items again, in their own order. */
+  .desk-col { display: contents; }
+  .paste-chip { flex-direction: column; align-items: stretch; }
+  .paste-chip code {
+    padding: 10px 12px;
+    font-size: 13px;
+    white-space: normal;
+    text-align: center;
+  }
+  .paste-chip-copy {
+    padding: 9px 12px;
+    border-left: 0;
+    border-top: var(--border) solid var(--ink);
+  }
   html { scroll-padding-top: 84px; } /* the wrapped two-row bar */
   .menubar { padding: 2px 8px 4px; }
   .menubar .spacer { display: none; } /* title row, then links flow below */
@@ -1004,24 +1244,1589 @@ pre.cmd {
     padding: 26px 22px 24px;
   }
   .donate-grid { grid-template-columns: 1fr; }
+  .donate-grid .dialog-actions { grid-column: 1; }
   .dialog-icon { grid-row: auto; }
   .dialog-actions { grid-column: 1; }
-  .shortcut-table { gap: 14px 16px; }
+  }
 
-  /* Phones stack the chip. The string gets a whole line and wraps at the space
-     after the colon rather than breaking the URL, and the Copy button becomes a
-     full-width footer under it, which is a far better thumb target than a
-     narrow column beside the text. */
-  .paste-chip { flex-direction: column; align-items: stretch; }
-  .paste-chip code {
-    padding: 10px 12px;
-    font-size: 13px;
-    white-space: normal;
-    text-align: center;
+/* ======================================================================
+   THE LIVE HERO — modern macOS, drawn from the page's own tokens
+
+   The screen inside the PowerBook shows today's macOS, not 1993's: real
+   rounded corners, real layering, real translucency. What it does NOT do
+   is bring its own palette. Every value below is --ink over --paper, or
+   a color-mix of the two, so the whole screen re-cuts for night and for
+   the terminal at no cost and with no second copy of anything.
+
+   That is why color-mix is used rather than rgba(): rgba pins a literal,
+   and the site's older washes each had to be written four times (light,
+   system dark, forced night, phosphor). A mix on a token is written once
+   and follows wherever the token goes.
+   ====================================================================== */
+
+.cw-win {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--scr-paper);
+  border-radius: 10px;
+  border: 1px solid color-mix(in srgb, var(--scr-ink) 16%, transparent);
+  /* Two shadows: a wide soft one for depth, a tight one for the edge. */
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--scr-ink) 14%, transparent),
+              0 1px 3px color-mix(in srgb, var(--scr-ink) 12%, transparent);
+}
+
+/* The frontmost window lifts and lights up. This is what makes a raise
+   legible — and a raise is the ONLY thing native cmd-backtick does, so
+   this carries half the comparison the hero exists to make. */
+.cw-win.is-front {
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--scr-ink) 22%, transparent),
+              0 2px 6px color-mix(in srgb, var(--scr-ink) 16%, transparent);
+  border-color: color-mix(in srgb, var(--scr-ink) 26%, transparent);
+}
+
+.cw-win-bar {
+  flex: none;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 9px;
+  background: color-mix(in srgb, var(--scr-ink) 7%, var(--scr-paper));
+  border-bottom: 1px solid color-mix(in srgb, var(--scr-ink) 9%, transparent);
+}
+
+.cw-lights { display: flex; gap: 6px; flex: none; }
+.cw-light { width: 10px; height: 10px; border-radius: 50%; }
+
+/* Background windows wear grey lights, as macOS does. Colour is a
+   property of focus here, not decoration. */
+.cw-light { background: color-mix(in srgb, var(--scr-ink) 22%, transparent); }
+.cw-win.is-front .cw-light-close { background: var(--tl-close); }
+.cw-win.is-front .cw-light-min   { background: var(--tl-min); }
+.cw-win.is-front .cw-light-zoom  { background: var(--tl-zoom); }
+
+.cw-win-title {
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: color-mix(in srgb, var(--scr-ink) 55%, transparent);
+}
+.cw-win.is-front .cw-win-title { color: color-mix(in srgb, var(--scr-ink) 80%, transparent); }
+
+/* The lights are 3x10 + 2x6 = 42px wide; the spacer balances the title
+   so it centres on the window rather than on the space left over. */
+.cw-win-bar::after { content: ""; flex: none; width: 42px; }
+
+.cw-win-body {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  padding: 10px 11px;
+}
+
+/* ---- content sketches ------------------------------------------------
+   A window is legible at hero size by silhouette, not by text, so each
+   app has one: a browser, a terminal, a mailer, a note, a player. They
+   exist to make windows tell each other apart: with Crossway off,
+   cmd-backtick shows no chrome at all, and an indistinct desktop makes
+   that read as a dead button rather than as native macOS. All of it is
+   grey, mixes of the screen's ink and paper, so night and phosphor come
+   free and the app glyphs stay the only colour on the screen. */
+
+.cw-sketch { display: flex; flex-direction: column; gap: 6px; height: 100%; }
+.cw-bar {
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--scr-ink) 13%, transparent);
+}
+.cw-bar.is-strong { background: color-mix(in srgb, var(--scr-ink) 26%, transparent); }
+
+/* browser: a toolbar with the address pill centred in it, then a page */
+.cw-toolbar { display: flex; align-items: center; gap: 6px; height: 14px; flex: none; }
+.cw-nav { width: 8px; height: 8px; flex: none; border-radius: 2px; background: color-mix(in srgb, var(--scr-ink) 12%, transparent); }
+.cw-url {
+  flex: 1;
+  height: 10px;
+  margin: 0 12%;
+  border-radius: 5px;
+  background: color-mix(in srgb, var(--scr-ink) 7%, transparent);
+  border: 1px solid color-mix(in srgb, var(--scr-ink) 16%, transparent);
+}
+.cw-sketch-page .cw-head { height: 14px; width: 55%; flex: none; border-radius: 4px; background: color-mix(in srgb, var(--scr-ink) 22%, transparent); }
+.cw-sketch-page .cw-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; flex: 1; }
+.cw-col { display: flex; flex-direction: column; gap: 6px; }
+
+/* terminal: the one dark body on the desktop in either appearance, on
+   its own token; prompts, ragged command lines, a block cursor on the
+   last, all in the glyph white the app marks already use */
+.cw-body-code { background: var(--scr-term); }
+.cw-sketch-code { gap: 5px; }
+.cw-line { display: flex; align-items: center; gap: 5px; }
+.cw-prompt { width: 5px; height: 5px; flex: none; border-radius: 1px; background: color-mix(in srgb, var(--app-glyph) 55%, transparent); }
+.cw-sketch-code .cw-bar { height: 4px; border-radius: 2px; background: color-mix(in srgb, var(--app-glyph) 40%, transparent); }
+.cw-sketch-code .cw-line:nth-child(3n) .cw-bar { width: 58%; }
+.cw-sketch-code .cw-line:nth-child(3n+1) .cw-bar { width: 78%; }
+.cw-sketch-code .cw-line:nth-child(3n+2) .cw-bar { width: 44%; }
+.cw-cursor { width: 5px; height: 8px; background: color-mix(in srgb, var(--app-glyph) 80%, transparent); }
+
+/* mail: three panes, mailboxes then the list then the message */
+.cw-sketch-mail { flex-direction: row; gap: 0; }
+.cw-pane { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.cw-pane-side { flex: 0 0 20%; padding-right: 8px; border-right: 1px solid color-mix(in srgb, var(--scr-ink) 10%, transparent); }
+.cw-pane-side .cw-bar { width: 70%; }
+.cw-pane-list { flex: 0 0 36%; padding: 0 8px; border-right: 1px solid color-mix(in srgb, var(--scr-ink) 10%, transparent); }
+.cw-pane-read { flex: 1; padding-left: 8px; }
+.cw-pane-read .cw-head { height: 10px; width: 60%; flex: none; border-radius: 3px; background: color-mix(in srgb, var(--scr-ink) 22%, transparent); }
+.cw-sketch-mail .cw-row { display: flex; align-items: flex-start; gap: 6px; }
+.cw-sketch-mail .cw-dot { width: 6px; height: 6px; margin-top: 1px; flex: none; border-radius: 50%; background: color-mix(in srgb, var(--scr-ink) 30%, transparent); }
+.cw-lines { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+.cw-lines .cw-bar { height: 5px; }
+.cw-lines .cw-bar.is-strong { width: 80%; }
+.cw-lines .cw-bar:not(.is-strong) { width: 60%; }
+
+/* note: a title, then text on ruled paper a shade off white */
+.cw-body-note { background: color-mix(in srgb, var(--scr-ink) 3%, var(--scr-paper)); }
+.cw-sketch-note {
+  gap: 8px;
+  background-image: repeating-linear-gradient(to bottom,
+    transparent 0 13px, color-mix(in srgb, var(--scr-ink) 11%, transparent) 13px 14px);
+}
+.cw-sketch-note .cw-bar.is-title { height: 9px; width: 45%; border-radius: 3px; background: color-mix(in srgb, var(--scr-ink) 34%, transparent); }
+.cw-sketch-note .cw-bar:nth-child(3) { width: 90%; }
+.cw-sketch-note .cw-bar:nth-child(5) { width: 55%; }
+.cw-sketch-note .cw-bar:nth-child(6) { width: 70%; }
+
+/* music: a row of album art, then what is playing with its waveform */
+.cw-sketch-music { gap: 10px; }
+.cw-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; flex: none; }
+.cw-tile-art { aspect-ratio: 1; border-radius: 4px; background: color-mix(in srgb, var(--scr-ink) 18%, transparent); }
+.cw-tiles .cw-tile-art:nth-child(2) { background: color-mix(in srgb, var(--scr-ink) 30%, transparent); }
+.cw-tiles .cw-tile-art:nth-child(3) { background: color-mix(in srgb, var(--scr-ink) 12%, transparent); }
+.cw-tiles .cw-tile-art:nth-child(4) { background: color-mix(in srgb, var(--scr-ink) 24%, transparent); }
+.cw-now { display: flex; align-items: center; gap: 8px; }
+.cw-now .cw-tile-art { width: 22px; flex: none; }
+.cw-wave { flex: 1; display: flex; align-items: center; gap: 3px; height: 28px; }
+.cw-wave i {
+  flex: 1;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--scr-ink) 24%, transparent);
+}
+
+/* film: the projector's screen fills the body edge to edge, the frames
+   in the screen's ink on its paper and pixel-sharp at any size, in the
+   window and in every preview of it alike. Which frame shows is the
+   projector's call, so the frames carry no animation of their own. */
+.cw-body-movie { padding: 0; }
+.cw-sketch-movie { gap: 0; }
+.cw-reel { position: absolute; inset: 0; display: flex; }
+.cw-film { display: block; width: 100%; height: 100%; color: var(--scr-ink); shape-rendering: crispEdges; }
+.cw-cel { opacity: 0; }
+.cw-cel.is-on { opacity: 1; }
+
+/* ---- the screen: menu bar, wallpaper, and the window stack ---------- */
+
+.cw-screen {
+  container-type: inline-size;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  /* The wallpaper's two tokens, so it re-cuts with everything else and
+     needs no colour of its own; in the terminal they are the deepest
+     phosphor steps. A soft light from the upper left over the gradient,
+     so it reads as a lit surface rather than a slab. Both are mixes of
+     the same two tokens: no third grey, nothing patterned. */
+  background:
+    radial-gradient(ellipse 70% 60% at 28% 18%,
+      color-mix(in srgb, var(--scr-wall-a) 62%, var(--scr-paper)) 0%,
+      transparent 70%),
+    linear-gradient(160deg, var(--scr-wall-a), var(--scr-wall-b));
+}
+
+.cw-menubar {
+  position: relative;          /* the app menu hangs from it */
+  z-index: 600;
+  flex: none;
+  display: flex;
+  align-items: center;
+  /* These must FIT the screen well, clock included: a menu bar with no
+     clock, or one that slices "Help" mid-word, reads instantly as fake.
+     It used to overflow by 66px because the machine was accidentally
+     stuck at the 300px replaced-element default. Measured, not guessed:
+     scripts/test-site-layout.mjs fails if it overflows again. */
+  gap: 14px;
+  height: 22px;
+  padding: 0 10px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 1;
+  color: color-mix(in srgb, var(--scr-ink) 78%, transparent);
+  background: color-mix(in srgb, var(--scr-paper) 72%, transparent);
+  border-bottom: 1px solid color-mix(in srgb, var(--scr-ink) 10%, transparent);
+  /* The one place the demo leans on real translucency, because a macOS
+     menu bar that is not slightly see-through reads as a title bar. */
+  backdrop-filter: blur(10px);
+}
+/* The app's name is a button, and the one thing on the bar you can
+   open. It wears a wash while its menu is down, as menu titles do. */
+.cw-menu-app {
+  font: inherit;
+  font-weight: 700;
+  color: inherit;
+  margin: 0 -5px;
+  padding: 3px 5px;
+  border: 0;
+  border-radius: 4px;
+  background: transparent;
+  cursor: default;
+}
+.cw-menu-app[aria-expanded="true"] { background: color-mix(in srgb, var(--scr-ink) 14%, transparent); }
+.cw-menu-app:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
+/* The menu: a small modern panel under its title, the same material as
+   the switcher pane, holding the one item a demo of a switcher needs.
+   Above the panel and the grid, as the menu bar is above everything. */
+.cw-menu {
+  position: absolute;
+  top: 100%;
+  left: 6px;
+  z-index: 600;
+  min-width: 150px;
+  padding: 5px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--scr-paper) 92%, transparent);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--scr-ink) 22%, transparent),
+              0 0 0 1px color-mix(in srgb, var(--scr-ink) 12%, transparent);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+.cw-menu[hidden] { display: none; }
+.cw-menu-quit {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  width: 100%;
+  padding: 4px 9px;
+  border: 0;
+  border-radius: 5px;
+  background: transparent;
+  font: inherit;
+  color: var(--scr-ink);
+  text-align: left;
+  cursor: default;
+}
+.cw-menu-quit:hover, .cw-menu-quit:focus-visible { background: color-mix(in srgb, var(--scr-ink) 12%, transparent); outline: none; }
+.cw-menu-key { color: color-mix(in srgb, var(--scr-ink) 50%, transparent); }
+.cw-menu-item { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); }
+.cw-menu-spacer { flex: 1; }
+.cw-menu-clock { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); }
+
+.cw-desktop {
+  position: relative;
+  flex: 1;
+  /* The Dock does not hide, so no window is ever under it: the desktop
+     the windows are placed on stops above the Dock's band (its bottom
+     inset, its height, a little air), and a zoomed window fills exactly
+     that, as a Mac's visible frame does. The wallpaper is the screen's,
+     so the band is not a hole. Keep in step with .cw-dock and with
+     DESKTOP_ASPECT in stage.js. */
+  margin-bottom: var(--cw-dock-band);
+  /* Dragging a window must not select the text inside it. */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* The desktop is operable: the title bar is a handle, the lights are
+   buttons, and a zoomed window fills the screen. */
+/* Blur, as the app has it: what is BEHIND the switcher goes soft, the
+   desktop and the Dock, by the amount the bezel's wheel sets. On the
+   pane's own backdrop it did nothing visible, since the pane is paper. */
+.cw-screen.is-switching .cw-desktop,
+.cw-screen.is-switching .cw-dock { filter: blur(var(--cw-blur, 0px)); }
+@media (prefers-reduced-motion: no-preference) {
+  .cw-desktop, .cw-dock { transition: filter 160ms ease; }
+}
+.cw-win-bar { cursor: grab; }
+.cw-win-bar:active { cursor: grabbing; }
+/* The switcher's cells are for the mouse too. */
+.cw-app, .cw-tile-wrap, .cw-gcell { cursor: pointer; }
+/* A window resizes from any edge or corner: the desktop's wiring writes
+   the edge under the pointer onto the window, and the cursor says so,
+   over the title bar's own hand included. */
+.cw-win[data-edge="l"], .cw-win[data-edge="r"] { cursor: ew-resize; }
+.cw-win[data-edge="t"], .cw-win[data-edge="b"] { cursor: ns-resize; }
+.cw-win[data-edge="tl"], .cw-win[data-edge="br"] { cursor: nwse-resize; }
+.cw-win[data-edge="tr"], .cw-win[data-edge="bl"] { cursor: nesw-resize; }
+.cw-win[data-edge]:not([data-edge=""]) .cw-win-bar { cursor: inherit; }
+.cw-light { cursor: pointer; }
+.cw-win.is-zoomed { border-radius: 0; }
+.cw-win.is-zoomed .cw-win-bar { cursor: default; }
+
+/* Windows settle rather than snap when the stack reorders. Opacity and
+   shadow only — never transform, which would shimmer the sketches. */
+@media (prefers-reduced-motion: no-preference) {
+  .cw-win { transition: box-shadow 180ms ease, border-color 180ms ease; }
+  .cw-light, .cw-win-title { transition: background-color 180ms ease, color 180ms ease; }
+}
+
+/* ---- the Crossway panel --------------------------------------------- */
+
+.cw-panel {
+  position: absolute;
+  /* left:0/right:0 + margin auto, NOT left:50%. A shrink-to-fit box
+     positioned from the mid-line can only ever be half the screen wide,
+     which silently clipped the window strip to two tiles no matter how
+     many windows the app had. */
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: max-content;
+  max-width: calc(100% - 20px);
+  /* TOP-LEFT FROZEN, not centred. The app pins the panel's top-left at
+     session start precisely so the app row does not jump when the
+     thumbnail strip blooms below it (SwitcherPanel.swift:1064). Centring
+     the whole pane instead made the row slide upward the moment the
+     previews appeared, and slide again on every tab. The offset centres
+     the ROW, and everything else grows downward from it. */
+  top: calc(50% - (var(--cw-row-h) + 2 * var(--cw-pane-pad)) / 2);
+  z-index: 500;                 /* above every window, below the CRT glass */
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  padding: var(--cw-pane-pad);
+  border-radius: 16px;
+  /* A MATERIAL, not a sheet: near-opaque, with the blur governing what
+     little shows through. At 60% the desktop read through it as if the
+     windows behind were glass, which the user called out. */
+  background: color-mix(in srgb, var(--scr-paper) 92%, transparent);
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--scr-ink) 26%, transparent);
+  backdrop-filter: blur(var(--cw-blur, 18px)) saturate(150%);
+}
+.cw-panel.is-open { display: flex; }
+
+/* CENTRED. The row is stretched to the pane's width, which the strip
+   below it sets; left-aligned inside that, five icons sat against the
+   left edge with thirty-one pixels of dead paper on the right. Both real
+   switchers centre the row over the strip. */
+.cw-approw {
+  display: flex;
+  justify-content: center;
+  gap: calc(var(--cw-icon) * 0.074);
+}
+
+/* Cell = icon x 1.11, as the app has it. At 58px around a 30px icon the
+   row was icons adrift in whitespace; the real row is dense. */
+.cw-app {
+  position: relative;
+  width: calc(var(--cw-icon) * 1.11);
+  padding: var(--cw-app-pad) 0 var(--cw-app-pad-bottom);
+  border-radius: 11px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  background: transparent;
+}
+/* A squircle wash BEHIND THE ICON, 3pt inside its box on every side —
+   not a pill wrapping the icon and its label together. The label gets no
+   background at all; it only fades in. */
+.cw-app.is-sel::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(var(--cw-app-pad) + (var(--cw-icon) - var(--cw-wash)) / 2);
+  width: var(--cw-wash);
+  height: var(--cw-wash);
+  margin-left: calc(var(--cw-wash) / -2);
+  border-radius: calc(var(--cw-icon) * 0.222);
+  background: color-mix(in srgb, var(--scr-ink) var(--cw-sel-app), transparent);
+}
+
+/* Only the SELECTED app is named. The app hides every other label
+   (AppIconView.swift:205 — alphaValue 0, raised to 1 only for the
+   selected/context style), and naming all five at once turned the row
+   into a menu. Faded rather than removed, so the row cannot change
+   height as the selection moves. */
+.cw-app-name {
+  opacity: 0;
+  position: absolute;
+  left: 50%;
+  bottom: 1px;
+  transform: translateX(-50%);
+  font-family: var(--font-body);
+  font-size: clamp(9px, 2.3cqw, 15px);
+  line-height: 1;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--scr-ink) 62%, transparent);
+}
+.cw-app.is-sel .cw-app-name { opacity: 1; color: var(--scr-ink); }
+
+/* The Dock count, straddling the top-right of the icon. Height = icon x
+   0.407, so one digit is a circle and two grow it sideways. Shown on
+   badged apps whether or not they are selected. */
+/* Straddling the icon's top-right corner, sized off the icon like
+   everything else here — a fixed 6px offset put it in a different place
+   at every screen size. It also has to sit ABOVE the next cell along:
+   cells paint in DOM order, so the badge that overhangs its own cell was
+   disappearing under the icon to its right. */
+.cw-abadge {
+  position: absolute;
+  z-index: 2;
+  top: calc(var(--cw-app-pad) - var(--cw-icon) * 0.1);
+  left: calc(50% + var(--cw-icon) * 0.24);
+  min-width: calc(var(--cw-icon) * 0.38);
+  height: calc(var(--cw-icon) * 0.38);
+  padding: 0 calc(var(--cw-icon) * 0.05);
+  box-sizing: border-box;
+  border-radius: calc(var(--cw-icon) * 0.19);
+  background: var(--dock-badge);
+  color: var(--dock-badge-ink);
+  font-family: var(--font-body);
+  font-size: clamp(7px, 1.9cqw, 13px);
+  font-weight: 600;
+  line-height: calc(var(--cw-icon) * 0.38);
+  text-align: center;
+}
+/* The badged cell is lifted so its badge clears the cell after it. */
+.cw-app:has(.cw-abadge) { z-index: 2; }
+
+/* ---- drawn app glyphs. No fetched art, no Apple marks. --------------
+   Every measurement here is in em, and the icon's own font-size is the
+   icon's size. The glyphs are drawn with borders and box-shadows, which
+   cannot take percentages, so em is the only unit that lets one drawing
+   serve both the 30px icon in the app row and the 12px mark on an
+   exposé tile. In px they were pinned to 30 and, on a 12px mark, the
+   compass needle was longer than the icon and hung over the window
+   title underneath it. */
+.cw-appicon {
+  font-size: var(--cw-icon);
+  width: 1em; height: 1em;
+  border-radius: 0.267em;
+  position: relative;
+}
+.cw-appicon::before, .cw-appicon::after { content: ""; position: absolute; background: var(--app-glyph); }
+
+/* Six solid marks, one hue each, glyph knocked out in white. These are
+   the only coloured icons on the page besides the traffic lights, and
+   that is the point: the product being demoed has to look like it comes
+   from 2026 and not from the drawing around it. */
+.cw-glyph-compass  { background: var(--app-compass); }
+.cw-glyph-prompt   { background: var(--app-prompt); }
+.cw-glyph-envelope { background: var(--app-envelope); }
+.cw-glyph-note     { background: var(--app-note); }
+.cw-glyph-beam     { background: var(--app-beam); }
+.cw-glyph-reel     { background: var(--app-reel); }
+
+/* compass: a ring with a needle. The needle is a slim two-tone diamond
+   inside the ring, north in the traffic-light red the sheet already
+   declares. A bar across the ring read as a no-entry sign. */
+.cw-glyph-compass::before { inset: 0.2em; border-radius: 50%; background: transparent; border: 0.067em solid var(--app-glyph); }
+.cw-glyph-compass::after {
+  left: 0.42em; top: 0.29em;
+  width: 0.16em; height: 0.42em;
+  background: linear-gradient(to bottom, var(--tl-close) 50%, var(--app-glyph) 50%);
+  clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+  transform: rotate(45deg);
+}
+/* prompt: a chevron and a caret rule */
+.cw-glyph-prompt::before { left: 0.233em; top: 0.333em; width: 0.267em; height: 0.067em; transform: rotate(45deg); }
+.cw-glyph-prompt::after { left: 0.233em; top: 0.533em; width: 0.267em; height: 0.067em; transform: rotate(-45deg); }
+/* envelope: a flap */
+.cw-glyph-envelope::before { inset: 0.267em 0.2em; background: transparent; border: 0.067em solid var(--app-glyph); border-radius: 0.067em; }
+.cw-glyph-envelope::after { left: 0.267em; top: 0.367em; width: 0.467em; height: 0.067em; transform: rotate(20deg); }
+/* note: ruled lines */
+.cw-glyph-note::before { left: 0.267em; top: 0.333em; width: 0.467em; height: 0.067em; box-shadow: 0 0.167em 0 var(--app-glyph), 0 0.333em 0 var(--app-glyph); }
+/* beam: a stem with a flag */
+.cw-glyph-beam::before { left: 0.567em; top: 0.267em; width: 0.067em; height: 0.4em; }
+.cw-glyph-beam::after { left: 0.367em; top: 0.567em; width: 0.267em; height: 0.167em; border-radius: 0.1em; }
+/* reel: a ring with a play mark in it, a player */
+.cw-glyph-reel::before { inset: 0.18em; border-radius: 50%; background: transparent; border: 0.067em solid var(--app-glyph); }
+.cw-glyph-reel::after { left: 0.42em; top: 0.36em; width: 0.24em; height: 0.28em; clip-path: polygon(0 0, 100% 50%, 0 100%); }
+
+/* ---- the strip that folds ------------------------------------------- */
+
+/* The fold. The demo's signature move, and the site's only height
+   transition. max-height rather than the grid 0fr/1fr trick: an fr track
+   in an auto-height grid sizes to its content's max-content
+   contribution, and this content is a flex row of absolutely-positioned
+   miniatures inside container-query boxes, which contributed nothing —
+   so the strip opened to zero however many windows it held. max-height
+   needs no such measurement; the height stays auto and the cap simply
+   has to clear the tallest strip. */
+.cw-strip-fold {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+.cw-strip-fold.is-dropped { max-height: 320px; opacity: 1; }
+/* Centred inside a width reserved for the BUSIEST app, so tabbing from
+   a four-window app to a one-window app does not resize the pane and
+   shuffle the icons under the cursor. */
+.cw-strip {
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  gap: var(--cw-strip-gap);
+}
+
+.cw-tile-wrap { flex: none; width: var(--cw-strip-w); display: flex; flex-direction: column; gap: 3px; }
+
+/* The SLOT. Transparent and unstroked: the paper fill and the edge
+   belong to the miniature window inside it, and whatever the window does
+   not cover stays clear so the pane — or the selection tint — shows
+   through the letterbox bars. */
+.cw-tile {
+  position: relative;
+  /* Explicit width AND height, both definite: see --cw-tile-h. And
+     flex: none, or the tile shrinks to fit the zero-height wrap it sits
+     in while the fold is closed — the fold then measures its contents as
+     nothing and never opens. */
+  flex: none;
+  width: var(--cw-strip-w);
+  height: var(--cw-strip-h);
+  border-radius: 7px;
+  display: grid;
+  place-items: center;
+  container-type: inline-size;
+}
+/* Selection is a filled wash BEHIND the thumbnail, reaching a little
+   past it on every side. No stroke, no lift, no scale — a selected tile
+   is exactly the size and elevation of every other tile. */
+.cw-tile-wrap.is-sel .cw-tile::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 9px;
+  background: color-mix(in srgb, var(--scr-ink) var(--cw-sel-win), transparent);
+}
+.cw-tile-title {
+  font-family: var(--font-body);
+  font-size: clamp(9px, 1.5cqw, 12px);
+  line-height: 1.2;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--scr-ink) 60%, transparent);
+}
+.cw-tile-wrap.is-sel .cw-tile-title { color: var(--scr-ink); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .cw-strip-fold { transition: max-height 200ms ease, opacity 160ms ease; }
+  .cw-app { transition: background-color 120ms ease; }
+}
+
+/* ---- the miniature window -------------------------------------------
+   What a thumbnail actually is: a shrunk picture of the whole window,
+   title bar and traffic lights included. It carries the paper fill and
+   the soft shadow the slot used to carry, and it never fills the slot —
+   its own aspect decides how much of it it covers. */
+
+/* Crossway's own marker on a minimized window's tile, bottom-right over
+   the picture. Sized against the slot, like everything else inside a
+   miniature. */
+.cw-mini-tag {
+  position: absolute;
+  right: 3cqw;
+  bottom: 3cqw;
+  z-index: 2;
+  padding: 0.6cqw 2cqw;
+  border-radius: 1.6cqw;
+  background: color-mix(in srgb, var(--scr-ink) 62%, transparent);
+  color: var(--scr-paper);
+  font-family: var(--font-body);
+  font-size: clamp(5.5px, 5.5cqw, 9px);
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+.cw-mini {
+  /* OUT OF FLOW, and centred. In flow its intrinsic height pushes the
+     slot taller than the aspect ratio asks for, and then the slot is no
+     longer the fixed window the thumbnail is letterboxed into. Absolute
+     means the slot's size comes from its width and its aspect alone,
+     and the miniature simply sits in the middle of it. */
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 1;
+  transform: translate(-50%, -50%);
+  max-width: 100%;
+  max-height: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  background: var(--scr-paper);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 1px 6px color-mix(in srgb, var(--scr-ink) 18%, transparent);
+}
+/* Every measurement inside a miniature is a share of the SLOT, not a
+   fixed pixel size. The desktop window's own chrome is drawn for a
+   window; dropped into a 46px thumbnail unchanged, a 24px title bar and
+   10px traffic lights eat the whole picture and the thumbnail becomes a
+   title bar with nothing under it. The percentages below are the real
+   window's proportions: a 24px bar on a ~360px window is 6.7%. */
+.cw-mini .cw-win-bar {
+  flex: none;
+  height: 7cqw;
+  gap: 2.2cqw;
+  padding: 0 2.6cqw;
+  border-bottom-width: 0.3cqw;
+}
+.cw-mini .cw-lights { gap: 1.7cqw; }
+.cw-mini .cw-light { width: 2.8cqw; height: 2.8cqw; }
+.cw-mini .cw-win-title { font-size: 3.4cqw; }
+.cw-mini .cw-win-bar::after { width: 11cqw; }
+.cw-mini .cw-win-body { flex: 1; min-height: 0; overflow: hidden; padding: 2.8cqw 3cqw; }
+.cw-mini .cw-sketch { gap: 1.7cqw; }
+.cw-mini .cw-bar { height: 1.7cqw; border-radius: 0.9cqw; }
+/* browser */
+.cw-mini .cw-toolbar { height: 4cqw; gap: 1.7cqw; }
+.cw-mini .cw-nav { width: 2.2cqw; height: 2.2cqw; border-radius: 0.5cqw; }
+.cw-mini .cw-url { height: 2.8cqw; border-radius: 1.4cqw; border-width: 0.3cqw; }
+.cw-mini .cw-sketch-page .cw-head { height: 4cqw; border-radius: 1.1cqw; }
+.cw-mini .cw-cols { gap: 2.2cqw; }
+.cw-mini .cw-col { gap: 1.7cqw; }
+/* terminal */
+.cw-mini .cw-sketch-code { gap: 1.4cqw; }
+.cw-mini .cw-line { gap: 1.4cqw; }
+.cw-mini .cw-prompt { width: 1.4cqw; height: 1.4cqw; border-radius: 0.3cqw; }
+.cw-mini .cw-sketch-code .cw-bar { height: 1.1cqw; border-radius: 0.55cqw; }
+.cw-mini .cw-cursor { width: 1.4cqw; height: 2.2cqw; }
+/* mail */
+.cw-mini .cw-pane { gap: 1.7cqw; }
+.cw-mini .cw-pane-side { padding-right: 2.2cqw; border-right-width: 0.3cqw; }
+.cw-mini .cw-pane-list { padding: 0 2.2cqw; border-right-width: 0.3cqw; }
+.cw-mini .cw-pane-read { padding-left: 2.2cqw; }
+.cw-mini .cw-pane-read .cw-head { height: 2.8cqw; border-radius: 0.8cqw; }
+.cw-mini .cw-sketch-mail .cw-row { gap: 1.7cqw; }
+.cw-mini .cw-sketch-mail .cw-dot { width: 1.7cqw; height: 1.7cqw; margin-top: 0.3cqw; }
+.cw-mini .cw-lines { gap: 1.1cqw; }
+.cw-mini .cw-lines .cw-bar { height: 1.4cqw; }
+/* note */
+.cw-mini .cw-sketch-note {
+  gap: 2.2cqw;
+  background-image: repeating-linear-gradient(to bottom,
+    transparent 0 3.6cqw, color-mix(in srgb, var(--scr-ink) 11%, transparent) 3.6cqw 3.9cqw);
+}
+.cw-mini .cw-sketch-note .cw-bar.is-title { height: 2.5cqw; border-radius: 0.8cqw; }
+/* music */
+.cw-mini .cw-sketch-music { gap: 2.8cqw; }
+.cw-mini .cw-tiles { gap: 2.2cqw; }
+.cw-mini .cw-tile-art { border-radius: 1.1cqw; }
+.cw-mini .cw-now { gap: 2.2cqw; }
+.cw-mini .cw-now .cw-tile-art { width: 6cqw; }
+.cw-mini .cw-wave { gap: 0.8cqw; height: 8cqw; }
+.cw-mini .cw-wave i { border-radius: 0.5cqw; }
+
+/* Below a certain size the title is a smudge rather than a word. The
+   bar stays — a window without one is not a window. */
+@container (max-width: 62px) {
+  .cw-mini .cw-win-title { visibility: hidden; }
+}
+
+/* ---- the exposé grid ------------------------------------------------- */
+
+/* A PANE, not a full-bleed wash: the exposé is its own window floating
+   over the desktop, inset from the screen edges and rounded, the way
+   Mission Control is. It carries no app-icon row — the grid is the whole
+   of the content (ExposeContentView.swift:4-9). */
+.cw-grid {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  width: max-content;
+  top: calc(50% + 11px);        /* centred in the desktop, below the menu bar */
+  transform: translateY(-50%);
+  z-index: 400;
+  display: none;
+  align-content: center;
+  justify-content: center;
+  /* Content-sized and SNUG, never a full-bleed wash. The exposé is an
+     ordinary panel floating over an UNDIMMED desktop — nothing in
+     Crossway ever dims the screen, and a dark scrim is the signature of
+     the Mission Control it is offered as an alternative to. Three
+     windows is a small three-column slab, not a curtain. */
+  max-width: 86%;
+  max-height: 82%;
+  gap: 4px;
+  padding: 8px;
+  /* Columns are set per render: min(count, 6) of a FIXED tile width, so
+     three windows are three normal tiles rather than three enormous
+     ones, and a short last row sits left inside a centred block. */
+  border-radius: 16px;
+  /* The same material as the panel. */
+  background: color-mix(in srgb, var(--scr-paper) 92%, transparent);
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--scr-ink) 26%, transparent);
+  backdrop-filter: blur(var(--cw-blur, 18px)) saturate(150%);
+}
+.cw-grid.is-open { display: grid; }
+
+/* min-width: 0 or the title's own min-content width props the column
+   open and the grid overflows the screen it is drawn inside. */
+.cw-gcell { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+
+/* The SLOT — transparent and unstroked, exactly as in the strip. */
+.cw-gshot {
+  position: relative;
+  /* Landscape, like the windows it stands for. A fixed height made the
+     tiles portrait the moment the columns got narrower. WIDTH is
+     explicit so the slot is a definite box: the miniature inside sizes
+     itself as a percentage of it, and against an indefinite parent that
+     percentage silently becomes "as big as my content". */
+  width: var(--cw-tile-w);
+  height: var(--cw-tile-h);
+  border-radius: 8px;
+  display: grid;
+  place-items: center;
+  container-type: inline-size;
+}
+.cw-gcell.is-sel .cw-gshot::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--scr-ink) var(--cw-sel-win), transparent);
+}
+
+/* The app mark: BOTTOM-LEFT of the thumbnail, inset, floating on the
+   picture (WindowPreviewCell.swift:330, 430-444 — 28pt square, radius 6,
+   6pt in from the leading and bottom edges). It is the only thing on
+   this surface that says which app a window belongs to, which is what
+   makes "this app's windows" visibly one app and "all windows" visibly
+   several. Drawn a little larger than true scale, as all the chrome on
+   this screen is, or it would be four pixels wide. */
+.cw-gbadge {
+  position: absolute;
+  left: 4px;
+  bottom: 4px;
+  /* Above the miniature, which is z-index 1: the mark floats ON the
+     picture (WindowPreviewCell.swift:330 — added after the image view). */
+  z-index: 2;
+  width: clamp(12px, 2.6cqw, 22px);
+  height: clamp(12px, 2.6cqw, 22px);
+  border-radius: 4px;
+  /* A hairline only — the app draws no shadow under this icon. But a
+     pale mark on a pale thumbnail is as good as no mark, and it carries
+     the whole "which app is this" question. */
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--scr-ink) 35%, transparent);
+}
+.cw-gbadge .cw-appicon {
+  font-size: clamp(12px, 2.6cqw, 22px);   /* one number resizes the whole glyph */
+}
+
+/* The Dock badge rides the corner of that icon, exactly as it does on
+   the real grid tile. App-level, so every window of an app shows it —
+   macOS has no per-window badge. */
+.cw-gdot {
+  position: absolute;
+  top: -3px;
+  right: -2px;
+  min-width: 8px;
+  height: 8px;
+  padding: 0 2px;
+  border-radius: 6px;
+  background: var(--dock-badge);
+  color: var(--dock-badge-ink);
+  font-family: var(--font-body);
+  font-size: 6px;
+  line-height: 8px;
+  text-align: center;
+}
+
+.cw-gtitle {
+  font-family: var(--font-body);
+  font-size: clamp(8px, 1.3cqw, 11px);
+  line-height: 1.2;
+  text-align: center;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--scr-ink) 60%, transparent);
+}
+.cw-gcell.is-sel .cw-gtitle { color: var(--scr-ink); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .cw-gshot { transition: box-shadow 140ms ease, border-color 140ms ease; }
+}
+
+/* ---- the Dock --------------------------------------------------------
+   Bottom centre of the desktop, a translucent bar in the pane's
+   material, the app glyphs in the Dock's fixed order with a dot under
+   the running ones, then the minimized windows as the tiny pictures
+   macOS keeps there. Sized in cqw like everything on the screen; chrome
+   UNDER the switcher and the grid, as on a Mac. The glyphs are the only
+   colour on it. */
+.cw-dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 1.4cqw;
+  margin: 0 auto;
+  width: max-content;
+  max-width: calc(100% - 4cqw);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  gap: 1.4cqw;
+  padding: 1cqw 1.4cqw;
+  border-radius: 2.2cqw;
+  background: color-mix(in srgb, var(--scr-paper) 74%, transparent);
+  box-shadow: 0 0 0 1px color-mix(in srgb, var(--scr-ink) 12%, transparent),
+              0 1.4cqw 3cqw color-mix(in srgb, var(--scr-ink) 22%, transparent);
+  backdrop-filter: blur(18px) saturate(150%);
+}
+.cw-dock-apps, .cw-dock-mins { display: flex; align-items: center; gap: 1.4cqw; }
+.cw-dock-app {
+  position: relative;
+  width: 6cqw;
+  height: 6cqw;
+  padding: 0;
+  border: 0;
+  border-radius: 1.2cqw;
+  background: transparent;
+  cursor: pointer;
+}
+.cw-dock-app .cw-appicon { display: block; font-size: 6cqw; }
+.cw-dock-app:focus-visible, .cw-dock-min:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+/* The dot under a running app. Always in the tree, so a launch or a
+   quit changes one opacity and nothing moves. */
+.cw-dock-dot {
+  position: absolute;
+  left: 50%;
+  bottom: -1cqw;
+  width: 0.7cqw;
+  height: 0.7cqw;
+  margin-left: -0.35cqw;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--scr-ink) 60%, transparent);
+  opacity: 0;
+}
+.cw-dock-app.is-running .cw-dock-dot { opacity: 1; }
+.cw-dock-sep {
+  width: 1px;
+  align-self: stretch;
+  margin: 0 0.3cqw;
+  background: color-mix(in srgb, var(--scr-ink) 18%, transparent);
+}
+.cw-dock-sep[hidden] { display: none; }
+/* A minimized window: a slot the miniature letterboxes into, exactly as
+   in the strip, but small. */
+.cw-dock-min {
+  position: relative;
+  width: 8cqw;
+  height: 5cqw;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  display: grid;
+  place-items: center;
+  container-type: inline-size;
+  cursor: pointer;
+}
+
+/* ---- the system switcher, for the Crossway-off comparison -----------
+   Suggestive, never traced. The proportions and behaviour are macOS's —
+   a wide dark slab, big icons, and the highlighted app named beneath the
+   row rather than every app labelled — but it is drawn in this page's
+   own tokens and is not a copy of Apple's HUD.
+
+   The markup is the same as Crossway's panel; only these rules differ,
+   which is exactly the point. What separates the two is not decoration:
+   Crossway names every app and can drop a strip of that app's windows,
+   the system switcher does neither. */
+
+/* Everything here is a multiple of the icon, which is itself a share of
+   the screen. Pinned in px the cell stayed 66px wide while the icon it
+   held shrank to 25px, and the name centred inside that cell rather than
+   under the panel. */
+.cw-panel.is-native {
+  gap: 0;
+  padding: calc(var(--cw-icon) * 0.35)
+           calc(var(--cw-icon) * 0.39)
+           calc(var(--cw-icon) * 0.62);
+  border-radius: calc(var(--cw-icon) * 0.44);
+  /* The dark HUD it is, and on the same terms: near-opaque. */
+  background: color-mix(in srgb, var(--scr-ink) 88%, transparent);
+  border-color: color-mix(in srgb, var(--scr-paper) 18%, transparent);
+}
+.cw-panel.is-native .cw-approw { gap: calc(var(--cw-icon) * 0.22); }
+
+.cw-panel.is-native .cw-app {
+  width: calc(var(--cw-icon) * 1.45);
+  padding: calc(var(--cw-icon) * 0.13);
+  border-radius: calc(var(--cw-icon) * 0.3);
+  /* STATIC, so the name below positions against the panel rather than
+     against one 66px cell — which is where macOS puts it, and why it
+     may be wider than any single icon. */
+  position: static;
+}
+.cw-panel.is-native .cw-app.is-sel {
+  background: color-mix(in srgb, var(--scr-paper) 26%, transparent);
+}
+/* The system switcher fills the whole cell rather than washing the icon,
+   so Crossway's squircle behind the icon has no business here. */
+.cw-panel.is-native .cw-app.is-sel::before { content: none; }
+
+/* Only the highlighted app is named, and the name sits centred under the
+   ROW — the single clearest tell that this is the system's switcher and
+   not Crossway's. */
+.cw-panel.is-native .cw-app-name { display: none; }
+.cw-panel.is-native .cw-app.is-sel .cw-app-name {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(var(--cw-icon) * 0.2);
+  margin: 0;
+  transform: none;
+  opacity: 1;
+  white-space: nowrap;
+  font-size: clamp(8px, 2.1cqw, 13px);
+  text-align: center;
+  color: var(--scr-paper);
+}
+
+/* And it never has a strip to drop. */
+.cw-panel.is-native .cw-strip-fold { display: none; }
+
+/* ---- the display ----------------------------------------------------
+   A 1993 Apple display, drawn as its manual would have drawn it: paper,
+   the page's own ink line, form carried by a few solid blacks, and the
+   page's own hard offset shadow. No tone and no dot pattern anywhere:
+   the QuickDraw patterns the laptop wore read as perforation at this
+   size, which is what got it rejected. One fixed-viewBox SVG for the
+   furniture and a DOM overlay for the screen, registered in PERCENTAGES
+   of the same box so it tracks the drawing at every width with no
+   measuring JavaScript.
+
+   The well is x14 y14 w316 h197.5 of a 344x262 box: 8:5, as every Apple
+   display of the era was, and 91.86% of the drawing's width, which is
+   the contract: the screen is the product, the drawing is its frame.
+   Change the rect and these four numbers together, or the screen slides
+   off its own bezel:
+     left 14/344 = 4.0698%      top 14/262 = 5.3435%
+     width 316/344 = 91.8605%   height 197.5/262 = 75.3817% */
+
+.cw-machine {
+  position: relative;
+  width: 100%;
+  /* Bounded by the room actually LEFT, not by a fixed share of the
+     viewport: the whole demo — the title, the display, the keys beside
+     it — has to fit one laptop screen, and what stands around the
+     display costs the same --cw-fold-overhead whatever the height is
+     (the site's sticky menu bar, the title over the screen, the gaps).
+     Subtracting that first is what makes the display as large as fits,
+     bounded by the column the keys leave it, and floored at 640px, where
+     the screen is the size the laptop's was: the redraw's contract was
+     that it never gets smaller. The 1.313 turns the height left into a
+     width: the drawing is 344 x 262. Every constant here is measured,
+     and scripts/test-site-layout.mjs pins the result. */
+  max-width: min(100%, max(640px, calc((100vh - var(--cw-fold-overhead)) * 1.313)));
+  margin: 0 auto;
+}
+/* The screen's own containing block. Below 700px the bezel becomes a
+   block in flow, and would otherwise grow the box the mount's
+   percentages resolve against, sliding the live desktop off the well. */
+.cw-display-frame { position: relative; }
+.cw-chassis {
+  display: block;
+  width: 100%;
+  height: auto;
+  color: var(--ink);
+  /* The page's own shadow, in the page's own pixels. Drawn into the SVG
+     it would scale with the drawing and out-weigh the window frame
+     around it three to one. */
+  filter: drop-shadow(3px 3px 0 var(--ink));
+}
+
+/* ONE PEN for the whole page: non-scaling strokes at the page's own
+   hairline, so the drawing weighs exactly what the window frame around
+   it weighs at every width. */
+.cw-chassis rect,
+.cw-chassis line,
+.cw-chassis circle {
+  vector-effect: non-scaling-stroke;
+  stroke-width: var(--border);
+}
+.cw-chassis .cw-case, .cw-chassis .cw-strip { fill: var(--paper); stroke: currentColor; }
+.cw-chassis .cw-bezel-inner { fill: none; stroke: currentColor; }
+/* The recess: the screen sits INTO the case, and a manual drawing says so
+   with a solid band on the two walls away from the light. It is the
+   page's own shadow weight, 3px, never a bar that scales. */
+.cw-chassis .cw-recess { stroke: currentColor; stroke-width: 3px; }
+.cw-chassis .cw-well { stroke: currentColor; }
+.cw-chassis .cw-ink { fill: currentColor; stroke: none; }
+.cw-chassis .cw-paper { fill: var(--paper); stroke: none; }
+/* The power light: lit while Crossway runs on the screen, dark in ink
+   when the switch says Native. The stage carries the mode. */
+.cw-chassis .cw-power { fill: var(--cw-led); stroke: currentColor; }
+.cw-stage.is-native .cw-chassis .cw-power { fill: currentColor; }
+
+/* Registered to the drawn well: the four numbers in the header above. */
+.cw-screen-mount {
+  position: absolute;
+  left: 4.0698%;
+  top: 5.3435%;
+  width: 91.8605%;
+  height: 75.3817%;
+  /* The CRT face has rounded corners, and the live desktop clips to the
+     same ones: 3 of 316 by 3 of 197.5. */
+  border-radius: 0.95% / 1.52%;
+  overflow: hidden;
+}
+.cw-screen-host { width: 100%; height: 100%; }
+.cw-screen-host .cw-screen { width: 100%; height: 100%; }
+
+/* ---- the keys -------------------------------------------------------
+   The rail beside the display: a line of copy, the four keys the visitor
+   presses drawn as keycaps in the page's own chip idiom (paper, ink
+   line, a solid bottom shadow), a caption that follows the hand, and the
+   legend of the four chords. Real buttons: focusable, announced, driven
+   by pointer and keyboard alike. */
+
+/* The title over the screen, the display under it, and the keys BESIDE
+   the display, in a paper box in the page's own chrome, so the whole
+   demo stands in one laptop screen: nothing to scroll to find the keys.
+   The box's column is a FIXED width: sized to its content it changed
+   width when the switch was thrown (the Native sentences are not the
+   Crossway ones) and the whole stage shifted. Below 1120px of stage —
+   where the display would drop under its 640px floor beside the box —
+   the box goes under the display instead, and its legend spreads to two
+   columns to use the width. */
+/* The SECTION is the container the stage measures itself against: a
+   container query cannot style the container itself, so the stage's own
+   columns have to answer to the width of something above it. */
+.cw-hero { container-type: inline-size; }
+.cw-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 440px;
+  grid-template-rows: auto auto;
+  column-gap: 28px;
+  row-gap: 14px;
+  align-items: center;
+}
+.cw-title {
+  grid-column: 1 / -1;
+  grid-row: 1;
+  margin: 0;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 1.2;
+  color: var(--ink);
+}
+.cw-machine  { grid-column: 1; grid-row: 2; }
+.cw-controls {
+  grid-column: 2;
+  grid-row: 2;
+  align-self: center;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
+  padding: 18px 22px 20px;
+  background: var(--paper);
+  border: var(--border) solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+
+/* What stands around the display in one screen, and gets back nowhere:
+   the site's sticky menu bar, the title over the screen and the gap
+   under it, the section's own edges. The display's height budget is the
+   viewport minus this. The layout test measures the real page and fails
+   loudly if this drifts from what it finds. */
+:root { --cw-fold-overhead: 90px; }
+
+/* One exposé tile. Six of these plus their gutters is the pane's inner
+   width, which is how the app arrives at ~6 per row. */
+:root {
+  /* Sized so the busiest app's windows all FIT the pane at the narrowest
+     screen the hero draws. The pane grows to its content and stops at the
+     screen; anything wider is silently clipped, which looks like windows
+     going missing. */
+  /* A share of the SCREEN, bounded. The screen is 388px wide at one
+     viewport and 578px at another, so a fixed tile fits at one and
+     spills at the other; the app in turn holds its tiles between 150pt
+     and 240pt however big the display is. cqw resolves against
+     .cw-screen, which is the container the tiles are drawn on. */
+  /* Scaled UP from the app's true proportions, as a game draws its
+     doors larger than life: at hero size the true scale made the
+     product illegible. */
+  --cw-tile-w: clamp(40px, 12cqw, 100px);
+  --cw-strip-w: clamp(54px, 15.5cqw, 132px);
+  /* 16:10, matching TILE_ASPECT in stage.js — keep the two in step.
+     Stated as an explicit HEIGHT rather than an aspect-ratio: a ratio
+     does not contribute to an ancestor's intrinsic height in Chrome, so
+     the fold's 1fr row measured its contents as zero and the strip
+     opened to nothing. */
+  --cw-tile-h: clamp(25px, 7.5cqw, 62.5px);
+  --cw-strip-h: clamp(33.75px, 9.6875cqw, 82.5px);
+  --cw-strip-gap: 8px;
+  /* The Dock's band at the foot of the screen: 1.4cqw inset, 8cqw of
+     Dock (6cqw icon in 1cqw of padding), 1cqw of air. */
+  --cw-dock-band: 10.4cqw;
+  /* Selection is a filled WASH, never a stroke — Crossway strokes
+     nothing on selection. Two deliberately different alphas: lighter
+     behind an app icon, stronger behind a window thumbnail. */
+  --cw-sel-app: 22.5%;
+  --cw-sel-win: 35%;
+  /* The app row, at the app's own proportions: the icon is 90% of its
+     cell (108 in 120), not half of it. */
+  /* A share of the screen, not a fixed size. Pinned in px the app row
+     was 10% of a 422px screen and 14% of a 311px one, so the switcher's
+     share of the display changed with the browser window — which is what
+     "inconsistent" looked like. The app draws its icons at 108pt on a
+     1440pt display, about 7.5%. */
+  --cw-icon: clamp(28px, 10.5cqw, 64px);
+  --cw-wash: clamp(26.4px, 9.91cqw, 60.4px);          /* icon x 0.944 */
+  /* Everything in the app row is a multiple of the icon, which is
+     itself a share of the screen. Left in fixed px the padding and the
+     gutter were a different fraction of the row at every screen size,
+     which is what made the spacing look arbitrary. The app's own
+     proportions: a 108pt icon in a 120x160 cell, 8pt between cells. */
+  --cw-app-pad: calc(var(--cw-icon) * 0.2);
+  --cw-app-pad-bottom: calc(var(--cw-icon) * 0.34);
+  /* The pane's own padding is a share of the screen too, or it is a
+     bigger fraction of a small screen than of a large one. */
+  --cw-pane-pad: clamp(9px, 2.4cqw, 20px);
+  /* The pane's app-row-only height, which is what freezes its top edge. */
+  --cw-row-h: calc(var(--cw-app-pad) + var(--cw-icon) + var(--cw-app-pad-bottom));
+}
+
+
+
+.cw-legend-note { grid-column: 1 / -1; }
+@container (max-width: 1120px) {
+  .cw-stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; }
+  .cw-controls { grid-column: 1; grid-row: 3; }
+  .cw-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .cw-legend-what { min-height: 2.8em; }
+}
+
+/* Two steps, two boxes: the group box of the era, a hairline frame with
+   its label sitting on the line. The instruction is the layout. */
+.cw-keypad { display: flex; gap: 18px; align-items: flex-start; }
+.cw-step {
+  margin: 0;
+  padding: 12px 12px 12px;
+  border: var(--border) solid var(--ink);
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  min-width: 0;
+}
+.cw-step-label {
+  padding: 0 5px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  line-height: 1;
+  color: var(--ink);
+}
+.cw-step-verb { color: var(--muted); }
+
+/* A keycap, at MacBook Pro proportions: one unit is 56px, command is a
+   quarter wider, tab half as wide again; every cap the same height. The
+   page's chip idiom (paper, ink line, a solid bottom shadow) at a size
+   you press, and the legend its real key carries: the symbol at the top
+   right, the name at the bottom left. */
+.cw-keycap-btn {
+  --cw-u: 56px;
+  position: relative;
+  width: var(--cw-u);
+  height: var(--cw-u);
+  flex: none;
+  padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--border) solid var(--ink);
+  border-radius: 8px;
+  box-shadow: 0 4px 0 0 var(--ink);
+  cursor: pointer;
+}
+.cw-key-cmd { width: calc(var(--cw-u) * 1.25); }
+.cw-key-tab { width: calc(var(--cw-u) * 1.5); }
+.cw-keycap-btn svg {
+  position: absolute;
+  top: 6px; right: 7px;
+  width: 18px; height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+/* The backtick key has no name: its symbol sits in the middle, larger,
+   with the tilde above it as on the real cap. */
+.cw-key-tick svg { top: 50%; left: 50%; right: auto; width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+.cw-keycap-word {
+  position: absolute;
+  left: 8px; bottom: 7px;
+  font-family: var(--font-body);
+  font-size: 10px;
+  line-height: 1;
+  letter-spacing: 0.01em;
+}
+.cw-keycap-btn:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+/* Held sits INTO its shadow and inverts: the page's own language for a
+   chosen thing, and unmistakable at any size. A tap sits down for a beat
+   and stays paper, so the two verbs have two looks. */
+.cw-keycap-btn.is-held {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 0 var(--ink);
+  background: var(--ink);
+  color: var(--paper);
+}
+.cw-keycap-btn.is-struck { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--ink); }
+/* Unavailable without Crossway. An absence, not a texture: the shadow is
+   what makes every button on this site look live, so it goes; the cap
+   and its legend dim, and the whole key fades, so "you cannot have this"
+   reads from across the page. No wash and no dither, which would read as
+   a surface where this needs to read as nothing to press. */
+.cw-keycap-btn[aria-disabled="true"] {
+  color: var(--dim);
+  border-color: var(--dim);
+  background: var(--paper);
+  background-image: none;
+  box-shadow: none;
+  transform: none;
+  opacity: 0.45;
+  cursor: default;
+  pointer-events: none;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .cw-keycap-btn { transition: transform 70ms ease, box-shadow 70ms ease, background-color 70ms ease, color 70ms ease, opacity 120ms ease; }
+}
+
+/* The legend: four chords, each with the page's own key chips, its name
+   and one sentence of what it buys you. The row in effect wears the
+   settings box's own frame and shadow, square-cornered: the page's
+   idiom for a plane rather than a button. */
+.cw-legend {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 4px 18px;
+}
+.cw-legend li {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 10px;
+  row-gap: 3px;
+  align-items: baseline;
+  padding: 5px 9px 6px;
+  border: var(--border) solid transparent;
+}
+/* Two marks on a row. READY: a modifier is held and this chord is there
+   to tap, an ink frame. PRESSED: the chord tapped, the frame lifted on
+   its shadow and its chips sunk and solid, the page's own word for a
+   pressed thing, and the same word the held keycap uses. */
+.cw-legend li.is-ready { border-color: var(--ink); }
+.cw-legend li.is-active { border-color: var(--ink); box-shadow: 3px 3px 0 0 var(--ink); background: var(--paper); }
+.cw-legend li.is-active .key { background: var(--ink); color: var(--paper); box-shadow: none; transform: translateY(2.5px); }
+.cw-legend .key { min-width: 22px; font-size: 12px; padding: 2px 6px 3px; }
+.cw-legend-name { font-family: var(--font-display); font-size: 12px; }
+.cw-legend-what {
+  grid-column: 2;
+  /* A line reserved: the ⌘ sentences rewrite themselves for the other
+     world, and a shorter sentence must not shrink its row and move the
+     rows below it. Beside the display every sentence is one line, so
+     one is reserved; where the legend is squeezed (under the display,
+     on a phone) they can wrap, so two are, in the container block. */
+  min-height: 1.4em;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+/* The ⌥ rows go flat with the ⌥ key, chips included, or the row dims
+   around two chips that still look pressable. */
+/* Off without Crossway: faded as one, chips included, so what you
+   cannot have reads from across the page and the two live rows stand
+   out by contrast. */
+.cw-legend li.is-off { color: var(--dim); opacity: 0.4; }
+.cw-legend li.is-off .key { color: var(--dim); border-color: var(--dim); box-shadow: none; background: transparent; }
+.cw-legend li.is-off .cw-legend-what { color: var(--dim); }
+.cw-legend-note {
+  grid-column: 1 / -1;
+  margin: 6px 0 0;
+  font-family: var(--font-body);
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+/* Hidden, not removed: the rail is centred on the display, so a note
+   that arrived with the switch would grow the rail and shove the display
+   down the page. The space is reserved and the note only becomes
+   visible. */
+.cw-legend-note { visibility: hidden; }
+.cw-legend-note[hidden] { display: block; }
+.cw-legend-note:not([hidden]) { visibility: visible; }
+/* The small print at the foot of the box, under a hairline: this is a
+   sketch of the app, not the app. */
+.cw-fine {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding-top: 10px;
+  border-top: var(--border) solid color-mix(in srgb, var(--ink) 30%, transparent);
+  font-family: var(--font-body);
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* ---- the bezel: the demo's settings as hardware ---------------------
+   The tray along the bottom bezel carries the three settings the demo
+   has, as the controls a display of this era carried: a slide switch, a
+   latching button with its light, a thumbwheel with detents, each with
+   an engraved label. They are the same three inputs the engine has
+   always wired, positioned over the drawing in percentages of the same
+   box as the screen. The tray is x56..337.5, y216..242 of 344 x 262:
+     left 56/344 = 16.2791%       top 216/262 = 82.4427%
+     width 281.5/344 = 81.8314%   height 26/262 = 9.9237% */
+.cw-bezel {
+  position: absolute;
+  left: 16.2791%;
+  top: 82.4427%;
+  width: 81.8314%;
+  height: 9.9237%;
+  display: flex;
+  align-items: center;
+  justify-content: space-evenly;
+  box-sizing: border-box;
+}
+/* The settings box is a grouping for the engine, which greys it as one
+   when Crossway is off, and nothing to the layout: its two controls are
+   siblings of the switch on the tray. */
+.cw-settings { display: contents; }
+.cw-bezel-ctl { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+/* Silkscreen: small caps in the body face, in ink, as a label printed on
+   a case is. Tracked grey Chicago read as a web eyebrow. */
+.cw-engrave {
+  font-family: var(--font-body);
+  font-size: 9.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--ink);
+}
+.cw-engrave output { color: var(--ink); }
+
+/* The latching button. The checkbox stays in the tree for the keyboard
+   and the screen reader; what you see is a square cap in the page's
+   keycap idiom and a light beside it, lit while the setting is on.
+   Pressed sits INTO its shadow and goes solid, the site's own language
+   for a chosen thing. */
+.cw-set { display: flex; align-items: center; cursor: pointer; }
+.cw-set input[type="checkbox"] {
+  position: absolute;
+  width: 1px; height: 1px;
+  opacity: 0;
+  margin: 0;
+}
+.cw-push-row { position: relative; display: flex; align-items: center; gap: 6px; }
+.cw-led {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  border: var(--border) solid var(--ink);
+  /* Lit green while the setting is on, dark ink while it is off or
+     unavailable: the same word the display's power light uses. */
+  background: var(--ink);
+}
+.cw-push-row:has(input:checked) .cw-led { background: var(--cw-led); }
+.cw-settings.is-disabled .cw-led { background: var(--ink); }
+.cw-tick {
+  flex: none;
+  width: 18px; height: 18px;
+  border: var(--border) solid var(--ink);
+  border-radius: 3px;
+  background: var(--paper);
+  box-shadow: 0 2px 0 0 var(--ink);
+}
+.cw-set input:checked + .cw-tick { background: var(--ink); transform: translateY(2px); box-shadow: none; }
+.cw-set input:focus-visible + .cw-tick { outline: 2px solid var(--link); outline-offset: 2px; }
+
+/* The thumbwheel: a rule, four detents, and a cap that rides it. */
+.cw-slider { position: relative; display: inline-block; width: 92px; height: 18px; }
+.cw-slider input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 18px;
+  margin: 0;
+  background: transparent;
+  cursor: pointer;
+}
+.cw-slider input::-webkit-slider-runnable-track {
+  height: var(--border);
+  background: var(--ink);
+}
+.cw-slider input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 10px; height: 16px;
+  margin-top: -7.5px;
+  border: var(--border) solid var(--ink);
+  background: var(--paper);
+  box-shadow: 0 2px 0 0 var(--ink);
+}
+.cw-slider input::-moz-range-track { height: var(--border); background: var(--ink); }
+.cw-slider input::-moz-range-thumb {
+  width: 10px; height: 16px;
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+}
+.cw-slider input:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
+.cw-detents {
+  position: absolute;
+  left: 5px; right: 5px; bottom: 0;
+  display: flex;
+  justify-content: space-between;
+}
+.cw-detents i { width: var(--border); height: 4px; background: var(--ink); }
+
+/* Without Crossway there is nothing here to set: the system cannot reach
+   a minimized window at all, and its switcher's blur is not ours. Shown
+   but not offered, and dimmed as one, cap and light and wheel alike. */
+.cw-settings.is-disabled .cw-bezel-ctl { opacity: 0.4; }
+.cw-settings.is-disabled .cw-engrave,
+.cw-settings.is-disabled .cw-engrave output { color: var(--dim); }
+.cw-settings.is-disabled .cw-set { cursor: default; }
+.cw-settings.is-disabled .cw-led { border-color: var(--dim); }
+.cw-settings.is-disabled .cw-push-row:has(input:checked) .cw-led { background: var(--dim); }
+.cw-settings.is-disabled .cw-tick { border-color: var(--dim); box-shadow: 0 2px 0 0 var(--dim); }
+.cw-settings.is-disabled .cw-set input:checked + .cw-tick { background: var(--dim); box-shadow: none; }
+.cw-settings.is-disabled .cw-slider input { cursor: default; }
+.cw-settings.is-disabled .cw-slider input::-webkit-slider-runnable-track { background: var(--dim); }
+.cw-settings.is-disabled .cw-slider input::-webkit-slider-thumb {
+  border-color: var(--dim);
+  box-shadow: 0 2px 0 0 var(--dim);
+}
+.cw-settings.is-disabled .cw-slider input::-moz-range-track { background: var(--dim); }
+.cw-settings.is-disabled .cw-slider input::-moz-range-thumb { border-color: var(--dim); }
+.cw-settings.is-disabled .cw-detents i { background: var(--dim); }
+
+/* ---- the comparison switch ------------------------------------------
+   A two-position slide switch on the bezel: the knob sits at CROSSWAY or
+   at NATIVE. Underneath it is still the radiogroup it always was, two
+   radios, neither of them "off" (role=switch would announce one side as
+   unchecked, which is wrong about what this control means): the radios
+   are the two halves of the slot, and the knob is drawn over whichever
+   is checked. Framed as a choice between two worlds rather than an off
+   switch for the product, because making "turn Crossway off" the
+   loudest control on the page would invite every visitor's first click
+   to disable it. */
+/* The whole row is the control: a click on either label, either half
+   of the slot, or the knob flips it. */
+.cw-toggle { display: flex; align-items: center; gap: 7px; cursor: pointer; }
+.cw-toggle .cw-engrave { color: var(--dim); }
+.cw-toggle:has(.cw-seg[data-mode="crossway"][aria-checked="true"]) .cw-engrave[data-side="crossway"],
+.cw-toggle:has(.cw-seg[data-mode="native"][aria-checked="true"]) .cw-engrave[data-side="native"] { color: var(--ink); font-weight: 700; }
+.cw-switch {
+  position: relative;
+  display: block;
+  width: 44px; height: 14px;
+  border: var(--border) solid var(--ink);
+  border-radius: 3px;
+  background: var(--paper);
+}
+.cw-seg {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 50%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: transparent;
+  font: inherit;
+  cursor: pointer;
+}
+.cw-seg[data-mode="crossway"] { left: 0; }
+.cw-seg[data-mode="native"] { right: 0; }
+.cw-seg:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
+.cw-switch-knob {
+  position: absolute;
+  top: -3px; left: -1.5px;
+  width: 20px; height: 17px;
+  border: var(--border) solid var(--ink);
+  border-radius: 3px;
+  background: var(--paper);
+  box-shadow: 0 2px 0 0 var(--ink);
+  pointer-events: none;
+}
+/* The slot is 44 wide and the knob 23 with its border: from one end to
+   the other is 24px. */
+.cw-switch:has(.cw-seg[data-mode="native"][aria-checked="true"]) .cw-switch-knob { transform: translateX(24px); }
+
+@media (prefers-reduced-motion: no-preference) {
+  .cw-switch-knob { transition: transform 120ms ease; }
+}
+
+/* ---- retro, before first paint --------------------------------------
+   The word is persisted, so a returning visitor would otherwise see the
+   PowerBook for a frame before retro.js could clone the old figures in.
+   The pre-paint snippet adds html.retro and this hides the live hero
+   immediately.
+
+   Note what this class does NOT do: it defines no tokens and no
+   appearance. That keeps it out of the (0,1,1) specificity tie that
+   html.hacker and the dark blocks share, where only source order
+   separates them. It is a visibility switch and nothing more.
+
+   The other two pages carry the snippet (it is free, and keeping the
+   three identical is the point) but do not load retro.js and have no
+   #demo, so the class lands and does nothing. */
+html.retro #demo { display: none; }
+
+/* ---- the narrow layout ----------------------------------------------
+   One breakpoint, as the rest of the site has. Below it the display goes
+   full width with the controls beneath, and the demo runs on the compact
+   fixture set: fewer windows rather than smaller ones. The tray is too
+   small to hold real controls at this width, so it is not drawn, and the
+   bezel's controls sit in their own box under the screen. */
+
+@media (max-width: 700px) {
+  .cw-chassis .cw-strip, .cw-chassis .cw-mark, .cw-chassis .cw-ink, .cw-chassis .cw-power { display: none; }
+  .cw-bezel {
+    position: static;
+    width: auto;
+    height: auto;
+    margin: 12px 0 16px;
+    padding: 10px 8px 12px;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 10px 14px;
+    border: var(--border) solid var(--ink);
+    box-shadow: 3px 3px 0 0 var(--ink);
+    background: var(--paper);
   }
-  .paste-chip-copy {
-    padding: 9px 12px;
-    border-left: 0;
-    border-top: var(--border) solid var(--ink);
-  }
+  .cw-engrave { font-size: 9px; }
+  .cw-slider { width: 72px; }
+
+  .cw-controls { grid-template-columns: minmax(0, 1fr); padding: 14px 14px 16px; }
+  .cw-legend { grid-template-columns: minmax(0, 1fr); }
+  .cw-keypad { flex-wrap: wrap; gap: 12px; }
+  .cw-keycap-btn { --cw-u: 48px; }
+
+  /* The exposé gets bigger cells against fewer of them. */
+  .cw-grid { gap: 5px; padding: 8px; }
+  :root { --cw-strip-gap: 5px; }
+
+  /* Panel tiles likewise. */
+  .cw-tile-wrap { width: 74px; }
+  .cw-tile { height: 46px; }
 }
