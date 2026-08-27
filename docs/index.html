@@ -103,12 +103,6 @@
        keyboard sits in front of a display. -->
   <section class="cw-hero" id="demo" aria-labelledby="cw-title">
       <div class="cw-stage">
-      <!-- The heading is a very small window of the page's own kind: the
-           title in its title bar, the one line under it as its body. -->
-      <header class="cw-heading mac-window">
-        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title cw-title" id="cw-title">Interactive demo</h2></div>
-        <p class="cw-subtitle">Click, drag, and interact with the windows, Dock, and more!</p>
-      </header>
       <div class="cw-machine cw-display">
         <!-- A 1993 Apple display, drawn as its manual would have drawn
              it: paper, the page's own ink line, and form carried by a few
@@ -220,18 +214,13 @@
              without Crossway, because a key you cannot have is the pitch.
              The glyphs are drawn at one weight: as text, four keys came
              from three fonts. -->
-        <!-- The keys, in a window of the page's own kind, titled as the
-             nav link that points here. -->
-        <section class="cw-controls mac-window" role="group" aria-label="Try it on the keys">
-          <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Try it</span></div>
+        <!-- The demo's ONE window beside the display, as tall as the
+             display: the heading in its title bar, the instructions and
+             the keys as its body. -->
+        <section class="cw-controls mac-window" role="group" aria-labelledby="cw-title">
+          <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title cw-title" id="cw-title">Interactive demo</h2></div>
           <div class="cw-keys-body">
-          <!-- Demo mode, in the box's corner: left alone, the demo
-               demonstrates itself. An autopilot clicks the same keys a
-               visitor would, through nine scenes whose commits put the
-               desktop back exactly where it started, and the visitor's
-               first real click on the keys, the screen or the switch takes
-               over. -->
-          <label class="cw-demo-mode"><input type="checkbox" id="cw-demo" checked> Demo mode</label>
+          <p class="cw-subtitle">Click, drag, and interact with the windows, Dock, and more!</p>
           <!-- Two steps, each a labelled box, each holding the keys of that
                step drawn at MacBook Pro proportions: command is a quarter
                wider than option, tab half as wide again as backtick, and
@@ -240,7 +229,16 @@
 
                The line above them says the one thing visitors kept
                missing: these keys are CLICKED. macOS keeps the real ones. -->
-          <p class="cw-keys-lead">Click the keys with your mouse.</p>
+          <!-- Demo mode at the line's right: left alone, the demo
+               demonstrates itself. An autopilot clicks the same keys a
+               visitor would, through nine scenes whose commits put the
+               desktop back exactly where it started, and the visitor's
+               first real click on the keys, the screen or the switch takes
+               over. -->
+          <div class="cw-keys-lead-row">
+            <p class="cw-keys-lead">Click the keys with your mouse.</p>
+            <label class="cw-demo-mode"><input type="checkbox" id="cw-demo" checked> Demo mode</label>
+          </div>
           <div class="cw-keypad">
             <fieldset class="cw-step">
               <legend class="cw-step-label">Step 1 <span class="cw-step-verb">click to hold</span></legend>
