@@ -107,6 +107,11 @@
         <h2 class="cw-title" id="cw-title">Interactive demo</h2>
         <p class="cw-subtitle">Click, drag, and interact with the windows and Dock, too!</p>
       </header>
+      <!-- Demo mode: left alone, the demo demonstrates itself. An autopilot
+           clicks the same keys a visitor would, through five scenes that put
+           the desktop back exactly where it started, and the visitor's first
+           real click on the keys, the screen or the switch takes over. -->
+      <label class="cw-demo-mode"><input type="checkbox" id="cw-demo" checked> Demo mode</label>
       <div class="cw-machine cw-display">
         <!-- A 1993 Apple display, drawn as its manual would have drawn
              it: paper, the page's own ink line, and form carried by a few
@@ -183,7 +188,6 @@
               </span>
               <span class="cw-engrave" data-side="native" aria-hidden="true">Native</span>
             </div>
-            <span class="cw-engrave" aria-hidden="true">Switcher</span>
           </div>
           <div class="cw-settings">
             <label class="cw-set cw-push cw-bezel-ctl">
@@ -227,12 +231,12 @@
           <p class="cw-keys-lead">Click the keys with your mouse.</p>
           <div class="cw-keypad">
             <fieldset class="cw-step">
-              <legend class="cw-step-label">Step 1 <span class="cw-step-verb">hold</span></legend>
+              <legend class="cw-step-label">Step 1 <span class="cw-step-verb">click to hold</span></legend>
               <button type="button" class="cw-keycap-btn cw-key-cmd" data-key="cmd" aria-pressed="false" aria-label="Command"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg><span class="cw-keycap-word" aria-hidden="true">command</span></button>
               <button type="button" class="cw-keycap-btn cw-key-opt" data-key="opt" aria-pressed="false" aria-label="Option" data-crossway-only="1"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h5.5l7 14H21M14 5h7"/></svg><span class="cw-keycap-word" aria-hidden="true">option</span></button>
             </fieldset>
             <fieldset class="cw-step">
-              <legend class="cw-step-label">Step 2 <span class="cw-step-verb">tap</span></legend>
+              <legend class="cw-step-label">Step 2 <span class="cw-step-verb">click to tap</span></legend>
               <button type="button" class="cw-keycap-btn cw-key-tab" data-key="tab" aria-label="Tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h13M11 7l5 5-5 5M20 5v14"/></svg><span class="cw-keycap-word" aria-hidden="true">tab</span></button>
               <button type="button" class="cw-keycap-btn cw-key-tick" data-key="tick" aria-label="Backtick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 4.5l4.5 4.5M6 17.5c1.5-2.2 3-2.2 4.5 0s3 2.2 4.5 0 3-2.2 3-2.2"/></svg></button>
             </fieldset>
