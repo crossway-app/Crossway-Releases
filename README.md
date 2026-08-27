@@ -43,10 +43,11 @@ Every build is signed with an Apple Developer ID certificate and notarized by Ap
 4. Grant the two permissions it asks for in **System Settings → Privacy & Security**:
    - **Accessibility** — needed to take over ⌘Tab and to raise the window you pick.
    - **Screen Recording** — needed for the window thumbnail previews.
-5. Follow the in-app setup. Crossway notices the grants and completes any required
-   relaunch itself; you do not need to relaunch it manually.
+5. Follow the in-app setup. In the final Startup choices, **Launch at login** starts
+   on; **Auto-update** stays off unless you choose it. Crossway notices the grants
+   and completes any required relaunch itself; you do not need to relaunch it manually.
 
-Crossway records nothing and uploads nothing. The app makes exactly one kind of network request, and only when you ask it to: **menu-bar icon → Check for Updates…** fetches the latest release info from this repository and tells you if a newer build is available, with a download button. That is the app's entire network surface — no telemetry, no automatic or background checks, nothing uploaded, ever. Crossway contains no updater and installs nothing. The ordinary update path remains downloading the zip and replacing the app yourself.
+Crossway records nothing and uploads nothing. Auto-update is optional and opt-in, off by default, and checks only on the schedule you choose. Crossway fetches release metadata from GitHub; it never downloads or installs an update itself. The same metadata-only check is always available manually from **menu-bar icon → Check for Updates…**. That is the app's entire network surface—no telemetry, identifiers, or uploads. When an update is available, Crossway offers a deliberate browser download; you replace the app yourself.
 
 ## Troubleshooting
 
@@ -75,7 +76,7 @@ Your Gatekeeper setting allows App Store apps only. In System Settings → Priva
 
 - **When downloading:** the release title says it — for example *Crossway 1.11* — and every release also includes a version-named copy of the zip (like `Crossway-1.11.zip`), so the file itself tells you what it is.
 - **Once installed:** click the Crossway menu-bar icon → **Settings…** — your version is shown at the bottom of the Settings window. Or select `/Applications/Crossway.app` in Finder and press ⌘I (Get Info).
-- **To see if you're current:** click the menu-bar icon → **Check for Updates…** — Crossway compares your build against the newest release here and offers the download if there's something newer.
+- **To see if you're current:** click the menu-bar icon → **Check for Updates…** for a manual check, or opt into **Settings → General → Startup → Auto-update** and choose a schedule. Both compare your build against the newest release here; if something newer is available, Crossway offers the browser download.
 
 ## Terms
 
