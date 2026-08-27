@@ -1064,6 +1064,14 @@
     });
   }
 
+  /* The date beside it, as the menu bar shows it: weekday, day, month,
+     in the visitor's own locale. */
+  function dateText(now) {
+    return (now || new Date()).toLocaleDateString([], {
+      weekday: "short", day: "numeric", month: "short",
+    });
+  }
+
   /* ====================================================================
      THE PROJECTOR
 
@@ -1247,6 +1255,8 @@
     var mark = el("span", "cw-menu-mark");
     mark.setAttribute("aria-hidden", "true");
     menubar.appendChild(mark);
+    var date = el("span", "cw-menu-date", dateText());
+    menubar.appendChild(date);
     var clock = el("span", "cw-menu-clock", clockText());
     menubar.appendChild(clock);
 
@@ -1290,6 +1300,7 @@
       menuApp.setAttribute("aria-expanded", menuOpen ? "true" : "false");
       menu.hidden = !menuOpen;
       quitLabel.textContent = active ? "Quit " + active.name : "";
+      date.textContent = dateText();
       clock.textContent = clockText();
       mark.hidden = !state.crosswayEnabled;
 
@@ -1511,7 +1522,7 @@
     }
 
     return {
-      render: render, desktop: desktop, menubar: menubar, clock: clock, mark: mark, screen: root,
+      render: render, desktop: desktop, menubar: menubar, clock: clock, date: date, mark: mark, screen: root,
       dock: dock,
       /* The switcher's surfaces, for the mouse. */
       panel: panel, approw: approw, strip: strip, grid: grid,
@@ -2516,6 +2527,7 @@
         var c = current && current.controller;
         if (c && c.renderer && c.renderer.clock) {
           c.renderer.clock.textContent = clockText();
+          if (c.renderer.date) { c.renderer.date.textContent = dateText(); }
         }
       }, 20000);
       /* Under node the interval would hold the process open. */
@@ -2553,6 +2565,7 @@
     REEL_BOX: REEL_BOX,
     REEL_DWELL: REEL_DWELL,
     clockText: clockText,
+    dateText: dateText,
     createController: createController,
     mountHero: mountHero,
     pickFixtures: pickFixtures,
