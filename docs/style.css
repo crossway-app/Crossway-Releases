@@ -13,10 +13,11 @@
 :root {
   --ink: #000000;
   --paper: #ffffff;
-  /* The display's case. Not the page's paper: Apple's displays of the era
-     were Platinum, the warm light grey that replaced the beige in 1987,
-     and the case wears it so the monitor is not one more window. */
-  --cw-case: #d9d6cd;
+  /* The display's case: a slightly different white from the page's
+     paper, warm, so the monitor is not one more window and not a grey
+     slab either (Platinum was tried and rejected, 2026-08-27). The tray
+     and the mark's panes wear it too. */
+  --cw-case: #f4f2ec;
   /* The two cells of the desktop dither. They were 12% of range apart
      at a 2px cell, which composites to flat grey at any normal viewing
      distance — the era's defining texture, nominally present and
@@ -98,7 +99,7 @@
   html:not(.day) {
     --ink: #e8e8e8;
     --paper: #141414;
-    --cw-case: #3d3c39;
+    --cw-case: #1c1c1a;
     --desktop-a: #343434;
     --desktop-b: #141414;
     --dim: #6f6f6f;
@@ -146,7 +147,7 @@ html.night {
 html.night {
   --ink: #e8e8e8;
   --paper: #141414;
-  --cw-case: #3d3c39;
+  --cw-case: #1c1c1a;
   --desktop-a: #343434;
   --desktop-b: #141414;
   --dim: #6f6f6f;
@@ -197,7 +198,7 @@ html.day { color-scheme: light; }
 html.hacker {
   --ink: #7bec93;            /* primary text and rules */
   --paper: #101b12;          /* window fill, the lit surface */
-  --cw-case: #0b2114;              /* platinum, in phosphor */
+  --cw-case: #142216;              /* the case, in phosphor */
   --desktop-a: #0c140d;      /* phosphor dither, cell A */
   --desktop-b: #080d09;      /* cell B */
   --dim: #2e6b42;            /* disabled chrome */
@@ -2347,8 +2348,7 @@ pre.cmd {
   vector-effect: non-scaling-stroke;
   stroke-width: var(--border);
 }
-.cw-chassis .cw-case { fill: var(--cw-case); stroke: currentColor; }
-.cw-chassis .cw-strip { fill: var(--paper); stroke: currentColor; }
+.cw-chassis .cw-case, .cw-chassis .cw-strip { fill: var(--cw-case); stroke: currentColor; }
 .cw-chassis .cw-bezel-inner { fill: none; stroke: currentColor; }
 /* The recess: the screen sits INTO the case, and a manual drawing says so
    with a solid band on the two walls away from the light. It is the
@@ -2356,7 +2356,9 @@ pre.cmd {
 .cw-chassis .cw-recess { stroke: currentColor; stroke-width: 3px; }
 .cw-chassis .cw-well { stroke: currentColor; }
 .cw-chassis .cw-ink { fill: currentColor; stroke: none; }
-.cw-chassis .cw-paper { fill: var(--paper); stroke: none; }
+/* The mark's panes are cut out of its ink frame down to the CASE, not
+   to white: the mark sits on the case. */
+.cw-chassis .cw-paper { fill: var(--cw-case); stroke: none; }
 /* The power light: lit while Crossway runs on the screen, dark in ink
    when the switch says Native. The stage carries the mode. */
 .cw-chassis .cw-power { fill: var(--cw-led); stroke: currentColor; }
@@ -2425,12 +2427,25 @@ pre.cmd {
   color: var(--ink);
   cursor: pointer;
 }
+/* The box itself in the page's idiom, a System 7 checkbox: a square in
+   ink on paper, an X of two strokes when on. Not the browser's. */
 .cw-demo-mode input {
   margin: 0;
-  width: 14px;
-  height: 14px;
-  accent-color: var(--ink);
+  width: 13px;
+  height: 13px;
+  -webkit-appearance: none;
+  appearance: none;
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+  background: var(--paper);
+  cursor: pointer;
 }
+.cw-demo-mode input:checked {
+  background-image:
+    linear-gradient(45deg, transparent 42%, var(--ink) 42% 58%, transparent 58%),
+    linear-gradient(-45deg, transparent 42%, var(--ink) 42% 58%, transparent 58%);
+}
+.cw-demo-mode input:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
 /* The heading over the whole demo is a VERY SMALL window of the page's
    own kind (the title in its title bar, one line as its body), centred
    on the demo. Small and tight, because every pixel here comes off the
@@ -2470,18 +2485,20 @@ pre.cmd {
   color: var(--muted);
 }
 .cw-machine  { grid-column: 1; grid-row: 2; }
+/* A window of the page's own kind (.mac-window draws its paper, its ink
+   line and its shadow; the title bar is the markup's), with the keys as
+   its body. */
 .cw-controls {
   grid-column: 2;
   grid-row: 2;
   align-self: center;
+}
+.cw-keys-body {
   position: relative;          /* the demo-mode box hangs off its corner */
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: 16px;
   padding: 18px 22px 20px;
-  background: var(--paper);
-  border: var(--border) solid var(--ink);
-  box-shadow: 3px 3px 0 0 var(--ink);
 }
 
 /* What stands around the display in one screen, and gets back nowhere:
@@ -2976,7 +2993,7 @@ html.retro #demo { display: none; }
   .cw-engrave { font-size: 9px; }
   .cw-slider { width: 72px; }
 
-  .cw-controls { grid-template-columns: minmax(0, 1fr); padding: 14px 14px 16px; }
+  .cw-keys-body { padding: 14px 14px 16px; }
   .cw-legend { grid-template-columns: minmax(0, 1fr); }
   .cw-keypad { flex-wrap: wrap; gap: 12px; }
   .cw-keycap-btn { --cw-u: 48px; }
