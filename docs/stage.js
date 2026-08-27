@@ -103,10 +103,12 @@
      `glyph` names a shape we draw ourselves. No Apple icon art. */
   var APPS = [
     { id: "safari",    name: "Safari",           glyph: "compass" },
-    /* Second, so the very first ⌘Tab lands on the film and its tile is
-       seen PLAYING in the strip: that is the live previews, shown. */
-    { id: "quicktime", name: "QuickTime Player", glyph: "reel" },
     { id: "terminal",  name: "Terminal",         glyph: "prompt" },
+    /* Third, one Tab past Terminal, so reaching the film is a walk along
+       the row with its tile seen PLAYING before it is chosen: that is
+       the live previews, shown. Its window starts mostly hidden under a
+       Terminal window, so choosing it visibly brings it forward. */
+    { id: "quicktime", name: "QuickTime Player", glyph: "reel" },
     { id: "mail",     name: "Mail",     glyph: "envelope", badge: 3 },
     { id: "notes",    name: "Notes",    glyph: "note" },
     { id: "music",    name: "Music",    glyph: "beam" },
@@ -132,12 +134,13 @@
      rather than shipped in the hero. */
   var WINDOWS = [
     { id: "sa1", app: "safari",    title: "Crossway — a window switcher for macOS", sketch: SKETCH.PAGE,  x: 6,  y: 12, w: 42, h: 56 },
-    /* The film, bottom right, second in the stack: only its top-left
-       corner sits under the front window, so it is seen playing. */
-    { id: "qt1", app: "quicktime", title: "Flipbook.mov",                           sketch: SKETCH.MOVIE, x: 40, y: 36, w: 46, h: 48 },
-    { id: "tm1", app: "terminal",  title: "~/Projects/Crossway — zsh",              sketch: SKETCH.CODE,  x: 66, y: 4,  w: 32, h: 28 },
+    /* A big Terminal window sits over the film: about a fifth of the
+       film shows (its bottom band, where the skyline plays), so choosing
+       it in the switcher visibly brings it forward. */
+    { id: "tm1", app: "terminal",  title: "~/Projects/Crossway — zsh",              sketch: SKETCH.CODE,  x: 34, y: 28, w: 46, h: 46 },
     { id: "sa2", app: "safari",    title: "GitHub — crossway-app/Crossway",         sketch: SKETCH.PAGE,  x: 24, y: 2,  w: 30, h: 30 },
     { id: "tm2", app: "terminal",  title: "run-tests.sh — 1815 passing",            sketch: SKETCH.CODE,  x: 76, y: 30, w: 24, h: 34 },
+    { id: "qt1", app: "quicktime", title: "Flipbook.mov",                           sketch: SKETCH.MOVIE, x: 40, y: 36, w: 46, h: 48 },
     { id: "ml1", app: "mail",      title: "Inbox — 3 unread",                       sketch: SKETCH.MAIL,  x: 2,  y: 6,  w: 44, h: 30 },
     { id: "nt1", app: "notes",     title: "Release notes — 1.12",                   sketch: SKETCH.NOTE,  x: 0,  y: 46, w: 22, h: 44 },
     { id: "ms1", app: "music",     title: "Now Playing",                            sketch: SKETCH.MUSIC, x: 52, y: 5,  w: 26, h: 32 },
@@ -2075,7 +2078,7 @@
   /* Options are not chords: they change what the switcher may REACH, or
      how it looks, rather than driving it. One handler for all of them,
      keyed by data-option, so a third option needs no new wiring. */
-  function wireOptions(root, controller, screen) {
+  function wireOptions(root, controller, screen, onAct) {
     if (!root) { return { sync: function () {} }; }
     var boxes = Array.prototype.slice.call(root.querySelectorAll("[data-option]"));
     var box = root.querySelector ? root.querySelector(".cw-settings") : null;
@@ -2100,7 +2103,13 @@
     boxes.forEach(function (b) {
       var what = b.getAttribute("data-option");
       var handler = function () {
-        if (what === "include-minimized") { controller.setIncludeMinimized(b.checked); }
+        if (what === "include-minimized") {
+          /* The reducer abandons any session here; whoever holds the
+             keys is told to let go, as after every other verb that
+             ends one. */
+          controller.setIncludeMinimized(b.checked);
+          if (onAct) { onAct(); }
+        }
         else if (what === "blur") { applyBlur(b.value); }
       };
       b.addEventListener("change", handler);
@@ -2183,10 +2192,12 @@
 
      Left alone, the demo demonstrates itself: an autopilot drives the
      same keypad a visitor clicks, at a visitor's pace (a little uneven,
-     as a hand is), through nine scenes that use all four chords: ⌘Tab
-     and ⌘` into Terminal's second window, ⌥` across Terminal's own
-     windows, ⌥Tab over everything to a Safari window, ⌘Tab alone to the
-     film, and so on. Each commit moves one window and its app to the
+     as a hand is), through nine scenes that use all four chords. It
+     opens on the film: ⌘Tab along the row to QuickTime, its tile seen
+     playing, and letting go brings the mostly hidden window forward.
+     Then ⌘` brings ONE Terminal window forward and leaves the others as
+     they were, ⌥` walks Terminal's own windows, ⌥Tab walks everything
+     to a Safari window, and so on. Each commit moves one window and its app to the
      front of the MRU, and the LAST FIVE are ordered so the desktop ends
      EXACTLY where it started: the loop ends in the state it began in and
      runs again from there, with no reset and no jump. Only windows of
@@ -2202,19 +2213,22 @@
      off; the box over the keys turns it back on.
      ==================================================================== */
   var DEMO_SCENES = [
-    /* ⌘Tab, ⌘`: Terminal's second window. */
+    /* ⌘Tab along the row to the film: its tile is seen playing, and
+       letting go brings the mostly hidden window forward. */
+    { hold: "cmd", taps: [{ key: "tab", app: "quicktime" }] },
+    /* ⌘Tab, ⌘`: ONE Terminal window forward, the others left as they
+       were. */
     { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm2" }] },
-    /* ⌥`: the focused app's windows, Terminal's, to its first. */
+    /* ⌥`: the focused app's windows, Terminal's, to its other one. */
     { hold: "opt", taps: [{ key: "tick", win: "tm1" }] },
     /* ⌥Tab: every window, a few along, to a Safari window. */
     { hold: "opt", taps: [{ key: "tab", win: "sa2" }] },
-    /* ⌘Tab alone: to the film, its previews blooming under it. */
-    { hold: "cmd", taps: [{ key: "tab", app: "quicktime" }] },
-    /* And the five that close the loop, in the one order that does. */
-    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm2" }] },
-    { hold: "opt", taps: [{ key: "tab", win: "sa2" }] },
-    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm1" }] },
+    /* And the five that close the loop, in the one order that does:
+       the stack's first five, deepest first. */
     { hold: "opt", taps: [{ key: "tab", win: "qt1" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm2" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa2" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm1" }] },
     { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa1" }] },
   ];
   /* A visitor's pace, in ms, and an unhurried one: the modifier goes
@@ -2264,6 +2278,10 @@
        named target is selected. */
     function tapNext() {
       var sc = scenes[scene], t = sc.taps[step];
+      /* The latch can be dropped under a running scene (a rebuild at
+         the breakpoint, a switch flipped from the keyboard): then the
+         scene is over, not sixteen taps of nothing. */
+      if (keys._held() !== sc.hold) { next(); return; }
       if (!t) { schedule(letGo, pace.settle); return; }
       keys.tap(t.key);
       taps += 1;
@@ -2304,8 +2322,14 @@
   }
 
   /* The box over the keys. Checked runs the autopilot; a real press on
-     any of `stops` (the keys, the screen, the switch) unchecks it, so the
-     visitor's first click takes over and never fights the demo. */
+     any of `stops` (the keys, the screen, the switch, the bezel's
+     settings) unchecks it, so the visitor's first click takes over and
+     never fights the demo. Two events, because the keys are buttons
+     wired on click so Enter and Space work: a pointer press, and a click
+     in the CAPTURE phase, which runs before the key's own handler and so
+     ends the autopilot's session before the visitor's begins. The
+     autopilot itself never sends DOM events, so every one is the
+     visitor. */
   function wireDemoMode(box, autopilot, stops) {
     if (!box) { return { _wired: false }; }
     function sync() {
@@ -2322,12 +2346,14 @@
       return false;
     }
     box.addEventListener("change", sync);
+    function takeOver(e) {
+      if (onTheBox(e && e.target)) { return; }
+      if (box.checked) { box.checked = false; autopilot.stop(); }
+    }
     (stops || []).forEach(function (el) {
       if (!el || !el.addEventListener) { return; }
-      el.addEventListener("pointerdown", function (e) {
-        if (onTheBox(e && e.target)) { return; }
-        if (box.checked) { box.checked = false; autopilot.stop(); }
-      });
+      el.addEventListener("pointerdown", takeOver);
+      el.addEventListener("click", takeOver, true);
     });
     sync();
     return { _wired: true, sync: sync };
@@ -2400,7 +2426,8 @@
     var keys = null;
     current = build();
     keys = wireKeys(opts.controls, proxy);
-    var options = wireOptions(opts.settings || opts.controls, proxy, opts.root);
+    var options = wireOptions(opts.settings || opts.controls, proxy, opts.root,
+      function () { if (keys) { keys.clear(); } });
     /* The stage wears the mode, so the drawing around the screen can
        answer it: the display's power light is lit with Crossway and
        dark without. */
@@ -2477,7 +2504,9 @@
       controller: proxy,
       paused: function () { return !onScreen || hidden(); },
     });
-    wireDemoMode(opts.demo, autopilot, [opts.controls, opts.root, opts.toggle]);
+    var settingsBox = opts.settings && opts.settings.querySelector
+      ? opts.settings.querySelector(".cw-settings") : null;
+    wireDemoMode(opts.demo, autopilot, [opts.controls, opts.root, opts.toggle, settingsBox]);
 
     /* One write a minute is enough to keep the clock honest, and it
        touches nothing else — a full redraw would fight the session the
