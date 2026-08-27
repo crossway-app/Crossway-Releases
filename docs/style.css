@@ -2465,6 +2465,16 @@ pre.cmd {
   .cw-legend-what { min-height: 2.8em; }
 }
 
+/* The one instruction the steps cannot carry themselves: the keys are
+   CLICKED. Visitors reached for the real ⌘Tab, which macOS keeps. Set
+   in ink, a touch bigger than the small print, and tight to the boxes. */
+.cw-keys-lead {
+  margin: 0 0 -4px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.3;
+  color: var(--ink);
+}
 /* Two steps, two boxes: the group box of the era, a hairline frame with
    its label sitting on the line. The instruction is the layout. */
 .cw-keypad { display: flex; gap: 18px; align-items: flex-start; }
