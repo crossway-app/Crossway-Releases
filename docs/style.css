@@ -55,8 +55,8 @@
      replacing the neutral greys the first cut had). Night gets the same
      blue, deep; the terminal keeps its phosphor. Everything else on the
      screen stays neutral, and a test reads every token and checks. */
-  --scr-wall-a: #e8f0fa;       /* wallpaper, top */
-  --scr-wall-b: #c9d9ec;       /* wallpaper, bottom */
+  --scr-wall-a: #e6eefc;       /* wallpaper, top: pale sky */
+  --scr-wall-b: #bccdef;       /* wallpaper, bottom: a gentle periwinkle */
   /* A terminal is dark in BOTH appearances, so it cannot be a mix of
      the screen's ink and paper, which trade places at night. Neutral. */
   --scr-term: #262626;
@@ -122,16 +122,16 @@
   :root:not([data-theme="light"]):not(.day) {
     --scr-ink: #ececec;
     --scr-paper: #2b2b2b;
-    --scr-wall-a: #3a4658;
-    --scr-wall-b: #222b38;
+    --scr-wall-a: #2e3a50;
+    --scr-wall-b: #1a2232;
     --scr-term: #161616;
   }
 }
 html.night {
   --scr-ink: #ececec;
   --scr-paper: #2b2b2b;
-  --scr-wall-a: #3a4658;
-  --scr-wall-b: #222b38;
+  --scr-wall-a: #2e3a50;
+  --scr-wall-b: #1a2232;
   --scr-term: #161616;
 }
 
@@ -676,8 +676,14 @@ code, kbd {
      TWO COLUMNS, because the extra width that helped the hero left the
      reading windows as very wide, very short slabs. The lede and the
      demo span both; Read Me pairs with Privacy, and Contact with
-     Donate. */
-  max-width: 1320px;
+     Donate.
+
+     1480, up from 1320 (2026-08-27, the user's call, with cursor.com's
+     near-full-width layout as the reference): the demo's keys take a
+     fixed 440px beside the display, so every extra pixel of column is
+     display, and on a 1512-wide laptop the screen grows from 812 to
+     about 960px wide before the fold, not the column, bounds it. */
+  max-width: 1480px;
   margin: 0 auto;
   /* Tight at the top: what is spent above the demo is demo the visitor
      has to scroll for, and the lede is only a title and two controls. */
