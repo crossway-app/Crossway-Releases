@@ -1436,6 +1436,13 @@ pre.cmd {
 .cw-screen {
   container-type: inline-size;
   position: relative;
+  /* The screen is its OWN stacking context. Its menu bar, panes and
+     Dock carry z-indexes in the hundreds so they layer against each
+     other; without this they layered against the whole page too, and
+     the Dock (300) painted over the cameo's visitor (95), who is meant
+     to walk in front of everything. container-type no longer implies
+     one, so it is said outright. */
+  isolation: isolate;
   display: flex;
   flex-direction: column;
   overflow: hidden;
