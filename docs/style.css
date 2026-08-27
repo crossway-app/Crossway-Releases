@@ -50,17 +50,21 @@
      terminal, so the two halves cannot bleed into each other. */
   --scr-ink: #202020;          /* text and hairlines on the screen */
   --scr-paper: #ffffff;        /* window fill */
-  /* Neutral, and NEUTRAL: equal red, green and blue. The screen earns
-     its "modern" from smooth gradients, real window chrome and five
-     colour app marks, not from the wallpaper, which sat against a 1-bit
-     grey page as a purple slab and read as a different website; and the
-     greys used to carry a faint blue cast, which is colour the user's
-     rule does not allow. A test reads every screen token and checks. */
-  --scr-wall-a: #a8a8a8;       /* wallpaper, top */
-  --scr-wall-b: #6f6f6f;       /* wallpaper, bottom */
+  /* The wallpaper is the one screen surface with a colour: a very
+     pale, pastel blue, light at the top (the user's call, 2026-08-27,
+     replacing the neutral greys the first cut had). Night gets the same
+     blue, deep; the terminal keeps its phosphor. Everything else on the
+     screen stays neutral, and a test reads every token and checks. */
+  --scr-wall-a: #e8f0fa;       /* wallpaper, top */
+  --scr-wall-b: #c9d9ec;       /* wallpaper, bottom */
   /* A terminal is dark in BOTH appearances, so it cannot be a mix of
      the screen's ink and paper, which trade places at night. Neutral. */
   --scr-term: #262626;
+  /* What the screen's shadows are made of: black, in every appearance.
+     They used to be mixed from the screen's ink, which is LIGHT at
+     night and in the terminal, so every window wore a glow there. A
+     shadow is dark whatever the appearance. */
+  --scr-shade: #000000;
 
   /* The five app marks. Not Apple's art and not Apple's colours: the
      glyphs are drawn, and these are ours. They are the only five
@@ -118,16 +122,16 @@
   :root:not([data-theme="light"]):not(.day) {
     --scr-ink: #ececec;
     --scr-paper: #2b2b2b;
-    --scr-wall-a: #4c4c4c;
-    --scr-wall-b: #242424;
+    --scr-wall-a: #3a4658;
+    --scr-wall-b: #222b38;
     --scr-term: #161616;
   }
 }
 html.night {
   --scr-ink: #ececec;
   --scr-paper: #2b2b2b;
-  --scr-wall-a: #4c4c4c;
-  --scr-wall-b: #242424;
+  --scr-wall-a: #3a4658;
+  --scr-wall-b: #222b38;
   --scr-term: #161616;
 }
 
@@ -1272,17 +1276,20 @@ pre.cmd {
   background: var(--scr-paper);
   border-radius: 10px;
   border: 1px solid color-mix(in srgb, var(--scr-ink) 16%, transparent);
-  /* Two shadows: a wide soft one for depth, a tight one for the edge. */
-  box-shadow: 0 10px 28px color-mix(in srgb, var(--scr-ink) 14%, transparent),
-              0 1px 3px color-mix(in srgb, var(--scr-ink) 12%, transparent);
+  /* Two shadows: a wide soft one for depth, a tight one for the edge.
+     On --scr-shade, which is black in every appearance: mixed from the
+     screen's ink they were light at night and in the terminal, and every
+     window wore a glow instead of a shadow. */
+  box-shadow: 0 10px 28px color-mix(in srgb, var(--scr-shade) 14%, transparent),
+              0 1px 3px color-mix(in srgb, var(--scr-shade) 12%, transparent);
 }
 
 /* The frontmost window lifts and lights up. This is what makes a raise
    legible — and a raise is the ONLY thing native cmd-backtick does, so
    this carries half the comparison the hero exists to make. */
 .cw-win.is-front {
-  box-shadow: 0 18px 44px color-mix(in srgb, var(--scr-ink) 22%, transparent),
-              0 2px 6px color-mix(in srgb, var(--scr-ink) 16%, transparent);
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--scr-shade) 22%, transparent),
+              0 2px 6px color-mix(in srgb, var(--scr-shade) 16%, transparent);
   border-color: color-mix(in srgb, var(--scr-ink) 26%, transparent);
 }
 
@@ -1509,7 +1516,7 @@ pre.cmd {
   padding: 5px;
   border-radius: 8px;
   background: color-mix(in srgb, var(--scr-paper) 92%, transparent);
-  box-shadow: 0 12px 30px color-mix(in srgb, var(--scr-ink) 22%, transparent),
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--scr-shade) 22%, transparent),
               0 0 0 1px color-mix(in srgb, var(--scr-ink) 12%, transparent);
   backdrop-filter: blur(18px) saturate(150%);
 }
@@ -1645,7 +1652,7 @@ pre.cmd {
      little shows through. At 60% the desktop read through it as if the
      windows behind were glass, which the user called out. */
   background: color-mix(in srgb, var(--scr-paper) 92%, transparent);
-  box-shadow: 0 24px 60px color-mix(in srgb, var(--scr-ink) 26%, transparent);
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--scr-shade) 26%, transparent);
   backdrop-filter: blur(var(--cw-blur, 18px)) saturate(150%);
 }
 .cw-panel.is-open { display: flex; }
@@ -1904,7 +1911,7 @@ pre.cmd {
   background: var(--scr-paper);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 1px 6px color-mix(in srgb, var(--scr-ink) 18%, transparent);
+  box-shadow: 0 1px 6px color-mix(in srgb, var(--scr-shade) 18%, transparent);
 }
 /* Every measurement inside a miniature is a share of the SLOT, not a
    fixed pixel size. The desktop window's own chrome is drawn for a
@@ -2004,7 +2011,7 @@ pre.cmd {
   border-radius: 16px;
   /* The same material as the panel. */
   background: color-mix(in srgb, var(--scr-paper) 92%, transparent);
-  box-shadow: 0 24px 60px color-mix(in srgb, var(--scr-ink) 26%, transparent);
+  box-shadow: 0 24px 60px color-mix(in srgb, var(--scr-shade) 26%, transparent);
   backdrop-filter: blur(var(--cw-blur, 18px)) saturate(150%);
 }
 .cw-grid.is-open { display: grid; }
@@ -2120,7 +2127,7 @@ pre.cmd {
   border-radius: 2.2cqw;
   background: color-mix(in srgb, var(--scr-paper) 74%, transparent);
   box-shadow: 0 0 0 1px color-mix(in srgb, var(--scr-ink) 12%, transparent),
-              0 1.4cqw 3cqw color-mix(in srgb, var(--scr-ink) 22%, transparent);
+              0 1.4cqw 3cqw color-mix(in srgb, var(--scr-shade) 22%, transparent);
   backdrop-filter: blur(18px) saturate(150%);
 }
 .cw-dock-apps, .cw-dock-mins { display: flex; align-items: center; gap: 1.4cqw; }
@@ -2346,12 +2353,34 @@ pre.cmd {
    columns have to answer to the width of something above it. */
 .cw-hero { container-type: inline-size; }
 .cw-stage {
+  position: relative;          /* the demo-mode box hangs off its corner */
   display: grid;
   grid-template-columns: minmax(0, 1fr) 440px;
   grid-template-rows: auto auto;
   column-gap: 28px;
   row-gap: 14px;
   align-items: center;
+}
+/* Demo mode, in the corner over the keys: out of the grid entirely, so
+   it moves nothing, and left of nothing. */
+.cw-demo-mode {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1;
+  color: var(--ink);
+  cursor: pointer;
+}
+.cw-demo-mode input {
+  margin: 0;
+  width: 14px;
+  height: 14px;
+  accent-color: var(--ink);
 }
 /* The heading over the whole demo: the title, and one short line under
    it that says the screen is a desktop too. Small, and tight, because
@@ -2657,7 +2686,18 @@ pre.cmd {
    when Crossway is off, and nothing to the layout: its two controls are
    siblings of the switch on the tray. */
 .cw-settings { display: contents; }
-.cw-bezel-ctl { display: flex; flex-direction: column; align-items: center; gap: 5px; }
+/* Each control is two ROWS of fixed height: the control, then its
+   engraved label. Fixed, so the three controls share one centre line
+   whether or not they carry a label (the switch has none), and the
+   labels share another. More specific than .cw-set, which is one of
+   them and would otherwise keep its flex. */
+.cw-bezel .cw-bezel-ctl {
+  display: grid;
+  grid-template-rows: 20px 12px;
+  row-gap: 4px;
+  align-items: center;
+  justify-items: center;
+}
 /* Silkscreen: small caps in the body face, in ink, as a label printed on
    a case is. Tracked grey Chicago read as a web eyebrow. */
 .cw-engrave {
