@@ -2173,6 +2173,131 @@
   }
 
   /* ====================================================================
+     DEMO MODE
+
+     Left alone, the demo demonstrates itself: an autopilot drives the
+     same keypad a visitor clicks, at a visitor's pace, through five
+     scenes — ⌘Tab into Terminal and ⌘` to its second window, ⌥Tab to a
+     window of another app, ⌘` again, ⌥Tab again, and ⌘` home to Safari's
+     first window. The five are chosen so that their five commits, each
+     moving one window and its app to the front of the MRU, put the
+     desktop back EXACTLY where it started: the loop ends in the state it
+     began in and runs again from there, with no reset and no jump.
+
+     Targets are named, not counted: a tap is repeated until the named
+     app or window is selected, so a scene still lands if the visitor
+     left the desktop rearranged. Native has no ⌥ and no strip, so the
+     autopilot waits while the switch says Native; it also waits while
+     the demo is scrolled away or the tab is hidden. The visitor's first
+     real click on the keys, the screen or the switch turns demo mode
+     off; the box over the keys turns it back on.
+     ==================================================================== */
+  var DEMO_SCENES = [
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm2" }] },
+    { hold: "opt", taps: [{ key: "tab", win: "sa2" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm1" }] },
+    { hold: "opt", taps: [{ key: "tab", win: "qt1" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa1" }] },
+  ];
+  /* A visitor's pace, in ms: the modifier goes down, the taps come at a
+     stroll (each one past the preview delay, so the strip is seen to
+     bloom), the last selection is looked at, and the modifier goes up;
+     then a rest before the next scene. */
+  var DEMO_PACE = { hold: 500, tap: 700, settle: 1100, rest: 1400 };
+  /* No scene needs more taps than this; a target that never comes
+     (a rearranged desktop) is given up on rather than tapped forever. */
+  var DEMO_MAX_TAPS = 16;
+
+  function createAutopilot(o) {
+    o = o || {};
+    var keys = o.keys, controller = o.controller;
+    var scenes = o.scenes || DEMO_SCENES, pace = o.pace || DEMO_PACE;
+    var later = o.setTimeout || function (fn, ms) { return setTimeout(fn, ms); };
+    var cancel = o.clearTimeout || function (h) { clearTimeout(h); };
+    var paused = o.paused || function () { return false; };
+    var running = false, handle = null, scene = 0, step = 0, taps = 0, loops = 0;
+
+    function onTarget(t) {
+      if (t.app) { var a = controller.stage.selectedApp(); return !!a && a.id === t.app; }
+      if (t.win) { var w = controller.stage.selectedWindow(); return !!w && w.id === t.win; }
+      return true;
+    }
+    function schedule(fn, ms) {
+      handle = later(function () { handle = null; if (running) { fn(); } }, ms);
+    }
+    /* The modifier goes down. Native has none of this, and a demo nobody
+       is looking at can wait: both just try again after a rest. */
+    function begin() {
+      if (paused() || !controller.state.crosswayEnabled) { schedule(begin, pace.rest); return; }
+      var sc = scenes[scene];
+      step = 0; taps = 0;
+      keys.hold(sc.hold);
+      if (keys._held() !== sc.hold) { next(); return; }
+      schedule(tapNext, pace.hold);
+    }
+    /* One tap of the scene's current key; on to the next key once its
+       named target is selected. */
+    function tapNext() {
+      var sc = scenes[scene], t = sc.taps[step];
+      if (!t) { schedule(letGo, pace.settle); return; }
+      keys.tap(t.key);
+      taps += 1;
+      if (onTarget(t) || taps >= DEMO_MAX_TAPS) { step += 1; taps = 0; }
+      schedule(tapNext, pace.tap);
+    }
+    /* The modifier goes up, which commits, exactly as a visitor's does. */
+    function letGo() {
+      var sc = scenes[scene];
+      if (keys._held() === sc.hold) { keys.hold(sc.hold); }
+      next();
+    }
+    function next() {
+      scene = (scene + 1) % scenes.length;
+      if (scene === 0) { loops += 1; }
+      schedule(begin, pace.rest);
+    }
+    function start() {
+      if (running) { return; }
+      running = true;
+      scene = 0;
+      schedule(begin, pace.rest);
+    }
+    /* Stopping mid-scene abandons the session rather than committing a
+       selection nobody chose, and lets the key go. */
+    function stop() {
+      if (!running) { return; }
+      running = false;
+      if (handle !== null) { cancel(handle); handle = null; }
+      if (keys._held() !== null) { controller.escape(); keys.clear(); }
+    }
+    return {
+      start: start, stop: stop,
+      get running() { return running; },
+      get scene() { return scene; },
+      get loops() { return loops; },
+    };
+  }
+
+  /* The box over the keys. Checked runs the autopilot; a real press on
+     any of `stops` (the keys, the screen, the switch) unchecks it, so the
+     visitor's first click takes over and never fights the demo. */
+  function wireDemoMode(box, autopilot, stops) {
+    if (!box) { return { _wired: false }; }
+    function sync() {
+      if (box.checked) { autopilot.start(); } else { autopilot.stop(); }
+    }
+    box.addEventListener("change", sync);
+    (stops || []).forEach(function (el) {
+      if (!el || !el.addEventListener) { return; }
+      el.addEventListener("pointerdown", function () {
+        if (box.checked) { box.checked = false; autopilot.stop(); }
+      });
+    });
+    sync();
+    return { _wired: true, sync: sync };
+  }
+
+  /* ====================================================================
      MOUNTING
 
      The phone gets FEWER things, not smaller ones. A 3x3 exposé of
@@ -2204,8 +2329,10 @@
        started in Crossway. */
     var proxy = {
       get state() { return current.controller.state; },
+      get stage() { return current.controller.stage; },
       press: function (chord, o) { return current.controller.press(chord, o); },
       release: function () { return current.controller.release(); },
+      escape: function () { return current.controller.escape(); },
       setCrosswayEnabled: function (on) { return current.controller.setCrosswayEnabled(on); },
       setIncludeMinimized: function (on) { return current.controller.setIncludeMinimized(on); },
     };
@@ -2284,20 +2411,37 @@
        happens. A caller that wants it open — the social card — asks. */
     if (opts.open === true) { keys.hold("cmd"); keys.tap("tab"); }
 
-    /* The film runs while the demo is on screen and stands on its first
-       frame when it is scrolled away, and for good when the visitor has
-       asked for less motion, as the retro figures do. */
+    /* Whether anyone can see the demo: scrolled away or in a hidden tab,
+       the film stands on its frame and the autopilot waits. The film also
+       stands still for good when the visitor has asked for less motion,
+       as the retro figures do. */
     var reduced = typeof window !== "undefined" && !!window.matchMedia
       && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reduced && projector.reels.length) {
-      if (typeof IntersectionObserver !== "undefined" && opts.root) {
-        new IntersectionObserver(function (entries) {
-          if (entries[0].isIntersecting) { projector.start(); } else { projector.stop(); }
-        }).observe(opts.root);
-      } else {
-        projector.start();
-      }
+    var onScreen = true;
+    function hidden() { return typeof document !== "undefined" && !!document.hidden; }
+    var filmRuns = !reduced && projector.reels.length > 0;
+    function attend() {
+      if (!filmRuns) { return; }
+      if (onScreen && !hidden()) { projector.start(); } else { projector.stop(); }
     }
+    if (typeof IntersectionObserver !== "undefined" && opts.root) {
+      new IntersectionObserver(function (entries) {
+        onScreen = !!entries[0].isIntersecting;
+        attend();
+      }).observe(opts.root);
+    }
+    if (typeof document !== "undefined" && document.addEventListener) {
+      document.addEventListener("visibilitychange", attend);
+    }
+    attend();
+
+    /* Demo mode: the autopilot on the same keys, and the box that runs it. */
+    var autopilot = opts.autopilot || createAutopilot({
+      keys: keys,
+      controller: proxy,
+      paused: function () { return !onScreen || hidden(); },
+    });
+    wireDemoMode(opts.demo, autopilot, [opts.controls, opts.root, opts.toggle]);
 
     /* One write a minute is enough to keep the clock honest, and it
        touches nothing else — a full redraw would fight the session the
@@ -2324,6 +2468,7 @@
       keys: keys,
       rebuild: rebuild,
       projector: projector,
+      autopilot: autopilot,
     };
   }
 
@@ -2354,6 +2499,10 @@
     wireDock: wireDock,
     wirePane: wirePane,
     wireToggle: wireToggle,
+    wireDemoMode: wireDemoMode,
+    createAutopilot: createAutopilot,
+    DEMO_SCENES: DEMO_SCENES,
+    DEMO_PACE: DEMO_PACE,
     GRID_COLUMNS: GRID_COLUMNS,
     TILE_ASPECT: TILE_ASPECT,
     DESKTOP_ASPECT: DESKTOP_ASPECT,
