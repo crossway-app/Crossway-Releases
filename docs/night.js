@@ -154,9 +154,10 @@
      included. The inline head snippet already did the add before first
      paint on a fresh load; this covers a stripped snippet and, via
      pageshow, bfcache restores whose frozen classes predate a toggle
-     made on another page. Removals are BY NAME on purpose: a third
-     appearance also lives on this element, and clearing the class list
-     wholesale here would strip it. */
+     made on another page. Removals are BY NAME on purpose: other
+     classes live on this element too — the terminal's appearance, and
+     the retro hero's pre-paint flag — and clearing the class list
+     wholesale here would strip them. */
   function applyStored() {
     var stored;
     try {
