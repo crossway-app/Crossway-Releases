@@ -13,11 +13,15 @@
 :root {
   --ink: #000000;
   --paper: #ffffff;
-  /* The display's case: a slightly different white from the page's
-     paper, warm, so the monitor is not one more window and not a grey
-     slab either (Platinum was tried and rejected, 2026-08-27). The tray
-     and the mark's panes wear it too. */
-  --cw-case: #faf9f6;
+  /* The display's case: the page's own paper, the colour of its windows,
+     in every appearance. Platinum, a warm off-white and a light grey
+     were each tried and rejected (2026-08-27): now that the machine on
+     the screen has a personality of its own (its cursors, its greyer
+     windows), one uniform white for the site's things reads calmer, and
+     the screen's windows stay distinct by being the slightly grey ones.
+     Still a token of its own, because the tray and the mark's panes
+     wear it, and a case colour is one decision, made here. */
+  --cw-case: var(--paper);
   /* The two cells of the desktop dither. They were 12% of range apart
      at a 2px cell, which composites to flat grey at any normal viewing
      distance — the era's defining texture, nominally present and
@@ -99,7 +103,6 @@
   html:not(.day) {
     --ink: #e8e8e8;
     --paper: #141414;
-    --cw-case: #1c1c1a;
     --desktop-a: #343434;
     --desktop-b: #141414;
     --dim: #6f6f6f;
@@ -147,7 +150,6 @@ html.night {
 html.night {
   --ink: #e8e8e8;
   --paper: #141414;
-  --cw-case: #1c1c1a;
   --desktop-a: #343434;
   --desktop-b: #141414;
   --dim: #6f6f6f;
@@ -198,7 +200,6 @@ html.day { color-scheme: light; }
 html.hacker {
   --ink: #7bec93;            /* primary text and rules */
   --paper: #101b12;          /* window fill, the lit surface */
-  --cw-case: #142216;              /* the case, in phosphor */
   --desktop-a: #0c140d;      /* phosphor dither, cell A */
   --desktop-b: #080d09;      /* cell B */
   --dim: #2e6b42;            /* disabled chrome */
@@ -1466,6 +1467,10 @@ pre.cmd {
      to walk in front of everything. container-type no longer implies
      one, so it is said outright. */
   isolation: isolate;
+  /* Over the screen the pointer is the machine's own (the images are the
+     appendix at the end of this sheet); what can be pressed, dragged or
+     resized says so below in the same set. */
+  cursor: var(--cur-arrow);
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -1524,7 +1529,6 @@ pre.cmd {
   border: 0;
   border-radius: 4px;
   background: transparent;
-  cursor: default;
 }
 .cw-menu-app[aria-expanded="true"] { background: color-mix(in srgb, var(--scr-ink) 14%, transparent); }
 .cw-menu-app:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
@@ -1558,7 +1562,6 @@ pre.cmd {
   font: inherit;
   color: var(--scr-ink);
   text-align: left;
-  cursor: default;
 }
 .cw-menu-quit:hover, .cw-menu-quit:focus-visible { background: color-mix(in srgb, var(--scr-ink) 12%, transparent); outline: none; }
 .cw-menu-key { color: color-mix(in srgb, var(--scr-ink) 50%, transparent); }
@@ -1624,21 +1627,21 @@ pre.cmd {
 @media (prefers-reduced-motion: no-preference) {
   .cw-desktop, .cw-dock { transition: filter 160ms ease; }
 }
-.cw-win-bar { cursor: grab; }
-.cw-win-bar:active { cursor: grabbing; }
+.cw-win-bar { cursor: var(--cur-grab); }
+.cw-win-bar:active { cursor: var(--cur-grabbing); }
 /* The switcher's cells are for the mouse too. */
-.cw-app, .cw-tile-wrap, .cw-gcell { cursor: pointer; }
+.cw-app, .cw-tile-wrap, .cw-gcell { cursor: var(--cur-hand); }
 /* A window resizes from any edge or corner: the desktop's wiring writes
    the edge under the pointer onto the window, and the cursor says so,
    over the title bar's own hand included. */
-.cw-win[data-edge="l"], .cw-win[data-edge="r"] { cursor: ew-resize; }
-.cw-win[data-edge="t"], .cw-win[data-edge="b"] { cursor: ns-resize; }
-.cw-win[data-edge="tl"], .cw-win[data-edge="br"] { cursor: nwse-resize; }
-.cw-win[data-edge="tr"], .cw-win[data-edge="bl"] { cursor: nesw-resize; }
+.cw-win[data-edge="l"], .cw-win[data-edge="r"] { cursor: var(--cur-ew); }
+.cw-win[data-edge="t"], .cw-win[data-edge="b"] { cursor: var(--cur-ns); }
+.cw-win[data-edge="tl"], .cw-win[data-edge="br"] { cursor: var(--cur-nwse); }
+.cw-win[data-edge="tr"], .cw-win[data-edge="bl"] { cursor: var(--cur-nesw); }
 .cw-win[data-edge]:not([data-edge=""]) .cw-win-bar { cursor: inherit; }
-.cw-light { cursor: pointer; }
+.cw-light { cursor: var(--cur-hand); }
 .cw-win.is-zoomed { border-radius: 0; }
-.cw-win.is-zoomed .cw-win-bar { cursor: default; }
+.cw-win.is-zoomed .cw-win-bar { cursor: var(--cur-arrow); }
 
 /* Windows settle rather than snap when the stack reorders. Opacity and
    shadow only — never transform, which would shimmer the sketches. */
@@ -2192,7 +2195,7 @@ pre.cmd {
   border: 0;
   border-radius: 1.2cqw;
   background: transparent;
-  cursor: pointer;
+  cursor: var(--cur-hand);
 }
 .cw-dock-app .cw-appicon { display: block; font-size: 6cqw; }
 .cw-dock-app:focus-visible, .cw-dock-min:focus-visible { outline: 2px solid var(--link); outline-offset: 2px; }
@@ -2229,7 +2232,7 @@ pre.cmd {
   display: grid;
   place-items: center;
   container-type: inline-size;
-  cursor: pointer;
+  cursor: var(--cur-hand);
 }
 
 /* ---- the system switcher, for the Crossway-off comparison -----------
@@ -2426,14 +2429,14 @@ pre.cmd {
   /* One row: the display, and beside it ONE window as tall as it. */
   align-items: stretch;
 }
-/* Demo mode, at the right of the "Click the keys" line. */
+/* Automatic demo, at the right of the "Click the keys" line. */
 .cw-demo-mode {
   flex: none;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 7px;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1;
   color: var(--ink);
   cursor: pointer;
@@ -2442,8 +2445,8 @@ pre.cmd {
    ink on paper, an X of two strokes when on. Not the browser's. */
 .cw-demo-mode input {
   margin: 0;
-  width: 13px;
-  height: 13px;
+  width: 15px;
+  height: 15px;
   -webkit-appearance: none;
   appearance: none;
   border: var(--border) solid var(--ink);
@@ -2461,7 +2464,7 @@ pre.cmd {
 .cw-subtitle {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: clamp(12px, 2.1cqb, 14px);   /* one line at the smallest window, so it wraps only where there is room */
   line-height: 1.3;
   color: var(--muted);
 }
@@ -2469,21 +2472,33 @@ pre.cmd {
 /* A window of the page's own kind (.mac-window draws its paper, its ink
    line and its shadow; the title bar is the markup's), as tall as the
    display beside it: its body fills the height, the legend spreads its
-   rows over what is left, and the small print sits at the foot. */
+   rows over what is left, and the small print sits at the foot.
+   Beside the display it is a SIZE container: its height is the
+   display's, never its content's, so the legend's type and rows can be
+   cut to that height (cqb) and the window reads dense at every height
+   the fold allows rather than airy at the tallest. Under the display
+   (the container block) it is as tall as its content, so there it is
+   no size container and the cqb units fall to their clamps. */
 .cw-controls {
   grid-column: 2;
   grid-row: 1;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  container-type: size;
 }
 .cw-controls .titlebar .title { margin: 0; font-weight: normal; }
 .cw-keys-body {
   flex: 1;
+  min-height: 0;                          /* a flex item's floor is its content: without this the body overflows the window rather than fit it */
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 14px 22px 16px;
+  /* Cut to the window's height, as the legend below is: the side-by-side
+     layout begins at 1121px, where the display beside this window is
+     ~490px tall, and runs up to a ~740px window; every one of these is
+     a line from its floor at ~500px to its full size at ~710px. */
+  gap: clamp(6px, calc(4.8cqb - 18px), 16px);
+  padding: 16px 22px 18px;
 }
 .cw-keys-lead-row {
   display: flex;
@@ -2560,7 +2575,7 @@ pre.cmd {
 
 @container (max-width: 1120px) {
   .cw-stage { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto; }
-  .cw-controls { grid-column: 1; grid-row: 2; }
+  .cw-controls { grid-column: 1; grid-row: 2; container-type: normal; }
   .cw-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cw-legend-what { min-height: 2.8em; }
 }
@@ -2571,7 +2586,7 @@ pre.cmd {
 .cw-keys-lead {
   margin: 0;
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: 15px;
   line-height: 1.3;
   color: var(--ink);
 }
@@ -2590,19 +2605,19 @@ pre.cmd {
 .cw-step-label {
   padding: 0 5px;
   font-family: var(--font-display);
-  font-size: 11px;
+  font-size: 12px;
   line-height: 1;
   color: var(--ink);
 }
 .cw-step-verb { color: var(--muted); }
 
-/* A keycap, at MacBook Pro proportions: one unit is 56px, command is a
+/* A keycap, at MacBook Pro proportions: one unit is 62px, command is a
    quarter wider, tab half as wide again; every cap the same height. The
    page's chip idiom (paper, ink line, a solid bottom shadow) at a size
    you press, and the legend its real key carries: the symbol at the top
    right, the name at the bottom left. */
 .cw-keycap-btn {
-  --cw-u: 56px;
+  --cw-u: 62px;
   position: relative;
   width: var(--cw-u);
   height: var(--cw-u);
@@ -2619,8 +2634,8 @@ pre.cmd {
 .cw-key-tab { width: calc(var(--cw-u) * 1.5); }
 .cw-keycap-btn svg {
   position: absolute;
-  top: 6px; right: 7px;
-  width: 18px; height: 18px;
+  top: 7px; right: 8px;
+  width: 21px; height: 21px;
   fill: none;
   stroke: currentColor;
   stroke-width: 1.7;
@@ -2629,12 +2644,12 @@ pre.cmd {
 }
 /* The backtick key has no name: its symbol sits in the middle, larger,
    with the tilde above it as on the real cap. */
-.cw-key-tick svg { top: 50%; left: 50%; right: auto; width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+.cw-key-tick svg { top: 50%; left: 50%; right: auto; width: 30px; height: 30px; margin: -15px 0 0 -15px; }
 .cw-keycap-word {
   position: absolute;
-  left: 8px; bottom: 7px;
+  left: 9px; bottom: 8px;
   font-family: var(--font-body);
-  font-size: 10px;
+  font-size: 12px;
   line-height: 1;
   letter-spacing: 0.01em;
 }
@@ -2686,10 +2701,14 @@ pre.cmd {
 .cw-legend li {
   display: grid;
   grid-template-columns: auto 1fr;
-  column-gap: 10px;
-  row-gap: 3px;
+  column-gap: 12px;
+  row-gap: 4px;
   align-items: baseline;
-  padding: 5px 9px 6px;
+  /* The rows are cut to the window's height: the smallest window the
+     side-by-side layout produces (~490px, at 1121px wide) gets 3px, a
+     ~710px window and up the full 12px, so the rows fill what they have
+     and never spill. The type below does the same. */
+  padding: clamp(3px, calc(4.3cqb - 18.4px), 12px) 10px clamp(4px, calc(4.3cqb - 17.4px), 13px);
   border: var(--border) solid transparent;
 }
 /* Two marks on a row. READY: a modifier is held and this chord is there
@@ -2699,8 +2718,8 @@ pre.cmd {
 .cw-legend li.is-ready { border-color: var(--ink); }
 .cw-legend li.is-active { border-color: var(--ink); box-shadow: 3px 3px 0 0 var(--ink); background: var(--paper); }
 .cw-legend li.is-active .key { background: var(--ink); color: var(--paper); box-shadow: none; transform: translateY(2.5px); }
-.cw-legend .key { min-width: 22px; font-size: 12px; padding: 2px 6px 3px; }
-.cw-legend-name { font-family: var(--font-display); font-size: 12px; }
+.cw-legend .key { min-width: 26px; font-size: clamp(13px, 2.1cqb, 16px); padding: 3px 7px 4px; }
+.cw-legend-name { font-family: var(--font-display); font-size: clamp(13px, calc(1.9cqb + 3.5px), 17px); }
 .cw-legend-what {
   grid-column: 2;
   /* A line reserved: the ⌘ sentences rewrite themselves for the other
@@ -2710,10 +2729,29 @@ pre.cmd {
      on a phone) they can wrap, so two are, in the container block. */
   min-height: 1.4em;
   font-family: var(--font-body);
-  font-size: 11.5px;
+  font-size: clamp(12px, calc(1.43cqb + 4.85px), 15px);
   line-height: 1.4;
   color: var(--muted);
 }
+/* One row's Crossway sentence ("Go straight to the window you want. No
+   trackpad.") runs to two lines beside the display at the larger type
+   (2026-08-27), and its Native sentence to one: the row reserves two in
+   both worlds, or the rows under it jump when the switch is thrown. The
+   layout suite's rail check is what enforces this; the other three
+   rows' sentences stay one line in both worlds at every size. */
+.cw-legend li[data-chord="cmd-tick"] .cw-legend-what { min-height: 2.8em; }
+/* The terminal sets the whole page in its mono face, which is about a
+   fifth wider than the body face, so at THIS pass's larger type three of
+   the four sentences wrapped to two lines there where one does here, and
+   the window's content stopped fitting the display's height: measured
+   2026-08-27, 31px past the foot at 1512x850, where the smaller type it
+   replaced fit with room to spare. A face that sets wider gets its own
+   step down, and the day and night appearances keep theirs. Measured,
+   not guessed, and kept measured: the layout suite runs the terminal at
+   every fold viewport and fails if the window spills. */
+html.hacker .cw-legend-what { font-size: clamp(11px, calc(1.2cqb + 4px), 13px); line-height: 1.35; }
+html.hacker .cw-legend li { padding-top: clamp(2px, calc(3cqb - 13px), 8px); padding-bottom: clamp(3px, calc(3cqb - 12px), 9px); }
+html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6cqb + 3px), 15px); }
 /* The ⌥ rows go flat with the ⌥ key, chips included, or the row dims
    around two chips that still look pressable. */
 /* Off without Crossway: faded as one, chips included, so what you
@@ -2727,10 +2765,10 @@ pre.cmd {
 .cw-fine {
   grid-column: 1 / -1;
   margin: 0;
-  padding-top: 10px;
+  padding-top: clamp(6px, 1.7cqb, 12px);
   border-top: var(--border) solid color-mix(in srgb, var(--ink) 30%, transparent);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: clamp(11px, 1.8cqb, 12.5px);
   line-height: 1.4;
   color: var(--muted);
 }
@@ -2766,23 +2804,23 @@ pre.cmd {
    them and would otherwise keep its flex. */
 .cw-bezel .cw-bezel-ctl {
   display: grid;
-  grid-template-rows: 20px 12px;
+  grid-template-rows: 20px 13px;
   row-gap: 4px;
+  padding-top: 12px;             /* the wheel's scale sits in this, above its row */
   align-items: center;
   justify-items: center;
 }
-/* Silkscreen: small caps in the body face, in ink, as a label printed on
-   a case is. Tracked grey Chicago read as a web eyebrow. */
+/* Silkscreen: the body face in title case, in ink, as a label printed on
+   a case is. Small caps were tried and read as a web eyebrow; so did
+   tracked grey Chicago. */
 .cw-engrave {
   font-family: var(--font-body);
-  font-size: 9.5px;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
+  font-size: 11px;
+  letter-spacing: 0.02em;
   line-height: 1;
   white-space: nowrap;
   color: var(--ink);
 }
-.cw-engrave output { color: var(--ink); }
 
 /* The latching button. The checkbox stays in the tree for the keyboard
    and the screen reader; what you see is a square cap in the page's
@@ -2822,7 +2860,7 @@ pre.cmd {
 .cw-set input:focus-visible + .cw-tick { outline: 2px solid var(--link); outline-offset: 2px; }
 
 /* The thumbwheel: a rule, four detents, and a cap that rides it. */
-.cw-slider { position: relative; display: inline-block; width: 92px; height: 18px; }
+.cw-slider { position: relative; display: inline-block; width: 108px; height: 18px; }
 .cw-slider input[type="range"] {
   -webkit-appearance: none;
   appearance: none;
@@ -2865,13 +2903,39 @@ pre.cmd {
   justify-content: space-between;
 }
 .cw-detents i { width: var(--border); height: 4px; background: var(--ink); }
+/* The wheel's scale, printed above it as a dial's is: a word over each
+   detent (zero-width cells at the detents' own spacing, each centring
+   its word), the one the cap sits under in ink and bold and the rest
+   dim, which is the switch's own language for the chosen side. The
+   engine stamps the wheel with the step it is at. */
+.cw-scale {
+  position: absolute;
+  left: 5px; right: 5px; bottom: calc(100% + 1px);
+  display: flex;
+  justify-content: space-between;
+}
+.cw-scale i {
+  width: 0;
+  display: flex;
+  justify-content: center;
+  font-family: var(--font-body);
+  font-style: normal;
+  font-size: 8.5px;
+  line-height: 1;
+  white-space: nowrap;
+  color: var(--dim);
+}
+.cw-slider[data-blur="0"] .cw-scale i:nth-child(1),
+.cw-slider[data-blur="1"] .cw-scale i:nth-child(2),
+.cw-slider[data-blur="2"] .cw-scale i:nth-child(3),
+.cw-slider[data-blur="3"] .cw-scale i:nth-child(4) { color: var(--ink); font-weight: 700; }
 
 /* Without Crossway there is nothing here to set: the system cannot reach
    a minimized window at all, and its switcher's blur is not ours. Shown
    but not offered, and dimmed as one, cap and light and wheel alike. */
 .cw-settings.is-disabled .cw-bezel-ctl { opacity: 0.4; }
 .cw-settings.is-disabled .cw-engrave,
-.cw-settings.is-disabled .cw-engrave output { color: var(--dim); }
+.cw-settings.is-disabled .cw-scale i { color: var(--dim); }
 .cw-settings.is-disabled .cw-set { cursor: default; }
 .cw-settings.is-disabled .cw-led { border-color: var(--dim); }
 .cw-settings.is-disabled .cw-push-row:has(input:checked) .cw-led { background: var(--dim); }
@@ -2984,13 +3048,27 @@ html.retro #demo { display: none; }
     box-shadow: 3px 3px 0 0 var(--ink);
     background: var(--paper);
   }
-  .cw-engrave { font-size: 9px; }
-  .cw-slider { width: 72px; }
+  .cw-engrave { font-size: 10px; }
+  .cw-slider { width: 84px; }
+  /* A phone's wheel has no room for four words at once (they are
+     zero-width cells, so they would sit on top of each other): the one
+     the cap is under is printed. VISIBILITY, not display: the cells are
+     spaced by `justify-content: space-between`, and with three of the
+     four taken out of the flow the survivor is the only item, which
+     space-between packs at the left edge — the word would print over
+     the None detent whichever step the cap is on (measured at 390px
+     before this was written). Hidden cells keep their place. */
+  .cw-scale i { visibility: hidden; }
+  .cw-slider[data-blur="0"] .cw-scale i:nth-child(1),
+  .cw-slider[data-blur="1"] .cw-scale i:nth-child(2),
+  .cw-slider[data-blur="2"] .cw-scale i:nth-child(3),
+  .cw-slider[data-blur="3"] .cw-scale i:nth-child(4) { visibility: visible; }
 
   .cw-keys-body { padding: 14px 14px 16px; }
   .cw-legend { grid-template-columns: minmax(0, 1fr); }
   .cw-keypad { flex-wrap: wrap; gap: 12px; }
   .cw-keycap-btn { --cw-u: 48px; }
+  .cw-keycap-word { font-size: 10px; }    /* "command" at 12px overran the 60px cap */
 
   /* A phone's menu bar is tight: the status mark took the clock's last
      few pixels and it wrapped. */
@@ -3005,4 +3083,30 @@ html.retro #demo { display: none; }
   /* Panel tiles likewise. */
   .cw-tile-wrap { width: 74px; }
   .cw-tile { height: 46px; }
+}
+
+/* ---- the screen's cursors: the monitor's own --------------------------
+   Over the monitor's screen the pointer is the machine's, not the
+   visitor's: the classic one-bit set, arrow, pointing hand, the open and
+   closed hand for dragging a window, and the four two-headed arrows for
+   its edges, each drawn at 16 px with the white outline the originals
+   had, so it reads on any wallpaper. The moment the pointer crosses the
+   bezel it changes, which is what says "you are in this machine now."
+   CSS only, and static: a cursor image is composited by the browser the
+   way any cursor is, off the page's own frame budget, so this costs the
+   demo nothing per frame. The SVG is what draws (crisp at every scale);
+   the PNG after it is for a browser that will not take an SVG cursor,
+   and the keyword after both is for one that takes neither. The bezel
+   and its controls stay with the page's pointer. Only the images live
+   here, as an appendix; the rules that use them sit with the screen,
+   the windows, the Dock and the panes they belong to. */
+:root {
+  --cur-arrow: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20x='1'%20y='0'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='1'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='2'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='3'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='3'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='4'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='4'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='5'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='7'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='7'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='8'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='8'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='9'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='10'%20width='5'%20height='1'%20fill='white'/%3E%3Crect%20x='11'%20y='10'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='11'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='11'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='11'%20width='5'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='12'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='12'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='12'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='14'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='14'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='14'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='15'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='15'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='15'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='15'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='0'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='1'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='2'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='2'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='3'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='3'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='5'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='8'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='9'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='10'%20width='5'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='13'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='13'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='13'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='14'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='5'%20y='14'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='8'%20y='14'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='5'%20y='15'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='8'%20y='15'%20width='1'%20height='1'%20fill='black'/%3E%3C/svg%3E") 1 1, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAcUlEQVR42p2TQQ4AIQgDC/H/X+5edFMNEcGLQmAgSA0ASQIAzMxQPD4TASVVASTbEF+PLsTV6EB+wBpgFbJ10IH46ahCPHJWICFAgzPIiJJ0udSOmhi3oNd14Ky+3Ycv18ItLv2Fs20ZGjKBukq5I+cPEu977/8wi7IAAAAASUVORK5CYII=") 1 1, default;
+  --cur-hand: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20x='2'%20y='0'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='0'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='1'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='1'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='1'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='2'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='3'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='3'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='3'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='4'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='4'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='5'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='5'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='7'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='7'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='7'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='8'%20width='9'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='11'%20y='9'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='10'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='10'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='10'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='10'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='11'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='11'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='12'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='11'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='12'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='11'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='14'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='14'%20width='8'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='14'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='15'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='15'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='0'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='1'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='1'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='2'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='2'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='3'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='3'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='4'%20width='3'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='9'%20y='5'%20width='3'%20height='1'%20fill='black'/%3E%3Crect%20x='1'%20y='6'%20width='4'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='9'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='12'%20y='6'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='9'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='12'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='12'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='1'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='1'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='13'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='12'%20y='13'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='14'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='12'%20y='14'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='15'%20width='10'%20height='1'%20fill='black'/%3E%3C/svg%3E") 5 0, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAjElEQVR42p2TSxLDMAhDJcb3v7K6MR2iuJBUO/x5BoGJLUkCAJIZY8dEo6gBSUiCJAz3zoB/NAK09Wt/dZerHxVSfVkdvRh5WSuGc/mBNHKCJSiq800yN1iCwutKSIV14FXdnobm1JB4MzSnB8JfeAj6lhVuylSCZxSe1pSFt3l5a3zqJj9ykOjf+ak+HJt9BxHd0ocAAAAASUVORK5CYII=") 5 0, pointer;
+  --cur-grab: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20x='3'%20y='0'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='0'%20width='5'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='1'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='1'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='1'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='11'%20y='1'%20width='5'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='2'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='2'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='3'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='3'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='3'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='3'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='3'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='4'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='4'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='5'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='5'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='5'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='6'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='7'%20width='8'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='7'%20width='5'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='10'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='10'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='10'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='11'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='12'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='12'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='14'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='14'%20width='8'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='14'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='15'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='15'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='0'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='1'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='1'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='9'%20y='1'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='2'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='2'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='2'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='2'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='3'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='3'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='3'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='3'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='1'%20y='4'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='5'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='0'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='15'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='1'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='15'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='1'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='15'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='15'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='13'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='13'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='14'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='14'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='15'%20width='10'%20height='1'%20fill='black'/%3E%3C/svg%3E") 8 8, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAhUlEQVR42pWTUQ7AIAhDKeH+V2YfWw1r2JR+icQHhAorysw0MwPA2FRgkrECAKyHPP8B3TYipIIArHNkh3131d4R4Er86OIzGTrzVL5rdwRQiAI1B2DtPnNYnu+8M9J4hLqWQfUboCs67YLb884cp9WrkUZdVO9EZ9HH+3kwBqIG+p1PdAHmeXIHyUeQoQAAAABJRU5ErkJggg==") 8 8, grab;
+  --cur-grabbing: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20x='3'%20y='2'%20width='8'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='3'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='3'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='3'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='4'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='4'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='4'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='5'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='5'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='7'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='7'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='7'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='8'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='8'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='0'%20y='10'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='10'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='10'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='11'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='12'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='15'%20y='12'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='14'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='14'%20width='8'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='14'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='15'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='15'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='3'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='3'%20width='3'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='10'%20y='4'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='12'%20y='5'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='6'%20width='3'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='1'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='5'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='1'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='15'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='1'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='15'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='15'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='14'%20y='12'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='13'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='13'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='14'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='14'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='15'%20width='10'%20height='1'%20fill='black'/%3E%3C/svg%3E") 8 9, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAh0lEQVR42sWSOw7AMAhDY5T7X9mdQK5FPp2aqVXAxo+M8feB/pDkthjAUiCbs4bk0HrVVqGXAIAq1G8XViG4uzd5KhcKH72JWSOnoMabO2d37xhDswOAbqKj7pGnX6yaPFKKRLey09Epwx1Pj8k5hQK6mcINooN18aRrIw5RV8gbmLMj+wXoAxFCfxPkpkIlAAAAAElFTkSuQmCC") 8 9, grabbing;
+  --cur-ew: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20x='3'%20y='4'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='4'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='5'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='5'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='6'%20width='6'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='8'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='8'%20width='6'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='8'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='10'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='10'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='6'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='6'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='7'%20width='12'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='8'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='8'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3C/svg%3E") 8 7, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAVUlEQVR42u2SwQoAIAhDNfr/X16XkjmKCjrmLZ7OTTL75fwAgADuR6xog8zlbZ0lsdkw8ZVAOKkKdy4GHyKVIlw7MD1SjwJMOpgxL3rZ1XbN/j/ww2r4BUX42s+RBQAAAABJRU5ErkJggg==") 8 7, ew-resize;
+  --cur-ns: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20x='6'%20y='1'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='2'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='2'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='3'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='3'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='5'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='5'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='9'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='10'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='10'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='13'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='14'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='2'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='3'%20width='3'%20height='1'%20fill='black'/%3E%3Crect%20x='5'%20y='4'%20width='5'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='5'%20y='11'%20width='5'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='12'%20width='3'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='13'%20width='1'%20height='1'%20fill='black'/%3E%3C/svg%3E") 7 8, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAZUlEQVR42sVTQQrAMAyKpf//srssJZTGbISx3EpVDBqz5iD7IMkFAlLcUGTnRbFSYCdXIkcHu2Oxgc1khUUU7vXclslCYXRj/F9gqgIdosWjFCIu9OBVE+VbCrhNJ4VO4JNjas8FPmA+DVcqV7UAAAAASUVORK5CYII=") 7 8, ns-resize;
+  --cur-nwse: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20x='1'%20y='1'%20width='8'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='3'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='3'%20width='5'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='4'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='5'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='6'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='7'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='7'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='8'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='8'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='11'%20y='8'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='10'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='10'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='10'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='11'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='11'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='12'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='13'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='14'%20width='8'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='2'%20width='6'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='3'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='5'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='10'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='8'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='9'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='12'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='10'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='12'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='12'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='8'%20y='13'%20width='6'%20height='1'%20fill='black'/%3E%3C/svg%3E") 8 8, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAeElEQVR42qWTUQ7AIAhDKfH+V+6+2AiCYMYv5VkaFPlZEBEhyaMIQNVbTpQKGvYHmA4cASQFwAs5WbfSzIHNcWBHq72nEK0SjxCrEuB72e6VozIkE4ZQt4C1O56wynYvOrnAbHAE8PtGiPVW+1mSl30WLeD2tK/rATIcWBOPtZ2fAAAAAElFTkSuQmCC") 8 8, nwse-resize;
+  --cur-nesw: url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='16'%20height='16'%20shape-rendering='crispEdges'%3E%3Crect%20x='7'%20y='1'%20width='8'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='2'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='3'%20width='5'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='3'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='4'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='4'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='11'%20y='5'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='5'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='6'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='10'%20y='6'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='6'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='7'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='7'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='14'%20y='7'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='3'%20y='8'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='8'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='9'%20y='8'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='12'%20y='8'%20width='3'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='9'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='10'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='10'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='7'%20y='10'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='2'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='4'%20y='11'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='6'%20y='11'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='12'%20width='2'%20height='1'%20fill='white'/%3E%3Crect%20x='5'%20y='12'%20width='4'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='13'%20width='1'%20height='1'%20fill='white'/%3E%3Crect%20x='1'%20y='14'%20width='8'%20height='1'%20fill='white'/%3E%3Crect%20x='8'%20y='2'%20width='6'%20height='1'%20fill='black'/%3E%3Crect%20x='12'%20y='3'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='11'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='4'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='10'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='5'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='9'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='6'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='8'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='13'%20y='7'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='5'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='8'%20y='8'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='4'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='7'%20y='9'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='6'%20y='10'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='5'%20y='11'%20width='1'%20height='1'%20fill='black'/%3E%3Crect%20x='3'%20y='12'%20width='2'%20height='1'%20fill='black'/%3E%3Crect%20x='2'%20y='13'%20width='6'%20height='1'%20fill='black'/%3E%3C/svg%3E") 7 8, url("data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAcklEQVR42rWSQQrAMAgEHcn/v2xvbbDqBko9Bcys66LZx2JqRkSMMLDkBOjEzcxMCmQTWdCVRTYCeAn6gYPoYCmg4DKDnPwOA+S+dxOrPKpgmezm6dUKPtiVcBviKXwL7MHkxNU5r+rC9rfgHwH18be6AP0iUSGJVjDRAAAAAElFTkSuQmCC") 7 8, nesw-resize;
 }
