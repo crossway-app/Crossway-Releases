@@ -1527,6 +1527,38 @@ pre.cmd {
 .cw-menu-item { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); }
 .cw-menu-spacer { flex: 1; }
 .cw-menu-clock { color: color-mix(in srgb, var(--scr-ink) 60%, transparent); }
+/* Crossway's status item, beside the clock: the switcher as a mark, an
+   ink frame with the app row as one pane above three window panes, the
+   drawing the display's bezel wears. Template-style, ink only. Shown
+   while Crossway is on the screen; hidden, and out of the bar, in
+   Native, as a quit menu-bar app's item is. */
+.cw-menu-mark {
+  position: relative;
+  flex: none;
+  width: 13px;
+  height: 11px;
+  margin-right: 2px;
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--scr-ink) 85%, transparent);
+}
+.cw-menu-mark::before, .cw-menu-mark::after {
+  content: "";
+  position: absolute;
+  left: 1.5px;
+  right: 1.5px;
+  border-radius: 0.5px;
+  background: var(--scr-paper);
+}
+.cw-menu-mark::before { top: 1.5px; height: 3px; }
+.cw-menu-mark::after {
+  top: 6px;
+  height: 3.5px;
+  background: linear-gradient(to right,
+    var(--scr-paper) 0 29%, transparent 29% 35.5%,
+    var(--scr-paper) 35.5% 64.5%, transparent 64.5% 71%,
+    var(--scr-paper) 71% 100%);
+}
+.cw-menu-mark[hidden] { display: none; }
 
 .cw-desktop {
   position: relative;
