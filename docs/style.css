@@ -2759,6 +2759,33 @@ pre.cmd {
    layout suite's rail check is what enforces this; the other three
    rows' sentences stay one line in both worlds at every size. */
 .cw-legend li[data-chord="cmd-tick"] .cw-legend-what { min-height: 2.8em; }
+/* A SHORT window, and the one place the density lines cannot reach.
+   The legend's rows and type are cut to the window's height, but the
+   keypad is not: its caps are a fixed 62px because they are the thing
+   the visitor clicks, and the subtitle, the lead row and the small print
+   are whole lines that do not scale. Below about 540px of window those
+   fixed costs stop fitting, and since this round makes the window take
+   the display's height rather than its content's, the overflow paints
+   outside it: measured 2026-08-27 at a 600px-tall viewport, 1px in the
+   body face and 22px in the terminal's wider one, at any width from
+   1200px up. (Before this round the window simply grew instead, which
+   put a gap inside the machine — the thing round 14 removed.)
+
+   So the fixed blocks give way, and only here. This is a query on the
+   window's OWN height, which it can answer because it is a size
+   container; in the stacked layout it is not one, the nearest container
+   is inline-size only, and a block-axis query against that never
+   matches, so none of this reaches the phone or the narrow desktop. */
+@container (max-height: 540px) {
+  .cw-keycap-btn { --cw-u: 52px; }
+  .cw-keycap-btn svg { top: 6px; right: 7px; width: 18px; height: 18px; }
+  .cw-key-tick svg { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+  .cw-keycap-word { left: 8px; bottom: 7px; font-size: 11px; }
+  .cw-step { padding: 8px 10px; }
+  .cw-keys-body { padding-bottom: 12px; }
+  .cw-fine { padding-top: 6px; }
+}
+
 /* The terminal sets the whole page in its mono face, which is about a
    fifth wider than the body face, so at THIS pass's larger type three of
    the four sentences wrapped to two lines there where one does here, and
@@ -2771,6 +2798,16 @@ pre.cmd {
 html.hacker .cw-legend-what { font-size: clamp(11px, calc(1.2 * var(--cw-dens) + 4px), 13px); line-height: 1.35; }
 html.hacker .cw-legend li { padding-top: clamp(2px, calc(3 * var(--cw-dens) - 13px), 8px); padding-bottom: clamp(3px, calc(3 * var(--cw-dens) - 12px), 9px); }
 html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) + 3px), 15px); }
+/* A short window AND the terminal: the fixed blocks above take the body
+   face from 1px over to 13px clear and the terminal from 22px over to 4,
+   because its wider face still wraps one sentence to two lines where the
+   body face wraps none. Its rows give the last of it. This sits AFTER
+   the terminal's own row rule and not inside the block above, because
+   the two selectors are identical and a container query adds no
+   specificity: source order is the whole of what separates them. */
+@container (max-height: 540px) {
+  html.hacker .cw-legend li { padding-top: 1px; padding-bottom: 2px; }
+}
 /* The ⌥ rows go flat with the ⌥ key, chips included, or the row dims
    around two chips that still look pressable. */
 /* Off without Crossway: faded as one, chips included, so what you
