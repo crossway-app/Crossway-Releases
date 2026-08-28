@@ -1530,6 +1530,15 @@ pre.cmd {
   border-radius: 4px;
   background: transparent;
 }
+/* A BUTTON does not inherit its cursor: the UA sheet gives it `default`,
+   the visitor's own arrow, which beats the screen's inherited one. These
+   two are the only buttons on the screen that should read as ordinary
+   surfaces rather than as things with a hand (macOS shows the arrow over
+   its own menu bar), so they name the drawn arrow outright. An earlier
+   pass deleted their `cursor: default` believing the screen's arrow
+   would inherit down; it cannot, and the layout suite's keyword-leak
+   sweep is what found it (2026-08-27). */
+.cw-menu-app, .cw-menu-quit { cursor: var(--cur-arrow); }
 .cw-menu-app[aria-expanded="true"] { background: color-mix(in srgb, var(--scr-ink) 14%, transparent); }
 .cw-menu-app:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
 /* The menu: a small modern panel under its title, the same material as
