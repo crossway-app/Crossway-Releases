@@ -2686,9 +2686,23 @@ pre.cmd {
    guess now. Measured off Wikimedia's Computer_keyboard_US.svg, whose
    ~ key carries both legends at one x: the tilde's baseline sits 37%
    down the keycap face and the grave's 90% down, so they stand about
-   HALF the cap's height apart. This drawing keeps that proportion, and
-   a test pins it, because a sentence beside a drawing guards nothing. */
-.cw-key-tick svg { top: 50%; left: 50%; right: auto; width: 30px; height: 30px; margin: -15px 0 0 -15px; }
+   HALF the cap's height apart. This drawing pushes them to the edges of
+   the box it has, which is as close to that as a 24-unit box inside a
+   62px cap gets, and a test pins the gap, because a sentence beside a
+   drawing guards nothing. */
+.cw-key-tick svg {
+  top: 50%; left: 50%; right: auto;
+  /* A BIGGER BOX, not a bigger drawing (2026-08-27, the user asking for
+     more air a second time). The drawing was already filling 70% of a
+     30px box, so the gap could not grow inside it. The box grows to 40
+     and the glyphs shrink by the same 0.75 in viewBox units, stroke
+     included, so both legends render at exactly the size and weight they
+     did and every pixel the box gained goes into the space between them:
+     measured, the clear gap goes from 12px to 18px and the pair spans
+     46% of the cap, against the real keyboard's ~53%. */
+  width: 40px; height: 40px; margin: -20px 0 0 -20px;
+  stroke-width: 1.275;
+}
 .cw-keycap-word {
   position: absolute;
   left: 9px; bottom: 8px;
@@ -2829,7 +2843,7 @@ pre.cmd {
 @container (max-height: 540px) {
   .cw-keycap-btn { --cw-u: 52px; }
   .cw-keycap-btn svg { top: 6px; right: 7px; width: 18px; height: 18px; }
-  .cw-key-tick svg { width: 26px; height: 26px; margin: -13px 0 0 -13px; }
+  .cw-key-tick svg { width: 34px; height: 34px; margin: -17px 0 0 -17px; }
   .cw-keycap-word { left: 8px; bottom: 7px; font-size: 11px; }
   .cw-step { padding: 8px 10px; }
   .cw-keys-body { padding-bottom: 12px; }
