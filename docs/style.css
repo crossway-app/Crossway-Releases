@@ -732,6 +732,13 @@ code, kbd {
 .desk-col > .mac-window:last-child:not(:only-child) { margin-top: auto; }
 .desktop > #donate { grid-column: 1 / -1; }
 
+/* Terms is a page of one window. .desktop is a two-column grid, so
+   without this it sits in column one and the page reads as half empty.
+   Spanning does not run the sentences to 1480px: the measure cap on
+   .window-body holds them at 74ch and centres them, the same as in the
+   two-column pages' windows. */
+.desktop > #terms { grid-column: 1 / -1; }
+
 /* Text keeps its measure while the figure takes the full width. The
    demo's own body carries .figure and is exempt. */
 .window-body:not(.figure) {
