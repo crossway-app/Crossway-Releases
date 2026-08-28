@@ -2678,11 +2678,16 @@ pre.cmd {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-/* The backtick key has no name: its symbols sit in the middle, larger,
-   and stacked the way the real cap is printed, the tilde ABOVE the grave
-   accent. They were the other way round until 2026-08-27, when the user
-   caught it; this comment described the right thing the whole time,
-   which is why the drawing is pinned by a test now and not by prose. */
+/* The backtick key has no name: its two symbols sit in the middle,
+   larger, stacked the way a real cap is printed — the tilde ABOVE the
+   grave accent, and set APART, one in the upper area and one in the
+   lower. Both of those were got wrong in turn (2026-08-27, the user
+   caught each): first the order, then the spacing. The spacing is not a
+   guess now. Measured off Wikimedia's Computer_keyboard_US.svg, whose
+   ~ key carries both legends at one x: the tilde's baseline sits 37%
+   down the keycap face and the grave's 90% down, so they stand about
+   HALF the cap's height apart. This drawing keeps that proportion, and
+   a test pins it, because a sentence beside a drawing guards nothing. */
 .cw-key-tick svg { top: 50%; left: 50%; right: auto; width: 30px; height: 30px; margin: -15px 0 0 -15px; }
 .cw-keycap-word {
   position: absolute;
