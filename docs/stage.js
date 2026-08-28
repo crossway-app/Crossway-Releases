@@ -2379,16 +2379,22 @@
   }
 
   /* The box over the keys. Checked runs the autopilot; a real press on
-     any of `stops` (the keys, the screen, the switch, the bezel's
-     settings) unchecks it, so the visitor's first click takes over and
-     never fights the demo. Three events, because a visitor reaches these
-     surfaces three ways: a pointer press; a click in the CAPTURE phase,
-     which runs before the key's own handler and so ends the autopilot's
-     session before the visitor's begins (the keys are buttons wired on
-     click, so Enter and Space arrive that way); and a keydown, also in
-     capture, for the switch, whose arrow keys move the knob without
-     ever producing a click. The autopilot itself never sends DOM
-     events, so every one is the visitor. */
+     any of `stops` unchecks it, so the visitor's first go at driving
+     takes over and never fights the demo.
+
+     What is IN that list is the keys and the screen: the two surfaces
+     the demo itself drives. The bezel is deliberately out (2026-08-27,
+     the user) — throwing the switch or moving the blur wheel is watching
+     the demo under different settings, not taking it over, so it keeps
+     running and picks up the world the switch now names.
+
+     Three events, because a visitor reaches a surface three ways: a
+     pointer press; a click in the CAPTURE phase, which runs before the
+     key's own handler and so ends the autopilot's session before the
+     visitor's begins (the keys are buttons wired on click, so Enter and
+     Space arrive that way); and a keydown, also in capture, for anything
+     driven by arrow keys rather than clicks. The autopilot itself never
+     sends DOM events, so every one is the visitor. */
   function wireDemoMode(box, autopilot, stops) {
     if (!box) { return { _wired: false }; }
     function sync() {
@@ -2565,9 +2571,14 @@
       controller: proxy,
       paused: function () { return !onScreen || hidden(); },
     });
-    var settingsBox = opts.settings && opts.settings.querySelector
-      ? opts.settings.querySelector(".cw-settings") : null;
-    wireDemoMode(opts.demo, autopilot, [opts.controls, opts.root, opts.toggle, settingsBox]);
+    /* The keys and the screen, and NOT the bezel (2026-08-27, the user):
+       changing a setting is watching the demo, not taking it over. Throw
+       the switch or move the wheel and the demo keeps running, in the
+       world the switch now names; only the keys, the screen and the box
+       itself stop it. The bezel is a sibling of the screen host rather
+       than inside it, so leaving it out of this list is the whole of
+       what that takes. */
+    wireDemoMode(opts.demo, autopilot, [opts.controls, opts.root]);
 
     /* One write a minute is enough to keep the clock honest, and it
        touches nothing else — a full redraw would fight the session the
