@@ -158,22 +158,13 @@
                  on the bezel face to its left, as the displays of the era
                  wore them. The light is lit while Crossway is on the
                  screen and goes dark when the switch says Native. -->
-            <rect class="cw-strip" x="56" y="216" width="281.5" height="26" rx="3"/>
-            <circle class="cw-power" cx="21" cy="229" r="2.2"/>
+            <rect class="cw-strip" x="14" y="216" width="316" height="26" rx="3"/>
             <!-- The mark: Crossway's own, the switcher as an icon, an ink
                  frame with the app row as one pane above the three window
                  panes. Drawn, so it inverts with the rest of the case. -->
-            <g class="cw-mark" aria-hidden="true">
-              <rect class="cw-ink" x="30" y="223.5" width="13" height="11" rx="1.6"/>
-              <rect class="cw-paper" x="31.5" y="225" width="10" height="3.6" rx="0.5"/>
-              <rect class="cw-paper" x="31.5" y="229.6" width="2.9" height="3.4" rx="0.5"/>
-              <rect class="cw-paper" x="35.05" y="229.6" width="2.9" height="3.4" rx="0.5"/>
-              <rect class="cw-paper" x="38.6" y="229.6" width="2.9" height="3.4" rx="0.5"/>
-            </g>
             <!-- In Native the machine is Apple's, and Apple's own mark takes
                  the bezel, in the page's ink: shown only while the switch
                  says Native, in the place the Crossway mark leaves. -->
-            <path class="cw-apple cw-ink" aria-hidden="true" transform="translate(30.2 223) scale(0.5)" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/>
           </svg>
           <div class="cw-screen-mount"><div class="cw-screen-host" id="cw-screen"></div></div>
         </div>
@@ -188,6 +179,12 @@
         <div class="cw-bezel">
           <div class="cw-bezel-ctl cw-bezel-mode">
             <div class="cw-toggle" role="radiogroup" aria-label="App Switcher">
+              <!-- The power light, which used to sit beside the mark on the
+                   bare bezel. It belongs to the SWITCH: green while Crossway
+                   is the switcher on the screen, ink while the system's is,
+                   which is the same thing the knob's position says and the
+                   same word the minimized light speaks. -->
+              <span class="cw-led cw-mode-led" aria-hidden="true"></span>
               <span class="cw-engrave" data-side="crossway" aria-hidden="true">Crossway</span>
               <span class="cw-switch">
                 <button type="button" class="cw-seg" role="radio" aria-checked="true" data-mode="crossway"><span class="sr-only">Crossway</span></button>
@@ -198,6 +195,17 @@
             </div>
             <span class="cw-engrave" aria-hidden="true">App Switcher</span>
           </div>
+          <!-- The badge, centred on the panel and so on the monitor: the
+               maker's mark where a display of this era put it. It moved off
+               the bare bezel and into the panel when the panel grew to the
+               screen's width, and it is the panel's middle column, so the
+               switch on its left and the settings on its right cannot push
+               it off centre. Crossway's mark with Crossway, Apple's with the
+               system, exactly as before. -->
+          <span class="cw-bezel-logo" aria-hidden="true">
+            <svg class="cw-logo-mark" viewBox="0 0 13 11" focusable="false"><rect class="cw-ink" x="0.0" y="0.0" width="13" height="11" rx="1.6"/><rect class="cw-paper" x="1.5" y="1.5" width="10" height="3.6" rx="0.5"/><rect class="cw-paper" x="1.5" y="6.1" width="2.9" height="3.4" rx="0.5"/><rect class="cw-paper" x="5.05" y="6.1" width="2.9" height="3.4" rx="0.5"/><rect class="cw-paper" x="8.6" y="6.1" width="2.9" height="3.4" rx="0.5"/></svg>
+            <svg class="cw-logo-apple" viewBox="0 0 24 26" focusable="false"><path class="cw-ink" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
+          </span>
           <div class="cw-settings">
             <label class="cw-set cw-push cw-bezel-ctl">
               <span class="cw-push-row"><span class="cw-led" aria-hidden="true"></span><input type="checkbox" data-option="include-minimized" checked><span class="cw-tick" aria-hidden="true"></span></span>
