@@ -2440,18 +2440,8 @@ pre.cmd {
    never show as a different colour. */
 .cw-chassis .cw-well { fill: var(--scr-wall-b); stroke: currentColor; }
 .cw-chassis .cw-ink { fill: currentColor; stroke: none; }
-/* The mark's panes are cut out of its ink frame down to the CASE, not
-   to white: the mark sits on the case. */
-.cw-chassis .cw-paper { fill: var(--cw-case); stroke: none; }
-/* The power light: lit while Crossway runs on the screen, dark in ink
-   when the switch says Native. The stage carries the mode. */
-.cw-chassis .cw-power { fill: var(--cw-led); stroke: currentColor; }
-.cw-stage.is-native .cw-chassis .cw-power { fill: currentColor; }
 /* The bezel's mark follows the switch: Crossway's while Crossway runs
    on the screen, Apple's own in Native. */
-.cw-chassis .cw-apple { display: none; }
-.cw-stage.is-native .cw-chassis .cw-apple { display: inline; }
-.cw-stage.is-native .cw-chassis .cw-mark { display: none; }
 
 /* Registered to the drawn well: the four numbers in the header above. */
 .cw-screen-mount {
@@ -2972,19 +2962,41 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
      width 281.5/344 = 81.8314%   height 26/262 = 9.9237% */
 .cw-bezel {
   position: absolute;
-  left: 16.2791%;
+  /* THE SCREEN'S OWN WIDTH. The tray used to start well inside it, at
+     x56 of the 344-unit drawing, leaving the bare bezel to the left of
+     it carrying the mark and the power light. It runs the full width of
+     the well now — x14, w316, the same numbers .cw-screen-mount uses —
+     so the panel and the screen are one column and the machine reads as
+     two stacked rectangles rather than three. */
+  left: 4.0698%;
   top: 82.4427%;
-  width: 81.8314%;
+  width: 91.8605%;
   height: 9.9237%;
-  display: flex;
+  /* Three columns, and the middle one is what makes the badge CENTRED on
+     the monitor rather than merely between its neighbours: the two 1fr
+     columns are equal by definition, so the logo sits on the panel's
+     centre line whatever the switch and the settings measure. A flex row
+     with space-evenly could not promise that. */
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  justify-content: space-evenly;
   box-sizing: border-box;
 }
 /* The settings box is a grouping for the engine, which greys it as one
-   when Crossway is off, and nothing to the layout: its two controls are
-   siblings of the switch on the tray. */
-.cw-settings { display: contents; }
+   when Crossway is off, and now also the panel's RIGHT column: the two
+   controls sit together to the right of the badge, with the switch alone
+   on its left. It was `display: contents` while the panel was one flex
+   row and its controls were siblings of the switch. */
+.cw-settings {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6.5cqw;
+}
+/* Each side group centres in its own half, so the two read as balanced
+   weights either side of the badge. */
+.cw-bezel-mode { justify-self: center; }
+.cw-settings { justify-self: center; }
 /* Each control is two ROWS of fixed height: the control, then its
    engraved label. Fixed, so the three controls share one centre line
    whether or not they carry a label (the switch has none), and the
@@ -2998,6 +3010,40 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
   align-items: center;
   justify-items: center;
 }
+/* The badge in the panel's middle column. Sized off the panel's own
+   height so it tracks the machine at every width, and given the same
+   two-row grid as a control so it sits on the controls' centre line
+   rather than on the labels'. */
+.cw-bezel-logo {
+  display: grid;
+  grid-template-rows: 20px 13px;
+  padding-top: 12px;
+  align-items: center;
+  justify-items: center;
+}
+/* No `display` on this shared rule: it would out-specify the two rules
+   below that show one badge and hide the other, and both would paint —
+   which is exactly what happened first time round. Size and paint only. */
+.cw-bezel-logo svg {
+  /* The control row's own height, so the badge sits on the same centre
+     line as the switch, the light and the wheel rather than floating
+     between them. It read half-size at 15px: the mark it replaces was
+     11 of the drawing's 26 tray units, which renders about 31px, and a
+     maker's mark that small stops looking deliberate. */
+  height: 20px;
+  width: auto;
+  overflow: visible;
+}
+.cw-bezel-logo .cw-ink { fill: currentColor; stroke: none; }
+/* The mark's panes are cut out of its ink frame down to the PANEL, which
+   is the same paper the windows on this page use. */
+.cw-bezel-logo .cw-paper { fill: var(--cw-case); stroke: none; }
+/* One at a time, and each rule at the same strength as its opposite. */
+.cw-logo-mark { display: block; }
+.cw-logo-apple { display: none; }
+.cw-stage.is-native .cw-logo-mark { display: none; }
+.cw-stage.is-native .cw-logo-apple { display: block; }
+
 /* Silkscreen: the body face in title case, in ink, as a label printed on
    a case is. Small caps were tried and read as a web eyebrow; so did
    tracked grey Chicago. */
@@ -3032,6 +3078,12 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
   background: var(--ink);
 }
 .cw-push-row:has(input:checked) .cw-led { background: var(--cw-led); }
+/* The switch's own light, which replaced the one that sat beside the mark
+   on the bare bezel. Lit while Crossway is the switcher on the screen,
+   ink while the system's is. It reads the SWITCH rather than the stage,
+   so it answers from the same markup the knob does. */
+.cw-mode-led { flex: none; }
+.cw-toggle:has(.cw-seg[data-mode="crossway"][aria-checked="true"]) .cw-mode-led { background: var(--cw-led); }
 .cw-settings.is-disabled .cw-led { background: var(--ink); }
 .cw-tick {
   flex: none;
@@ -3228,10 +3280,12 @@ html.retro #demo { display: none; }
    bezel's controls sit in their own box under the screen. */
 
 @media (max-width: 700px) {
-  .cw-chassis .cw-strip, .cw-chassis .cw-mark, .cw-chassis .cw-ink, .cw-chassis .cw-power { display: none; }
+  .cw-chassis .cw-strip, .cw-chassis .cw-ink { display: none; }
   /* Said at the Native rule's own strength, or that rule outranks this
      list and a lone Apple mark stays on the phone's blank bezel. */
-  .cw-stage.is-native .cw-chassis .cw-apple, .cw-chassis .cw-apple { display: none; }
+  /* The panel unpins into a block of its own on a phone, so the badge
+     has no monitor to sit in the middle of and only costs a row. */
+  .cw-bezel-logo { display: none; }
   .cw-bezel {
     position: static;
     width: auto;
