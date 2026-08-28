@@ -286,8 +286,12 @@ html.hacker .key,
 html.hacker .cw-keycap-btn {
   text-shadow: 0 0 0.3em currentColor;
 }
-/* Inverse video carries no bloom, as the selection rule below says. */
-html.hacker .cw-keycap-btn.is-held { text-shadow: none; }
+/* Inverse video carries no bloom, as the selection rule below says. Both
+   pressed states, since 2026-08-27: a struck cap inverts now too, and a
+   glow on one and not the other would be the same gap in the terminal
+   that the colour was in the body face. */
+html.hacker .cw-keycap-btn.is-held,
+html.hacker .cw-keycap-btn.is-struck { text-shadow: none; }
 
 /* Selection needs no colours of its own: it is already inverse video
    from the tokens, a phosphor block with the ground punched out of it,
@@ -2682,16 +2686,23 @@ pre.cmd {
   letter-spacing: 0.01em;
 }
 .cw-keycap-btn:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
-/* Held sits INTO its shadow and inverts: the page's own language for a
-   chosen thing, and unmistakable at any size. A tap sits down for a beat
-   and stays paper, so the two verbs have two looks. */
-.cw-keycap-btn.is-held {
+/* BLACK MEANS FULLY PRESSED, on both steps (2026-08-27, the user: the
+   step 2 caps sat down without inverting, and that was the one gap in
+   the language). A pressed cap sits into its shadow and inverts, and it
+   is the same picture whichever step it is on.
+
+   What still tells a hold from a tap is DURATION, not colour: a held
+   modifier stays black until it is let go, and a tapped key is black for
+   one beat (STRIKE_MS) and comes back up. The engine only ever puts
+   is-held on the step 1 caps and is-struck on the step 2 caps, so the
+   two never meet on one key. */
+.cw-keycap-btn.is-held,
+.cw-keycap-btn.is-struck {
   transform: translateY(3px);
   box-shadow: 0 1px 0 0 var(--ink);
   background: var(--ink);
   color: var(--paper);
 }
-.cw-keycap-btn.is-struck { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--ink); }
 /* Unavailable without Crossway. An absence, not a texture: the shadow is
    what makes every button on this site look live, so it goes; the cap
    and its legend dim, and the whole key fades, so "you cannot have this"
