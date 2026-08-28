@@ -1501,23 +1501,39 @@
           (widest - 1) + " * var(--cw-strip-gap))"
         : "";
 
-      strip.textContent = "";
-      wins.forEach(function (w, i) {
-        var tile = el("div", "cw-tile");
-        tile.appendChild(buildMini(w, null, projector));
-        var cap = el("span", "cw-tile-title", w.title);
-        var wrap = el("div", "cw-tile-wrap");
-        wrap.dataset.win = w.id;
-        wrap.appendChild(tile);
-        wrap.appendChild(cap);
-        if (state.mode === MODE.WINDOW && i === state.windowIndex) {
-          wrap.classList.add("is-sel");
-        }
-        strip.appendChild(wrap);
-      });
-
       var dropped = wins.length > 0 &&
         (state.mode === MODE.WINDOW || !!view.paneOpen);
+
+      /* Fill the strip only while it is OPEN or opening. Advancing along
+         the row folds the pane and re-arms the bloom, and this draw runs
+         at the START of that fold, with the strip still on screen and its
+         200ms collapse only just begun — so rebuilding it here painted
+         the NEXT app's windows into a pane that was closing. They showed
+         for the length of the collapse, vanished, and faded back in
+         400ms later: "the windows in the window pane flash briefly as
+         tab is pressed" (the user, 2026-08-27). Leaving the tiles alone
+         while folded means the closing pane keeps the windows it was
+         showing, which is what a pane that is closing should show, and
+         the next app's arrive with the bloom that announces them. They
+         are rebuilt on the very next draw that opens it, so nothing goes
+         stale: the drop itself is a draw. */
+      if (dropped) {
+        strip.textContent = "";
+        wins.forEach(function (w, i) {
+          var tile = el("div", "cw-tile");
+          tile.appendChild(buildMini(w, null, projector));
+          var cap = el("span", "cw-tile-title", w.title);
+          var wrap = el("div", "cw-tile-wrap");
+          wrap.dataset.win = w.id;
+          wrap.appendChild(tile);
+          wrap.appendChild(cap);
+          if (state.mode === MODE.WINDOW && i === state.windowIndex) {
+            wrap.classList.add("is-sel");
+          }
+          strip.appendChild(wrap);
+        });
+      }
+
       fold.classList.toggle("is-dropped", dropped);
     }
 
