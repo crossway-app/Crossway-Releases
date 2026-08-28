@@ -2678,8 +2678,11 @@ pre.cmd {
   stroke-linecap: round;
   stroke-linejoin: round;
 }
-/* The backtick key has no name: its symbol sits in the middle, larger,
-   with the tilde above it as on the real cap. */
+/* The backtick key has no name: its symbols sit in the middle, larger,
+   and stacked the way the real cap is printed, the tilde ABOVE the grave
+   accent. They were the other way round until 2026-08-27, when the user
+   caught it; this comment described the right thing the whole time,
+   which is why the drawing is pinned by a test now and not by prose. */
 .cw-key-tick svg { top: 50%; left: 50%; right: auto; width: 30px; height: 30px; margin: -15px 0 0 -15px; }
 .cw-keycap-word {
   position: absolute;
