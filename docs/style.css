@@ -2989,7 +2989,18 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
      centre line whatever the switch and the settings measure. A flex row
      with space-evenly could not promise that. */
   display: grid;
-  grid-template-columns: 1fr auto 1fr;
+  /* minmax(0, 1fr), not a bare 1fr. A bare `1fr` is minmax(AUTO, 1fr):
+     its floor is the track's min-content, so a side whose content
+     outgrows its share steals width from the other and the auto middle
+     track — the badge — slides off the panel's centre. That is not
+     hypothetical: at the round-20 spacing an adversarial review measured
+     the badge 37.7px left of centre between about 1165 and 1265px wide,
+     where the panel is at its narrowest, and zero everywhere else, which
+     is exactly the shape of a bug that a fixed set of test widths walks
+     straight past. A zero floor makes the two columns equal
+     unconditionally, so the centring is arithmetic rather than a
+     property of the current content. */
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   box-sizing: border-box;
 }
@@ -3346,6 +3357,16 @@ html.retro #demo { display: none; }
     height: auto;
     margin: 12px 0 16px;
     padding: 10px 8px 12px;
+    /* BACK TO FLEX here, and the display line is the whole point of it.
+       The panel is a grid on a monitor because the badge has to sit on
+       the machine's centre line; unpinned into a block on a phone there
+       is no monitor and no badge, and what it needs instead is to WRAP.
+       Grid does not wrap, so leaving it a grid left the blur wheel and
+       its label outside the panel's own border — measured at a true
+       390px viewport, 90px past the right edge, taking the page's
+       horizontal scroll with it. The two lines below were written for
+       flex and were sitting here inert. */
+    display: flex;
     justify-content: space-around;
     flex-wrap: wrap;
     gap: 10px 14px;
@@ -3353,7 +3374,21 @@ html.retro #demo { display: none; }
     box-shadow: 3px 3px 0 0 var(--ink);
     background: var(--paper);
   }
+  /* The desktop's stretch machinery is grid machinery, and there is no
+     grid here: the inset that makes the monitor's panel symmetric, and
+     the switch stretched to fill it, only mean something between two
+     equal columns either side of a badge. Left on, they made the switch
+     361px wide inside a 351px panel — measured at a true 375px viewport,
+     which is a width the test harness cannot even produce (it clamps to
+     500), so nothing caught it. Off, the switch is its own width again
+     and the row wraps around it. */
+  .cw-bezel-mode,
+  .cw-settings { padding-inline: 0; justify-self: auto; }
+  .cw-bezel-mode .cw-toggle { width: auto; justify-content: center; }
   .cw-engrave { font-size: 10px; }
+  /* The switch's names keep their ratio to the label size, which is
+     smaller here, rather than staying at the desktop's pixels. */
+  .cw-toggle .cw-engrave[data-side] { font-size: calc(10px * 1.4); }
   .cw-slider { width: 84px; }
   /* A phone's wheel has no room for four words at once (they are
      zero-width cells, so they would sit on top of each other): the one
