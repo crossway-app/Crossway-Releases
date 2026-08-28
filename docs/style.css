@@ -286,8 +286,12 @@ html.hacker .key,
 html.hacker .cw-keycap-btn {
   text-shadow: 0 0 0.3em currentColor;
 }
-/* Inverse video carries no bloom, as the selection rule below says. */
-html.hacker .cw-keycap-btn.is-held { text-shadow: none; }
+/* Inverse video carries no bloom, as the selection rule below says. Both
+   pressed states, since 2026-08-27: a struck cap inverts now too, and a
+   glow on one and not the other would be the same gap in the terminal
+   that the colour was in the body face. */
+html.hacker .cw-keycap-btn.is-held,
+html.hacker .cw-keycap-btn.is-struck { text-shadow: none; }
 
 /* Selection needs no colours of its own: it is already inverse video
    from the tokens, a phosphor block with the ground punched out of it,
@@ -2646,6 +2650,10 @@ pre.cmd {
    right, the name at the bottom left. */
 .cw-keycap-btn {
   --cw-u: 62px;
+  /* The pressed fill, derived so every appearance gets its own: dark
+     enough to read as pressed, short of the flat ink that erased the
+     cap's border and shadow. */
+  --cw-press: color-mix(in srgb, var(--ink) 80%, var(--paper));
   position: relative;
   width: var(--cw-u);
   height: var(--cw-u);
@@ -2682,16 +2690,33 @@ pre.cmd {
   letter-spacing: 0.01em;
 }
 .cw-keycap-btn:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
-/* Held sits INTO its shadow and inverts: the page's own language for a
-   chosen thing, and unmistakable at any size. A tap sits down for a beat
-   and stays paper, so the two verbs have two looks. */
-.cw-keycap-btn.is-held {
+/* A PRESSED CAP GOES DARK AT THE BOTTOM OF ITS TRAVEL (2026-08-27, the
+   user, refining the pass that made a press black at all: "at the apex
+   of the animation, when the key bottoms out physically, it can flash
+   black", and dial the black back so it stops washing out the physical
+   look of the key).
+
+   Two things make that read. The colour is DELAYED past the travel (see
+   the transition on the pressed rule below), so the eye sees the cap
+   move down and only then sees it darken, which is the order the
+   fingertip expects. And the fill is not the flat ink it was: a slab of
+   pure ink swallowed the cap's own ink border and its drop shadow, and
+   those two are the whole reason it looks like a key. At 80% the fill is
+   plainly dark, the border still draws a crisp edge against it, and the
+   shadow under it still reads as a lip.
+
+   What tells a hold from a tap is DURATION, not colour: a held modifier
+   stays dark until it is let go, a tapped key is dark for one beat
+   (STRIKE_MS) and comes back up. The engine only ever puts is-held on
+   the step 1 caps and is-struck on the step 2 caps, so the two never
+   meet on one key. */
+.cw-keycap-btn.is-held,
+.cw-keycap-btn.is-struck {
   transform: translateY(3px);
   box-shadow: 0 1px 0 0 var(--ink);
-  background: var(--ink);
+  background: var(--cw-press);
   color: var(--paper);
 }
-.cw-keycap-btn.is-struck { transform: translateY(3px); box-shadow: 0 1px 0 0 var(--ink); }
 /* Unavailable without Crossway. An absence, not a texture: the shadow is
    what makes every button on this site look live, so it goes; the cap
    and its legend dim, and the whole key fades, so "you cannot have this"
@@ -2709,7 +2734,15 @@ pre.cmd {
   pointer-events: none;
 }
 @media (prefers-reduced-motion: no-preference) {
-  .cw-keycap-btn { transition: transform 70ms ease, box-shadow 70ms ease, background-color 70ms ease, color 70ms ease, opacity 120ms ease; }
+  /* Coming UP, everything together: the cap lifts and lightens at once,
+     because a key that stays dark on the way up reads as stuck. */
+  .cw-keycap-btn { transition: transform 70ms ease, box-shadow 70ms ease, background-color 90ms ease, color 90ms ease, opacity 120ms ease; }
+  /* Going DOWN, the colour waits for the travel. 65ms of delay against a
+     70ms fall puts the dark at the bottom of the stroke rather than
+     across it, which is what makes the press read as a press and not as
+     a swatch changing colour. */
+  .cw-keycap-btn.is-held,
+  .cw-keycap-btn.is-struck { transition: transform 70ms ease, box-shadow 70ms ease, background-color 70ms ease 65ms, color 70ms ease 65ms, opacity 120ms ease; }
 }
 
 /* The legend: four chords, each with the page's own key chips, its name
