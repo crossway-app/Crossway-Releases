@@ -1729,9 +1729,16 @@ pre.cmd {
 }
 /* A squircle wash BEHIND THE ICON, 3pt inside its box on every side —
    not a pill wrapping the icon and its label together. The label gets no
-   background at all; it only fades in. */
-.cw-app.is-sel::before {
+   background at all; it only fades in.
+
+   Drawn on EVERY cell and shown on the selected one, rather than drawn
+   on the selected one: a pseudo-element that comes into existence with
+   the class cannot fade, so the wash popped on and off while the strip
+   below it animated. Absolutely positioned, so an invisible one costs
+   the row no layout at all. */
+.cw-app::before {
   content: "";
+  opacity: 0;
   position: absolute;
   left: 50%;
   top: calc(var(--cw-app-pad) + (var(--cw-icon) - var(--cw-wash)) / 2);
@@ -1741,6 +1748,7 @@ pre.cmd {
   border-radius: calc(var(--cw-icon) * 0.222);
   background: color-mix(in srgb, var(--scr-ink) var(--cw-sel-app), transparent);
 }
+.cw-app.is-sel::before { opacity: 1; }
 
 /* Only the SELECTED app is named. The app hides every other label
    (AppIconView.swift:205 — alphaValue 0, raised to 1 only for the
@@ -1852,13 +1860,26 @@ pre.cmd {
    miniatures inside container-query boxes, which contributed nothing —
    so the strip opened to zero however many windows it held. max-height
    needs no such measurement; the height stays auto and the cap simply
-   has to clear the tallest strip. */
+   has to clear the tallest strip.
+
+   THE CAP IS THE CONTENT'S OWN HEIGHT, and that is a timing decision,
+   not a layout one. What the visitor sees is min(max-height, content),
+   so the part of the ramp that runs above the content is invisible: at
+   a round 320px cap against a strip that is 60-100px tall and cannot
+   by construction exceed ~100px, five sixths of the animation happened
+   off the top. The whole opening was over in 2-3 frames of a 200ms
+   transition — measured 0 -> 23 -> 71 -> 100px, a 48px lurch and then a
+   dead stop at the curve's own peak speed — which is what "jittery"
+   was. Computed from the tokens the strip is built from, the same
+   200ms-odd carries the same distance over 15 frames, and the ease-out
+   actually decelerates into its stop. Keep --cw-fold-h in step with
+   anything that changes a tile's height or its caption. */
 .cw-strip-fold {
   max-height: 0;
   overflow: hidden;
   opacity: 0;
 }
-.cw-strip-fold.is-dropped { max-height: 320px; opacity: 1; }
+.cw-strip-fold.is-dropped { max-height: var(--cw-fold-h); opacity: 1; }
 /* Centred inside a width reserved for the BUSIEST app, so tabbing from
    a four-window app to a one-window app does not resize the pane and
    shuffle the icons under the cursor. */
@@ -1869,7 +1890,7 @@ pre.cmd {
   gap: var(--cw-strip-gap);
 }
 
-.cw-tile-wrap { flex: none; width: var(--cw-strip-w); display: flex; flex-direction: column; gap: 3px; }
+.cw-tile-wrap { flex: none; width: var(--cw-strip-w); display: flex; flex-direction: column; gap: var(--cw-tile-gap); }
 
 /* The SLOT. Transparent and unstroked: the paper fill and the edge
    belong to the miniature window inside it, and whatever the window does
@@ -1899,10 +1920,12 @@ pre.cmd {
   border-radius: 9px;
   background: color-mix(in srgb, var(--scr-ink) var(--cw-sel-win), transparent);
 }
+/* Both of these are tokens because --cw-fold-h adds them up: the cap the
+   fold opens to IS this line plus the tile above it. */
 .cw-tile-title {
   font-family: var(--font-body);
-  font-size: clamp(9px, 1.5cqw, 12px);
-  line-height: 1.2;
+  font-size: var(--cw-tile-cap);
+  line-height: var(--cw-cap-line);
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -1911,9 +1934,37 @@ pre.cmd {
 }
 .cw-tile-wrap.is-sel .cw-tile-title { color: var(--scr-ink); }
 
+/* The bloom and the fold are the app's own two animations, at the app's
+   own numbers: AnimationSpec.stripReveal (0.28s, ease-out) opening and
+   AnimationSpec.stripHide (0.20s, ease-out) closing. CSS's `ease-out`
+   keyword IS Core Animation's, cubic-bezier(0, 0, 0.58, 1), so this is
+   the same curve the product uses rather than a lookalike.
+
+   Which rule carries which: a transition is read from the style the
+   element is moving TO, so the dropped rule times the opening and the
+   base rule times the closing. `ease` on both was one duration doing
+   two jobs, and the wrong one for either.
+
+   The opacity finishes AHEAD of the geometry in both directions, on
+   purpose: opening, the tiles are legible while the pane settles its
+   last few pixels; closing, they are gone before the pane shuts. It
+   used to be the other way around, and the pane was full-size at 54%
+   opacity for 150ms on the way in and an invisible ghost still
+   collapsing on the way out. */
 @media (prefers-reduced-motion: no-preference) {
-  .cw-strip-fold { transition: max-height 200ms ease, opacity 160ms ease; }
-  .cw-app { transition: background-color 120ms ease; }
+  .cw-strip-fold { transition: max-height 200ms ease-out, opacity 140ms ease-out; }
+  .cw-strip-fold.is-dropped { transition: max-height 280ms ease-out, opacity 200ms ease-out; }
+  /* The row's own selection, at the app's AnimationSpec.cellHighlight
+     (0.12s, ease-out). The duration was already here and was doing
+     nothing: .cw-app's background is transparent in every state of
+     Crossway's own row, and the wash is the ::before below, which used
+     to be created and destroyed with the class — a pseudo-element that
+     appears cannot transition, so the ring and the label popped while
+     the strip animated. Now the wash is always there and only its
+     opacity moves, so a tab is continuous from the icon down. */
+  .cw-app { transition: background-color 120ms ease-out; }
+  .cw-app::before { transition: opacity 120ms ease-out; }
+  .cw-app-name { transition: opacity 120ms ease-out, color 120ms ease-out; }
 }
 
 /* ---- the miniature window -------------------------------------------
@@ -2291,8 +2342,11 @@ pre.cmd {
   background: color-mix(in srgb, var(--scr-paper) 26%, transparent);
 }
 /* The system switcher fills the whole cell rather than washing the icon,
-   so Crossway's squircle behind the icon has no business here. */
-.cw-panel.is-native .cw-app.is-sel::before { content: none; }
+   so Crossway's squircle behind the icon has no business here. Said of
+   every cell, not just the selected one: the wash is drawn on all of
+   them now (it fades rather than pops), so taking it off the selected
+   one alone would leave four invisible squircles in the HUD. */
+.cw-panel.is-native .cw-app::before { content: none; }
 
 /* Only the highlighted app is named, and the name sits centred under the
    ROW — the single clearest tell that this is the system's switcher and
@@ -2561,6 +2615,20 @@ pre.cmd {
   --cw-tile-h: clamp(25px, 7.5cqw, 62.5px);
   --cw-strip-h: clamp(33.75px, 9.6875cqw, 82.5px);
   --cw-strip-gap: 8px;
+  /* A tile and its caption, and the gap between them. Declared here
+     rather than inline in .cw-tile-wrap and .cw-tile-title because the
+     FOLD's cap is the sum of them: a strip is one row of tiles, each
+     with one line of caption under it, so its height is
+     tile + gap + caption line and nothing else. The cap has to be that
+     number — see .cw-strip-fold — and the only way it can stay that
+     number is for both places to read the same tokens. */
+  --cw-tile-gap: 3px;
+  --cw-tile-cap: clamp(9px, 1.5cqw, 12px);
+  --cw-cap-line: 1.2;
+  /* The strip's own height, computed rather than guessed, plus a hair
+     of headroom for an engine that rounds a line box up. */
+  --cw-fold-h: calc(var(--cw-strip-h) + var(--cw-tile-gap) +
+                    var(--cw-cap-line) * var(--cw-tile-cap) + 2px);
   /* The Dock's band at the foot of the screen: 1.4cqw inset, 8cqw of
      Dock (6cqw icon in 1cqw of padding), 1cqw of air. */
   --cw-dock-band: 10.4cqw;
@@ -3209,9 +3277,20 @@ html.retro #demo { display: none; }
   .cw-grid { gap: 5px; padding: 8px; }
   :root { --cw-strip-gap: 5px; }
 
-  /* Panel tiles likewise. */
-  .cw-tile-wrap { width: 74px; }
-  .cw-tile { height: 46px; }
+  /* Panel tiles likewise, and BOTH dimensions go on the tokens rather
+     than on the tile, for the same reason: other things are computed
+     from them, and a media query that overrides the concrete property
+     leaves those computations describing a tile the phone does not have.
+     The height fed --cw-fold-h, and overriding .cw-tile directly left
+     the fold opening 58.2px over a 59.8px strip, slicing 1.6px off its
+     captions. The width feeds renderPanel's min-width reservation, which
+     multiplies --cw-strip-w by the busiest app's window count to freeze
+     the pane's width for the session; overriding .cw-tile-wrap directly
+     left it reserving 54px per tile for tiles that are 74px, so the pane
+     resized as you tabbed — measured at 390x844, 140.7px on a one-window
+     app against 171px on a two-window one. The reservation is the whole
+     reason that token exists. */
+  :root { --cw-strip-w: 74px; --cw-strip-h: 46px; }
 }
 
 /* ---- the screen's cursors: the monitor's own --------------------------
