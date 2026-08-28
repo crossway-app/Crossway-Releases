@@ -92,9 +92,10 @@
   --app-note: #eaa221;
   --app-beam: #e0518f;
   --app-reel: #5b5fd6;
-  /* The display's power light: lit green with Crossway on the screen,
-     dark (ink) without. One more colour, on the user's word, and the
-     only one on the drawing. Declared once, re-cut once. */
+  /* The power light: lit green while Crossway is the switcher on the
+     screen, dark (ink) while the system's is. One more colour, on the
+     user's word. It sat on the drawing's bezel until the panel grew to
+     the screen's width; it belongs to the switch now. */
   --cw-led: #2fcf5a;
   --radius-btn: 9px;
 }
@@ -2968,9 +2969,10 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
    latching button with its light, a thumbwheel with detents, each with
    an engraved label. They are the same three inputs the engine has
    always wired, positioned over the drawing in percentages of the same
-   box as the screen. The tray is x56..337.5, y216..242 of 344 x 262:
-     left 56/344 = 16.2791%       top 216/262 = 82.4427%
-     width 281.5/344 = 81.8314%   height 26/262 = 9.9237% */
+   box as the screen. The tray is x14..330, y216..242 of 344 x 262, which
+   is the screen's own width:
+     left 14/344 = 4.0698%        top 216/262 = 82.4427%
+     width 316/344 = 91.8605%     height 26/262 = 9.9237% */
 .cw-bezel {
   position: absolute;
   /* THE SCREEN'S OWN WIDTH. The tray used to start well inside it, at
@@ -3082,6 +3084,14 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
   display: flex;
   align-items: center;
   justify-content: center;
+  /* A FIXED width, because this is the grid's auto middle track and the
+     two badges are not the same shape: Crossway's mark is 47.3px wide at
+     this height and Apple's is 36.9px. Left to size itself, the track
+     narrowed by 10.4px when the switch was thrown and every control on
+     the panel slid 4.4px sideways — the badge stayed centred, but the
+     furniture moved under it. Wide enough for the wider of the two, and
+     the narrower one centres in it. */
+  width: 48px;
 }
 /* No `display` on this shared rule: it would out-specify the two rules
    below that show one badge and hide the other, and both would paint —
@@ -3135,7 +3145,7 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
   border-radius: 50%;
   border: var(--border) solid var(--ink);
   /* Lit green while the setting is on, dark ink while it is off or
-     unavailable: the same word the display's power light uses. */
+     unavailable: the same word the switch's own light uses. */
   background: var(--ink);
 }
 .cw-push-row:has(input:checked) .cw-led { background: var(--cw-led); }
