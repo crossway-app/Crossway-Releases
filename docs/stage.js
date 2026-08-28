@@ -2222,7 +2222,7 @@
 
      Left alone, the demo demonstrates itself: an autopilot drives the
      same keypad a visitor clicks, at a visitor's pace (a little uneven,
-     as a hand is), through nine scenes that use all four chords. It
+     as a hand is), through eleven scenes that use all four chords. It
      opens on the film: ⌘Tab along the row to QuickTime, its tile seen
      playing, and letting go brings the mostly hidden window forward.
      Then ⌘` brings ONE Terminal window forward and leaves the others as
@@ -2255,10 +2255,28 @@
     /* ⌘Tab, ⌘`: ONE Terminal window forward, the others left as they
        were. */
     { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm2" }] },
+    /* A LAP of the front app's strip, and the point of it is the KEY:
+       every other scene taps ` once and moves on, so a visitor never
+       saw the thing ⌘` is actually for. Here it is pressed four times
+       and the highlight walks the whole of Terminal's strip.
+
+       It lands back on the window it started from, and that is what
+       makes it safe to insert: committing the window that is already in
+       front changes neither the window stack nor the app MRU, so the
+       scene is a no-op for state and the loop closes exactly as it did
+       without it. A lap that stopped anywhere else would have to be
+       undone by a later scene, and the two tries at that both drifted
+       (measured 2026-08-28). Targets are named, so the tap count is
+       whatever the strip's length makes it: four here, three for
+       Safari below. */
+    { hold: "cmd", taps: [{ key: "tick", win: "tm2" }] },
     /* ⌥`: the focused app's windows, Terminal's, to its other one. */
     { hold: "opt", taps: [{ key: "tick", win: "tm1" }] },
     /* ⌥Tab: every window, a few along, to a Safari window. */
     { hold: "opt", taps: [{ key: "tab", win: "sa2" }] },
+    /* The same lap over Safari's shorter strip: three presses of ` and
+       home again. */
+    { hold: "cmd", taps: [{ key: "tick", win: "sa2" }] },
     /* And the five that close the loop, in the one order that does:
        the stack's first five, deepest first. */
     { hold: "opt", taps: [{ key: "tab", win: "qt1" }] },
