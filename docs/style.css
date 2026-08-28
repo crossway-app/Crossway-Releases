@@ -34,6 +34,13 @@
   --link-visited: #551a8b;
   --font-display: "ChicagoFLF", "Charcoal", "Geneva", "Helvetica Neue", sans-serif;
   --font-body: "Geneva", Verdana, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  /* The PANEL's face, and only the panel's. Its labels are silkscreen on
+     hardware rather than type on a screen, and Geneva — a bitmap-era
+     design, and the first thing --font-body actually resolves to on a
+     Mac — reads coarse the moment a label is set larger than a caption.
+     This is the face the machine itself was sold with, and it holds
+     together from the 8.5px scale words up to the switch's own name. */
+  --font-panel: "Helvetica Neue", Helvetica, "Inter", "SF Pro Text", -apple-system, Arial, sans-serif;
   --font-mono: "Monaco", "Menlo", "Courier New", monospace;
   --border: 1.5px;           /* the classic 1px frame, at today's densities */
   /* The hero's traffic lights. The one place the live demo hardcodes
@@ -212,6 +219,10 @@ html.hacker {
      no new font, no new request. */
   --font-display: var(--font-mono);
   --font-body: var(--font-mono);
+  /* The terminal sets EVERYTHING in its own face, the panel included, or
+     the one refined sans on the page would be the only thing left in it
+     that had not gone to phosphor. */
+  --font-panel: var(--font-mono);
 }
 html.hacker body {
   background-color: #050806; /* the deepest step, behind the dither */
@@ -3009,7 +3020,17 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
 .cw-bezel-mode,
 .cw-settings {
   justify-self: stretch;
-  padding-inline: 15%;
+  /* 16.5%, and the figure is solved rather than nudged. One inset sets
+     four things at once: both outer margins, both gaps beside the badge,
+     and — because each group is then spread across what is left — the
+     space INSIDE each group. At 15% the switch's parts sat 29.6px apart
+     and the settings 39.5px, which read as three loose things rather
+     than two groups; at 19% the settings pair closes to 5.7px and
+     collides. 16.5% puts the switch's internals at 23.2px and the
+     settings' at 26.8px, near enough equal, against margins and gaps of
+     69.8px: roughly three to one, which is what makes a group read as a
+     group. Re-solve it if either side's content changes width. */
+  padding-inline: 16.5%;
   box-sizing: border-box;
 }
 .cw-settings { justify-content: space-between; }
@@ -3028,7 +3049,7 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
    labels that carry a data-side: the "App Switcher" caption under them,
    "Include Minimized Windows" and "Blur" are all .cw-engrave too and
    stay where they were. */
-.cw-toggle .cw-engrave[data-side] { font-size: calc(11px * 1.7); }
+.cw-toggle .cw-engrave[data-side] { font-size: calc(11px * 1.4); }
 /* Each control is two ROWS of fixed height: the control, then its
    engraved label. Fixed, so the three controls share one centre line
    whether or not they carry a label (the switch has none), and the
@@ -3077,7 +3098,7 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
    a case is. Small caps were tried and read as a web eyebrow; so did
    tracked grey Chicago. */
 .cw-engrave {
-  font-family: var(--font-body);
+  font-family: var(--font-panel);
   font-size: 11px;
   letter-spacing: 0.02em;
   line-height: 1;
@@ -3187,7 +3208,11 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
   width: 0;
   display: flex;
   justify-content: center;
-  font-family: var(--font-body);
+  /* The panel's face and the panel's tracking, like every other label on
+     it: these were the one piece of silkscreen still set in the body
+     face at normal tracking. */
+  font-family: var(--font-panel);
+  letter-spacing: 0.02em;
   font-style: normal;
   font-size: 8.5px;
   line-height: 1;
