@@ -79,18 +79,6 @@
       <div class="btn-row">
         <a class="btn btn-default" href="https://github.com/crossway-app/Crossway-Releases/releases/latest/download/Crossway.zip">Download Crossway.zip</a>
       </div>
-      <!-- PARKED 2026-08-27 (the user): "hide the 'Or let an agent install
-           it for you' part of the site for now, since we don't actually have
-           it working yet." Commented out rather than deleted, because the
-           skill itself is still generated, packaged and published by
-           scripts/package-crossway-skill.py and synced to the site root;
-           only the OFFER is withdrawn. Restore this block verbatim when the
-           agent path actually works, and put the layout suite's agent
-           geometry checks back with it: they are parked in the same breath,
-           in scripts/test-site-layout.mjs, which asserts the block's absence
-           while it is out so that un-hiding it without restoring them fails
-           loudly rather than silently skipping.
-
       <div class="agent-install">
         <p>Or let an agent install it for you:</p>
         <div class="paste-chip" data-copy="Install Crossway: https://crosswayapp.com/SKILL.md">
@@ -98,7 +86,6 @@
           <button type="button" class="paste-chip-copy" hidden>Copy</button>
         </div>
       </div>
-      -->
     </div>
     <p class="caption">Signed &amp; notarized&ensp;·&ensp;macOS 14+&ensp;·&ensp;Apple&nbsp;Silicon &amp; Intel</p>
   </section>
@@ -239,7 +226,7 @@
         <section class="cw-controls mac-window" role="group" aria-labelledby="cw-title">
           <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title cw-title" id="cw-title">Interactive demo</h2></div>
           <div class="cw-keys-body">
-          <p class="cw-subtitle">Use your cursor to <strong>click</strong>, <strong>drag</strong>, and <strong>interact</strong> with the windows, Dock, and more!</p>
+          <p class="cw-subtitle">Click, drag, and interact with the windows, Dock, and more!</p>
           <!-- Two steps, each a labelled box, each holding the keys of that
                step drawn at MacBook Pro proportions: command is a quarter
                wider than option, tab half as wide again as backtick, and
