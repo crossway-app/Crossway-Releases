@@ -3021,6 +3021,14 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
    is the one place a switch can take it. */
 .cw-bezel-mode .cw-toggle { width: 100%; justify-content: space-between; }
 .cw-toggle-side { display: flex; align-items: center; gap: 7px; }
+/* The switch's two SIDES are named larger than the rest of the panel's
+   silkscreen (2026-08-28, the user: "the text for crossway and macos
+   native on the left should be larger — 70% or so. rest of the text
+   should remain same size"). 1.7x the engrave size, and only the two
+   labels that carry a data-side: the "App Switcher" caption under them,
+   "Include Minimized Windows" and "Blur" are all .cw-engrave too and
+   stay where they were. */
+.cw-toggle .cw-engrave[data-side] { font-size: calc(11px * 1.7); }
 /* Each control is two ROWS of fixed height: the control, then its
    engraved label. Fixed, so the three controls share one centre line
    whether or not they carry a label (the switch has none), and the
