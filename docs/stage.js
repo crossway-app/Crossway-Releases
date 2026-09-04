@@ -1785,6 +1785,11 @@
   /* How long a tapped cap stays struck. Long enough to see, short enough
      to keep up with a burst. */
   var STRIKE_MS = 240;
+  /* How long after the last tap a held modifier lets itself go, which
+     is what commits (2026-09-03, the user: the modifier caps are art,
+     "you don't interact with them"). A visitor taps, looks, and the
+     switch lands, the way it does when a hand comes off the real key. */
+  var LET_GO_MS = 1800;
 
   /* ====================================================================
      THE SCHEDULER
@@ -1966,7 +1971,10 @@
      legend's rows follow the same rule, light the chord in effect, and
      say what the chord does in whichever world is on the screen.
      ==================================================================== */
-  function wireKeys(rail, controller) {
+  function wireKeys(rail, controller, o) {
+    o = o || {};
+    var later = o.setTimeout || function (fn, ms) { return setTimeout(fn, ms); };
+    var cancel = o.clearTimeout || function (h) { clearTimeout(h); };
     var noop = function () {};
     if (!rail) {
       return { hold: noop, tap: noop, clear: noop, sync: noop, _held: function () { return null; } };
@@ -1994,6 +2002,7 @@
     var rows = Array.prototype.slice.call(rail.querySelectorAll("[data-chord]"));
     var held = null;      /* "cmd", "opt", or null: the modifier being held */
     var last = null;      /* the chord the last tap made, for the legend */
+    var letGoHandle = null; /* the pause that lets a held modifier go */
 
     function native() { return !controller.state.crosswayEnabled; }
     function cls(el, name, on) { if (el && el.classList) { el.classList.toggle(name, on); } }
@@ -2013,12 +2022,11 @@
         var k = keys[m];
         if (!k) { return; }
         var on = held === m;
-        k.setAttribute("aria-pressed", on ? "true" : "false");
+        /* The modifier caps are art: lit while held, and that is all
+           they do. data-held is for the rendered suite's probes. */
+        k.setAttribute("data-held", on ? "true" : "false");
         cls(k, "is-held", on);
       });
-      if (keys.opt) {
-        keys.opt.setAttribute("aria-disabled", off ? "true" : "false");
-      }
       /* The ⌥ group's Tab and backtick go with the ⌥ key: a tap key you
          can press in a box whose modifier you cannot have would be a
          key that does nothing. */
@@ -2064,23 +2072,13 @@
     function verbOf(set) { return set && set.querySelector ? set.querySelector(".cw-keyset-verb") : null; }
     function guide() {
       ["cmd", "opt"].forEach(function (g) {
-        var holdSet = keyset(keys[g]), tapSet = keyset(capFor("tab", g));
-        if (!holdSet && !tapSet) { return; }
-        var off = g === "opt" && native();
-        var mine = held === g;
-        var verb = verbOf(holdSet);
-        if (verb) {
-          /* A line break after "click to", not wherever the width falls:
-             the verb's box is white-space: pre-line. */
-          var text = mine ? "click to\nrelease" : "click to\nhold";
-          if (verb.textContent !== text) { verb.textContent = text; }
-        }
-        cls(holdSet, "is-next", !off && held === null);
-        /* Held: "click to release" stands bold in ink (2026-09-03, the
-           user: "'click to release' should be bold too, but not green,
-           keep it black"), while the tap verb takes the guide colour. */
-        cls(holdSet, "is-held", !off && mine);
-        cls(tapSet, "is-next", !off && mine);
+        var tapSet = keyset(capFor("tab", g));
+        if (!tapSet) { return; }
+        /* One verb per box, over its tap keys: "click to tap", the step
+           to take, bold in the guide colour unless the box is off. The
+           modifier carries none (2026-09-03, the user: the modifiers are
+           art; "remove 'click to hold' aspect entirely"). */
+        cls(tapSet, "is-next", !(g === "opt" && native()));
       });
     }
 
@@ -2100,9 +2098,24 @@
 
     /* Click a modifier to hold it; click it again to let go, which is
        what commits. Holding the other modifier lets this one go first. */
+    function disarmLetGo() {
+      if (letGoHandle !== null) { cancel(letGoHandle); letGoHandle = null; }
+    }
+    /* A visitor's tap starts the pause; the next tap restarts it; when
+       it runs out the held modifier lets go, which commits. Only a
+       CLICK on a cap arms it: the autopilot and the tests tap through
+       the API and pace themselves. */
+    function armLetGo() {
+      disarmLetGo();
+      letGoHandle = later(function () {
+        letGoHandle = null;
+        if (held !== null) { hold(held); }
+      }, LET_GO_MS);
+    }
     function hold(m) {
       if (m === "opt" && native()) { return; }
       if (held === m) {
+        disarmLetGo();
         held = null; last = null;
         controller.release();
       } else {
@@ -2137,11 +2150,14 @@
 
     /* click, not pointerdown: it carries Enter and Space for free, so the
        keyboard path needs no second implementation. */
-    if (keys.cmd) { keys.cmd.addEventListener("click", function () { hold("cmd"); }); }
-    if (keys.opt) { keys.opt.addEventListener("click", function () { hold("opt"); }); }
+    /* The modifier caps take no click (2026-09-03): a tap on a box's key
+       holds its modifier, and the pause after the last tap lets it go. */
     ["tab", "tick"].forEach(function (k) {
       caps[k].forEach(function (b) {
-        b.addEventListener("click", function (e) { tap(k, e, attr(b, "data-group")); });
+        b.addEventListener("click", function (e) {
+          tap(k, e, attr(b, "data-group"));
+          if (held !== null) { armLetGo(); }
+        });
       });
     });
     sync();
@@ -2156,12 +2172,14 @@
         /* Only a session still open is committed; when the reducer has
            already ended it — a switch flip, a Dock click, a pick with
            the mouse — this just drops the latch. */
+        disarmLetGo();
         if (held !== null && controller.state.mode !== MODE.IDLE) { controller.release(); }
         held = null; last = null;
         sync();
       },
       sync: sync,
       _held: function () { return held; },
+      _letGoPending: function () { return letGoHandle !== null; },
     };
   }
 
@@ -3114,6 +3132,7 @@
     DEMO_SCENES_NATIVE: DEMO_SCENES_NATIVE,
     DEMO_PACE: DEMO_PACE,
     IDEAS_DWELL: IDEAS_DWELL, IDEAS_FADE: IDEAS_FADE, IDEAS_DWELL_REDUCED: IDEAS_DWELL_REDUCED,
+    LET_GO_MS: LET_GO_MS,
     createIdeas: createIdeas,
     GRID_COLUMNS: GRID_COLUMNS,
     TILE_ASPECT: TILE_ASPECT,
