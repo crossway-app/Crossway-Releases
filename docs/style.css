@@ -1201,6 +1201,18 @@ pre.cmd {
    spans the window. One grid serves both, so they stay siblings. */
 #download .window-body,
 #donate .window-body { max-width: none; }
+/* The pair are stretched to one row, so the shorter one's content would
+   sit at the top of a tall box with all its air below (2026-09-03, the
+   user, of Download: "very ugly... have the image be centered"). The
+   window is a column and its body takes what the title bar leaves, so
+   the row inside sits in the middle of the window. Donate's content
+   fills its box, so this is a no-op there and the two stay built alike. */
+#download,
+#donate { display: flex; flex-direction: column; }
+#download .window-body,
+#donate .window-body { flex: 1; display: flex; align-items: center; }
+#download .download-grid,
+#donate .donate-grid { flex: 1; }
 .download-grid,
 .donate-grid {
   display: grid;
@@ -1221,7 +1233,11 @@ pre.cmd {
    Donate window beside it is built too: mark, words, button. */
 .download-grid .dialog-actions { grid-column: 3; margin-top: 0; }
 .download-grid .dialog-actions .btn-row { margin: 0; }
-.download-grid .caption { margin: 0; text-align: left; }
+/* Centred, and the icon with it: the window holds three things and each
+   sits on its own centre line (2026-09-03, the user: "center things and
+   stack them up a bit more beautifully"). */
+.download-grid .caption { margin: 0; text-align: center; }
+.download-grid .dialog-icon { justify-self: center; }
 
 /* ---------- read-me list ---------- */
 
@@ -3132,9 +3148,14 @@ html:not(.hacker) .cw-screen::after {
    radius is the box's plus the spread. */
 .cw-group-keys > .cw-keyset:last-child {
   width: calc(var(--cw-u) * 2.5 + 5px);
-  border-radius: 10px;
+  /* Squarer than the caps it holds, and it reaches a little further
+     below them than above (2026-09-03, the user: "perhaps it should be
+     more squared off edges? a bit too round right now and should extend
+     a tiny bit lower"): the second shadow is the first, moved down, and
+     the two together are one panel 5px deeper at the foot. */
+  border-radius: 4px;
   background: var(--cw-tap-panel);
-  box-shadow: 0 0 0 6px var(--cw-tap-panel);
+  box-shadow: 0 0 0 6px var(--cw-tap-panel), 0 5px 0 6px var(--cw-tap-panel);
 }
 .cw-group.is-off .cw-group-keys > .cw-keyset:last-child { --cw-tap-panel: transparent; }   /* a box you cannot use is flat: nothing to group */
 /* The hold slot is ONE width in both boxes, the width Command needs
