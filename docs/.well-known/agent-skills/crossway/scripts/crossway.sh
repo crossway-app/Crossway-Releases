@@ -1,8 +1,7 @@
 #!/bin/bash
 
 # Deterministic runtime for the Crossway agent skill.
-# This file stays compatible with the macOS system Bash (3.2). Later milestones
-# fill in target inspection, release verification, and transactions.
+# This file stays compatible with the macOS system Bash (3.2).
 
 set -u
 umask 077
