@@ -49,9 +49,9 @@
 
    NOT MODELLED, deliberately:
      · the show-delay gate. The real app hides all chrome until you have
-       held for SHOW_DELAY; here the row appears at once (user decision).
-       A click is 80-120ms, which straddles 100ms, so gating it would
-       show or hide chrome unpredictably on identical gestures.
+       held for SHOW_DELAY; here the row appears at once. A click is
+       80-120ms, which straddles 100ms, so gating it would show or hide
+       chrome unpredictably on identical gestures.
      · live capture. Thumbnails are drawn sketches, not screenshots.
      · everything the switcher does about the real world: multiple
        monitors, hidden (as in ⌘H) apps, Spaces, window lists changing
@@ -63,17 +63,14 @@
 
    If you are changing the app and wondering whether to change this file:
    the answer is yes for anything in the first list, and no for anything
-   in the second. scripts/test-site-demo-constants.sh fails the build if
-   the two timing constants below drift from the app's own. */
+   in the second. An automated check fails the build if the two timing
+   constants below drift from the app's own. */
 (function (root) {
   "use strict";
 
   /* ---- timing ----------------------------------------------------------
-     Both come from the app's own defaults, and are pinned to them by
-     scripts/test-site-demo-constants.sh:
-
-       SHOW_DELAY    Preferences.defaultSwitcherShowDelay  (0.100 s)
-       PREVIEW_DELAY Preferences.defaultPreviewDelay       (0.400 s)
+     Both are the app's own shipped defaults, 0.100 s and 0.400 s, and an
+     automated check keeps them in step with it:
 
      SHOW_DELAY is recorded but deliberately NOT enforced — see the
      fidelity contract above. PREVIEW_DELAY is: the pane folds the moment
@@ -109,28 +106,24 @@
     { id: "terminal", name: "Terminal", glyph: "prompt" },
     { id: "finder",   name: "Finder",   glyph: "face" },
   ];
-  /* THREE apps RUNNING and SEVEN windows since 2026-09-03 (the user:
-     "start with fewer apps open: only safari, finder, and terminal.
-     help reduce the overall number of windows to boost clarity to new
-     users"). There were six apps and thirteen windows, and a visitor
-     arriving in the middle of a scene had to read all of them. What the
-     smaller set keeps, because the suite pins each as a thing the demo
-     shows: a strip worth walking (Terminal, three windows), an app with
-     exactly one (Finder, so ⌘` there has nothing to cycle to), a tall
-     window and a wide one, a minimized window in two different apps (so
-     Include Minimized Windows and the Dock's restore mean something),
-     more windows than one exposé row holds, and the FILM, which is the
-     live previews shown: it plays in Safari's second window, a video
-     page, where it played in a QuickTime window before. Safari is in
-     front; Terminal one Tab along.
+  /* THREE apps RUNNING and SEVEN windows: a deliberately small set, so
+     a visitor arriving in the middle of a scene has little to read.
+     What the set has to keep: a strip worth walking (Terminal, three
+     windows), a second app whose windows are worth cycling (Finder,
+     two), a tall window and a wide one, a minimized window in two
+     different apps (so Include Minimized Windows and the Dock's restore
+     mean something), more windows than one exposé row holds, and the
+     FILM, which is the live previews shown: it plays in Safari's second
+     window, a video page. Safari is in front; Terminal one Tab along.
+     The zero-window and one-window cases live in test fixtures rather
+     than on the shipped desktop.
 
-     The other four apps are still on the desktop, CLOSED: in the Dock
-     without a dot, one click from running (the user, the same day, on
-     finding them gone: "return the other apps closed"). They are what
-     the visitor launches, quits and switches to when three apps stop
-     being enough, and Mail keeps its Dock badge while closed, as the
-     App Store keeps its update count. The running three carry none:
-     none of them badges on a Mac, and the badge tests bring their own. */
+     The other four apps are on the desktop, CLOSED: in the Dock
+     without a dot, one click from running. They are what the visitor
+     launches, quits and switches to when three apps stop being enough,
+     and Mail keeps its Dock badge while closed, as the App Store keeps
+     its update count. The running three carry none: none of them badges
+     on a Mac, and the badge tests bring their own. */
   var CLOSED = [
     { id: "mail",      name: "Mail",             glyph: "envelope", badge: 3 },
     { id: "notes",     name: "Notes",            glyph: "note" },
@@ -162,6 +155,11 @@
     { id: "tm2", app: "terminal", title: "run-tests.sh — 1815 passing",            sketch: SKETCH.CODE,  x: 2,  y: 60, w: 26, h: 30 },
     { id: "tm3", app: "terminal", title: "~ — top",                                sketch: SKETCH.CODE,  x: 30, y: 20, w: 46, h: 46, minimized: true },
     { id: "sa3", app: "safari",   title: "Apple Developer Documentation",          sketch: SKETCH.PAGE,  x: 10, y: 16, w: 44, h: 50, minimized: true },
+    /* Finder's second window. Least recent, so every index above it is
+       unchanged, and placed in the clear strip along the bottom right
+       where it overlaps nothing: the stack stays readable and ⌘` on
+       Finder has somewhere to go. */
+    { id: "fd2", app: "finder",   title: "Downloads",                              sketch: SKETCH.FILES, x: 64, y: 80, w: 32, h: 17 },
   ];
 
   /* ---- the Dock --------------------------------------------------------
@@ -233,7 +231,7 @@
      split is what makes the hero a simulation rather than a recording:
      every state it can be in is one the visitor drove it to.
 
-     Four modes, matching SwitcherMode.swift exactly:
+     Four modes, matching the app exactly:
        idle    nothing open
        app     the ⌘Tab app row
        window  the ⌘` window strip, within one app
@@ -600,7 +598,7 @@
   /* Clicking a window activates its app as well as raising the window:
      the app moves to the front of the MRU, so the menu bar, ⌘` and the
      app-scoped grid all agree about which app is current. Without this
-     the menu bar said Mail while ⌘` cycled Safari. */
+     the menu bar names one app while ⌘` cycles another's windows. */
   function raiseWindow(state, id) {
     var win = state.windows.find(function (w) { return w.id === id; });
     if (!win) { return state; }
@@ -856,8 +854,8 @@
     }
 
     /* The same lists the panel renders, never the raw window list: with
-       Include minimized off, the raw list named a window the strip did
-       not show and counted one it could not reach. */
+       Include minimized off, the raw list names a window the strip does
+       not show and counts one it cannot reach. */
     var app = state.apps[state.appIndex];
 
     if (state.mode === MODE.APP) {
@@ -1074,8 +1072,8 @@
      window, so its title bar and traffic lights are in the shot; a bare
      sketch in a bordered card is a content card, not a screenshot.
      
-     It is LETTERBOXED, never stretched: `contentsGravity = .resizeAspect`
-     (WindowPreviewCell.swift:195). The miniature keeps its own aspect and
+     It is LETTERBOXED, never stretched, as the app's own tiles are. The
+     miniature keeps its own aspect and
      is centred in the slot, and the leftover bars stay transparent so the
      pane — or, on a selected tile, the selection tint — shows through
      them. Which axis binds is decided here rather than left to CSS, so a
@@ -1624,8 +1622,8 @@
       setCachedProjectorsActive(gridCache, true);
     }
 
-    /* The panel. Two independent visibilities, which is the whole of the
-       timing the user signed off:
+    /* The panel. Two independent visibilities, which is the whole of
+       the timing:
 
          the ROW appears the instant a session opens, and
          the STRIP first drops once the selection has rested for
@@ -1660,8 +1658,8 @@
           e.dataset.app = app.id;
           e.appendChild(buildAppIcon(app));
           /* Badged apps wear their Dock count whether or not they are
-             selected, exactly as in the row (AppIconView.swift:455 — the
-             badge layer sits above everything at zPosition 1000). */
+             selected, exactly as in the row, where the badge sits above
+             everything else on the icon. */
           if (app.badge) {
             e.appendChild(el("span", "cw-abadge", String(app.badge)));
           }
@@ -1672,8 +1670,8 @@
         e.classList.toggle("is-sel", i === state.appIndex);
       });
       /* An app that has quit leaves the row, cell and cache both: the
-         loop above only adds and reorders, and a quit Terminal stayed in
-         the row wearing its old selection. */
+         loop above only adds and reorders, so without this a quit
+         Terminal stays in the row wearing its old selection. */
       appCache.forEach(function (e, id) {
         if (!state.apps.some(function (a) { return a.id === id; })) {
           if (e.parentNode) { e.parentNode.removeChild(e); }
@@ -1717,12 +1715,12 @@
       /* Reconcile only when the pane reaches CURRENT. During PENDING the
          already-visible keyed children remain mounted and the pane keeps
          its geometry; only its emphasis changes, and it is inert and
-         hidden from assistive technology. The earlier implementation
-         rebuilt the NEXT app inside a collapsing pane, briefly showed
-         those windows, removed them with the fold, and rebuilt them once
-         more at the delayed drop — the reported flash. A settled draw
-         performs one keyed refresh to the final app, so no intermediate
-         selection creates or destroys preview nodes. */
+         hidden from assistive technology. Rebuilding the NEXT app
+         inside a collapsing pane briefly shows those windows, removes
+         them with the fold, and rebuilds them once more at the delayed
+         drop, which flashes. A settled draw performs one keyed refresh
+         to the final app, so no intermediate selection creates or
+         destroys preview nodes. */
       if (dropped && !pending) {
         reconcile(strip, wins, stripCache,
           function (w) { return w.id; },
@@ -1767,8 +1765,8 @@
      A FEW MEASUREMENTS THE RENDERER SHARES WITH THE STYLESHEET
      ==================================================================== */
 
-  /* A thumbnail slot is landscape, like the windows it holds
-     (WindowPreviewCell.swift:24-25 — 180 x 112). The fixtures' w/h are
+  /* A thumbnail slot is landscape, like the windows it holds, and the
+     app's own tiles are 180 x 112. The fixtures' w/h are
      percentages of the DESKTOP, so a window's real aspect is its
      percentage ratio times the desktop's own: the 8:5 screen less the
      menu bar and the Dock's band (--cw-dock-band, 10.4cqw) is about 2.
@@ -1779,24 +1777,23 @@
 
   /* The exposé fills each row to SIX tiles before starting another, and a
      short last row stays left-aligned rather than balancing itself —
-     eight windows is 6 + 2, never 4 + 4 (ExposeGridView.swift:50-71). */
+     eight windows is 6 + 2, never 4 + 4, as in the app. */
   var GRID_COLUMNS = 6;
 
   /* How long a tapped cap stays struck. Long enough to see, short enough
      to keep up with a burst. */
   var STRIKE_MS = 240;
   /* How long after the last tap a held modifier lets itself go, which
-     is what commits (2026-09-03, the user: the modifier caps are art,
-     "you don't interact with them"). A visitor taps, looks, and the
-     switch lands, the way it does when a hand comes off the real key. */
+     is what commits. The modifier caps are art and take no click, so a
+     visitor taps, looks, and the switch lands, the way it does when a
+     hand comes off the real key. */
   var LET_GO_MS = 1800;
 
   /* ====================================================================
      THE SCHEDULER
 
      The only place in this file that knows about time, and it owns
-     exactly one timer. The rule it implements is the one signed off for
-     the hero:
+     exactly one timer. The rule it implements:
 
        the app row appears the INSTANT a session opens — no show-delay
        gate, because a click is 80-120ms and would straddle the real
@@ -1981,12 +1978,12 @@
     }
     function attr(el, name) { return el && el.getAttribute ? el.getAttribute(name) : null; }
     /* The caps, by key. The two modifiers are one cap each. Tab and
-       backtick are drawn once PER GROUP since 2026-09-02 (the keys
-       window is two boxes, "View applications" over "View
-       windows", each complete with its own tap keys), so those are a
-       LIST, each cap carrying the group it belongs to in data-group. A
-       rail without groups, the tests' four-key rail, has one ungrouped
-       cap per key, which serves whichever modifier is held. */
+       backtick are drawn once PER GROUP (the keys window is two boxes,
+       "View applications" over "View windows", each complete with its
+       own tap keys), so those are a LIST, each cap carrying the group
+       it belongs to in data-group. A rail without groups, the tests'
+       four-key rail, has one ungrouped cap per key, which serves
+       whichever modifier is held. */
     var keys = {};
     var caps = { tab: [], tick: [] };
     Array.prototype.forEach.call(rail.querySelectorAll("[data-key]"), function (b) {
@@ -2001,10 +1998,30 @@
     });
     var rows = Array.prototype.slice.call(rail.querySelectorAll("[data-chord]"));
     var held = null;      /* "cmd", "opt", or null: the modifier being held */
-    var last = null;      /* the chord the last tap made, for the legend */
+    var last = null;      /* the chord the last tap made; see inEffect() */
     var letGoHandle = null; /* the pause that lets a held modifier go */
 
     function native() { return !controller.state.crosswayEnabled; }
+    /* WHICH ROW LIGHTS: the chord in effect, read from the reducer's own
+       state rather than from the last cap tapped. A tap inside an open
+       session often advances it without changing what is running: ⌥`
+       inside an ⌥Tab grid walks that grid rather than re-scoping it,
+       and ⌥Tab inside an ⌥` grid does the same, so lighting the tapped
+       row would claim a command the demo has not run.
+       Reading the state also gets the ⌘ side right for free, since there
+       backtick genuinely descends into window mode and Tab genuinely
+       returns to the app row, and the mode says so.
+
+       Native's ⌘` is the one chord that leaves no session behind — the
+       raise is the whole event — so there, and only there, the last tap
+       is all there is to light. */
+    function inEffect() {
+      var st = controller.state;
+      if (st.mode === MODE.APP) { return "cmd-tab"; }
+      if (st.mode === MODE.WINDOW) { return "cmd-tick"; }
+      if (st.mode === MODE.GRID) { return st.gridScope === "app" ? "opt-tick" : "opt-tab"; }
+      return native() ? last : null;
+    }
     function cls(el, name, on) { if (el && el.classList) { el.classList.toggle(name, on); } }
     /* The cap a tap of `k` moves: the held group's own, else an
        ungrouped one, else whichever is first. */
@@ -2039,16 +2056,14 @@
         cls(g, "is-off", off && attr(g, "data-crossway-only") === "1");
       });
       guide();
+      var lit = inEffect();
       rows.forEach(function (r) {
         var chord = attr(r, "data-chord");
-        /* Without Crossway, cmd-backtick leaves no session open — the
-           raise is the whole event — so the row stays lit on the last tap
-           rather than on an open mode. */
         var off = native() && attr(r, "data-crossway-only") === "1";
-        cls(r, "is-active", chord === last && (controller.state.mode !== MODE.IDLE || native()));
-        /* That frame is the row's one mark (2026-09-03, the user): a held
-           modifier no longer marks its rows "ready", so the frame says
-           only which command is in effect. */
+        cls(r, "is-active", chord === lit);
+        /* That frame is the row's one mark: a held modifier does not
+           mark its rows "ready", so the frame says only which command
+           is in effect. */
         cls(r, "is-off", off);
         var what = r.querySelector ? r.querySelector(".cw-legend-what") : null;
         var alt = attr(r, "data-what-native");
@@ -2056,16 +2071,15 @@
       });
     }
 
-    /* The verbs beside the caps are the GUIDE (2026-09-03, the user:
-       bold and shifting colour "so the user understands what to interact
-       with and in what order"; and then: it "should stay on 'click to
-       tap'", and every verb stays fully legible, the colour only points).
-       Per box: at rest "click to hold" is the step to take (is-next);
-       with the box's modifier held, "click to tap" is, and stays so
-       through the taps, while the hold verb reads "click to release",
-       one word under "click to" like the others, so the change is a
-       word and not a shape (2026-09-03, the user: "so that the number
-       of words is consistent and the change isn't jarring"). The other box waits.
+    /* The verbs beside the caps are the GUIDE: bold and in a shifting
+       colour, so what to interact with, and in what order, is legible
+       at a glance. The verb stays on "click to tap", and every verb
+       stays fully readable — the colour only points. Per box: at rest
+       "click to hold" is the step to take (is-next); with the box's
+       modifier held, "click to tap" is, and stays so through the taps,
+       while the hold verb reads "click to release", one word under
+       "click to" like the others, so the change is a word and not a
+       shape and the number of words stays constant. The other box waits.
        A keyset is a cap's parent; a rail without them (the tests' bare
        caps) has nothing to guide. */
     function keyset(b) { return b && b.parentNode && b.parentNode.classList ? b.parentNode : null; }
@@ -2076,8 +2090,8 @@
         if (!tapSet) { return; }
         /* One verb per box, over its tap keys: "Click to tap", the step
            to take, bold in the guide colour unless the box is off. The
-           modifier carries none (2026-09-03, the user: the modifiers are
-           art; "remove 'click to hold' aspect entirely"). */
+           modifier carries none: the modifier caps are art, with no
+           hold verb of their own. */
         cls(tapSet, "is-next", !(g === "opt" && native()));
       });
     }
@@ -2128,7 +2142,7 @@
     /* Tap a key: one more press of the held modifier's chord. With no
        modifier held there is no chord, and only the cap moves.
 
-       A GROUP's key (2026-09-02) is a tap of that group's chord: if its
+       A GROUP's key is a tap of that group's chord: if its
        modifier is not the one held, it goes down first, letting the
        other go as holding it by hand would, so the first click on
        either box does something on the screen. A group whose modifier
@@ -2150,8 +2164,8 @@
 
     /* click, not pointerdown: it carries Enter and Space for free, so the
        keyboard path needs no second implementation. */
-    /* The modifier caps take no click (2026-09-03): a tap on a box's key
-       holds its modifier, and the pause after the last tap lets it go. */
+    /* The modifier caps take no click: a tap on a box's key holds its
+       modifier, and the pause after the last tap lets it go. */
     ["tab", "tick"].forEach(function (k) {
       caps[k].forEach(function (b) {
         b.addEventListener("click", function (e) {
@@ -2602,13 +2616,11 @@
      automatic demo off; the box over the keys turns it back on.
      ==================================================================== */
   var DEMO_SCENES = [
-    /* The shape of every scene since 2026-09-03 (the user: "it should be
-       clicking tab a few times, then ` a few times"): Tab a few times,
-       then backtick a few times, under one box. And the boxes ALTERNATE
-       (the user, the same day: "the auto demo needs to intermix cmd and
-       option demos. right now it's very cmd heavy or at least very
-       front-loaded just cmds"), so a visitor who watches any two scenes
-       sees both halves of the window used.
+    /* The shape of every scene: Tab a few times, then backtick a few
+       times, under one box. And the boxes ALTERNATE — the ⌘ and ⌥
+       halves are intermixed rather than one being front-loaded — so a
+       visitor who watches any two scenes sees both halves of the window
+       used.
        Targets are named, not counted: a tap is repeated until the named
        app or window is selected, so a scene still lands if the visitor
        left the desktop rearranged; `min` taps first where the target
@@ -2651,7 +2663,7 @@
      targets name the window that must be IN FRONT afterwards. One key
      per scene: the system's switcher has no strip for ` to descend into,
      so a ` under a held ⌘Tab does nothing there. The same shape as
-     Crossway's since 2026-09-03: Tab a few times, then ` a few times.
+     Crossway's: Tab a few times, then ` a few times.
      Twelve scenes that close the loop, checked by walking them: the
      system's ` ping-pongs an app's two most recent windows, so the
      raises are tm1, tm2, sa1, sa2, sa1, tm2, tm1, sa1, sa1 (after a
@@ -2678,23 +2690,22 @@
      down and is seen down before the first tap, the taps come at a
      stroll (each well past the preview delay, so every strip is seen to
      bloom) and a little unevenly, the last selection is looked at, and
-     the modifier goes up; then a real rest before the next scene. The
-     first cut was half this and read as jarring (the user, 2026-08-27);
-     a test keeps the floors.
+     the modifier goes up; then a real rest before the next scene. Half
+     these values reads as jarring; a test keeps the floors.
 
-     Slowed a further 20% on 2026-08-31 (the user): every beat, the
-     jitter included, so the whole cadence stretches evenly and the hand
-     still does not tap on a metronome. The scene the visitor arrives in
-     the middle of is the one they have to read, and at the old pace it
-     was over before they had found the keys. */
+     The jitter scales with the beats, so the whole cadence stretches
+     evenly and the hand still does not tap on a metronome. The scene a
+     visitor arrives in the middle of is the one they have to read, and
+     a hurried pace is over before they have found the keys. */
   /* `first` is the wait from the demo coming into view to the modifier
-     going down; with `hold` and SHOW_DELAY it puts Crossway's switcher on
-     the screen 1.5 s after the visitor can see the demo (2026-09-03, the
-     user). `rest` is the pause after a scene commits before the next
-     modifier goes down, so close-to-open is rest + hold + SHOW_DELAY,
-     1.5 s too ("especially the pause between when it closes and is
-     opened again"). The taps and the settle keep the 2026-08-31 teaching
-     cadence: those are the parts a visitor is meant to follow. */
+     going down; with `hold` and SHOW_DELAY it puts Crossway's switcher
+     on the screen 1.5 s after the visitor can see the demo. `rest` is
+     the pause after a scene commits before the next modifier goes down,
+     so close-to-open is rest + hold + SHOW_DELAY, 1.5 s too: the pause
+     between one switcher closing and the next opening is as much a part
+     of the lesson as the taps. The taps and the settle carry the
+     teaching cadence — those are the parts a visitor is meant to
+     follow. */
   var DEMO_PACE = { first: 800, hold: 600, tap: 1440, jitter: 264, settle: 1920, rest: 800 };
   /* No scene needs more taps than this; a target that never comes
      (a rearranged desktop) is given up on rather than tapped forever. */
@@ -2735,12 +2746,10 @@
        again after a rest, and `wake` (the visibility wiring) cuts that
        short the moment the demo comes into view, so the first switcher
        is 1.5 s from THEN, not from whenever the last look was.
-       NOTHING is held here (2026-09-03, the user: "the auto demo has a
-       problem: it starts with just cmd being held... the auto demo
-       should just be clicking tab and ` a few times for each
-       applications/windows sections"). The modifiers are art now, so a
-       scene does what a visitor does: it clicks the box's own key, and
-       that key holds the box's modifier for it. */
+       NOTHING is held here: a scene that opened with a modifier already
+       down would show a key held that nobody pressed. The modifiers are
+       art, so a scene does what a visitor does: it clicks the box's own
+       key, and that key holds the box's modifier for it. */
     function begin() {
       if (paused()) { schedule(begin, pace.rest); waiting = true; return; }
       /* The switch was flipped between scenes: the other world's loop,
@@ -2770,8 +2779,8 @@
       if (!started && keys._held() !== sc.hold) { next(); return; }
       started = true;
       taps += 1;
-      /* `min` (2026-09-03): a target one tap away would end the walk
-         before it was seen, so a scene may ask for a few taps first. */
+      /* `min`: a target one tap away would end the walk before it was
+         seen, so a scene may ask for a few taps first. */
       if ((onTarget(t) && taps >= (t.min || 1)) || taps >= DEMO_MAX_TAPS) { step += 1; taps = 0; }
       schedule(tapNext, jittered(pace.tap));
     }
@@ -2821,10 +2830,10 @@
      takes over and never fights the demo.
 
      What is IN that list is the keys and the screen: the two surfaces
-     the demo itself drives. The bezel is deliberately out (2026-08-27,
-     the user) — throwing the switch or moving the blur wheel is watching
-     the demo under different settings, not taking it over, so it keeps
-     running and picks up the world the switch now names.
+     the demo itself drives. The bezel is deliberately out — throwing
+     the switch or moving the blur wheel is watching the demo under
+     different settings, not taking it over, so it keeps running and
+     picks up the world the switch now names.
 
      Three events, because a visitor reaches a surface three ways: a
      pointer press; a click in the CAPTURE phase, which runs before the
@@ -2835,15 +2844,13 @@
      sends DOM events, so every one is the visitor. */
   /* ====================================================================
      IDEAS: one thing to try on the monitor at a time, fading out and in
-     through a list of them (2026-09-03, the user: "a marquee of 15
-     different things that can be done in the interactive demo, have
-     them go in and out giving the user ideas of things they can do").
-     The list lives in the markup, once, for a screen reader; this only
-     moves the visible line through it, as plain text ("don't have random
-     words bolded", the user). With reduced motion there is no fade, and
-     the ideas change less often.
+     through a list of them, so a visitor picks up things the demo can
+     be made to do. The list lives in the markup, once, for a screen
+     reader; this only moves the visible line through it, as plain text
+     with no words bolded. With reduced motion there is no fade, and the
+     ideas change less often.
      ==================================================================== */
-  var IDEAS_DWELL = 4800;   /* how long an idea stands (3200 until 2026-09-03: the user, "the hints are also rotating too quickly, slow it down by 50%") */
+  var IDEAS_DWELL = 4800;   /* how long an idea stands: long enough to read one without hurrying */
   var IDEAS_FADE = 400;     /* how long it takes to go, and to come */
   var IDEAS_DWELL_REDUCED = 9000;
 
@@ -2936,8 +2943,8 @@
      The phone gets FEWER things, not smaller ones. A 3x3 exposé of
      titled thumbnails inside a drawn screen at ~296px is a smudge, so
      below the breakpoint the demo runs on the compact fixture set: three
-     apps, five windows, same reducer, same renderer. That is the whole
-     reason the fixtures were data from the first task rather than code.
+     apps, five windows, same reducer, same renderer. That is why the
+     fixtures are data rather than code.
 
      Rebuilt when the breakpoint is crossed, because a visitor who
      rotates a phone should get the set that fits, not the one they
@@ -2955,11 +2962,11 @@
     var current = null;
 
     /* The DOM is wired ONCE, against this stand-in, and the engine is
-       swapped underneath it at the breakpoint. Wiring per build stacked a
-       second set of listeners on every key and control each time the
-       breakpoint was crossed, so a tap moved the selection twice, and a
-       Native choice on the switch was thrown away by a fresh engine that
-       started in Crossway. */
+       swapped underneath it at the breakpoint. Wiring per build would
+       stack a second set of listeners on every key and control each
+       time the breakpoint is crossed, so a tap would move the selection
+       twice, and a Native choice on the switch would be thrown away by
+       a fresh engine starting in Crossway. */
     var proxy = {
       get state() { return current.controller.state; },
       get stage() { return current.controller.stage; },
@@ -3010,7 +3017,7 @@
       options.sync();
       markMode(crossway);
       /* A session open on a chord the other mode does not have must not
-         survive the flip, and it was abandoned rather than committed. */
+         survive the flip, so it is abandoned rather than committed. */
       keys.clear();
     });
 
@@ -3078,13 +3085,12 @@
       controller: proxy,
       paused: function () { return !onScreen || hidden(); },
     });
-    /* The keys and the screen, and NOT the bezel (2026-08-27, the user):
-       changing a setting is watching the demo, not taking it over. Throw
-       the switch or move the wheel and the demo keeps running, in the
-       world the switch now names; only the keys, the screen and the box
-       itself stop it. The bezel is a sibling of the screen host rather
-       than inside it, so leaving it out of this list is the whole of
-       what that takes. */
+    /* The keys and the screen, and NOT the bezel: changing a setting is
+       watching the demo, not taking it over. Throw the switch or move
+       the wheel and the demo keeps running, in the world the switch now
+       names; only the keys, the screen and the box itself stop it. The
+       bezel is a sibling of the screen host rather than inside it, so
+       leaving it out of this list is the whole of what that takes. */
     wireDemoMode(opts.demo, autopilot, [opts.controls, opts.root]);
 
     /* One write a minute is enough to keep the clock honest, and it
