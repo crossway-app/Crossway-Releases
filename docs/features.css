@@ -1,0 +1,321 @@
+/* Page-scoped styling for /features/. Loaded after style.css and only by
+   that page, so the shared sheet (and the hero's demo) never grows for it.
+   Structure only: every colour, border, and typeface comes from the shared
+   tokens, so day, night, and phosphor come for free, and nothing here
+   animates, so Reduce Motion has nothing to remove. If this file has not
+   arrived yet (the site syncs file by file) the page is still the shared
+   sheet's ordinary windows, one under another, with the list open. */
+
+/* ---- The page's two rows in the site's grid ------------------------- */
+/* The intro and the directory each span the desktop's two columns and
+   share one measure, so the intro's right edge is the directory's. 960
+   gives the content column about 76 characters of body text beside a
+   240px table of contents; wider reads as a slab, narrower wraps the
+   Settings tables. */
+.features-intro,
+.features-layout {
+  grid-column: 1 / -1;
+  width: 100%;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.features-intro .window-body { text-align: center; }
+.features-intro .window-body p {
+  max-width: 58ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+.features-layout {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  gap: 26px;
+  align-items: start;
+}
+.features-body {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  min-width: 0;
+}
+
+/* ---- The table of contents ------------------------------------------ */
+/* Sticky under the menu bar at the same offset the page already reserves
+   for fragment landings (scroll-padding-top), so the two never disagree.
+   No max-height and no inner scrolling: the list is nine lines, and a
+   TOC that scrolls inside itself is a trap. */
+.features-toc {
+  position: sticky;
+  top: 52px;
+}
+.features-toc .window-body {
+  padding: 10px 10px 12px;
+  max-width: none;
+}
+.features-nav-buttons {
+  display: flex;
+  gap: 5%;
+  margin: 0 0 8px;
+}
+.features-top-link,
+.features-site-home-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  min-height: 30px;
+  padding: 4px 8px;
+  font-size: 14px;
+  line-height: 1;
+  text-align: center;
+}
+.features-site-home-link {
+  flex: 0 0 20%;
+  padding: 4px;
+}
+.features-top-link { flex: 0 0 75%; }
+.features-home-icon {
+  width: 16px;
+  height: 16px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+  shape-rendering: geometricPrecision;
+}
+.features-toc-summary {
+  display: none;
+  cursor: pointer;
+  font-family: var(--font-display);
+  font-size: 15px;
+  padding: 6px 8px;
+}
+.features-toc-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.features-toc-list a {
+  display: block;
+  padding: 5px 8px;
+  color: var(--ink);
+  text-decoration: none;
+}
+.features-toc-list a:visited { color: var(--ink); }
+.features-toc-list a:hover,
+.features-toc-list a:focus-visible {
+  background: var(--ink);
+  color: var(--paper);
+  outline: none;
+}
+
+/* ---- The search control ---------------------------------------------- */
+/* It sits inside the list window and takes one row: a field, and a line of
+   text under it that says how many entries are showing. Nothing floats,
+   nothing overlays, and it is the same framed box the rest of the site
+   uses for an input. */
+.features-search { margin: 0 0 8px; }
+.features-search-field {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 5px 8px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--paper);
+  border: var(--border) solid var(--ink);
+  border-radius: 0;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.features-search-field::placeholder { color: var(--dim); opacity: 1; }
+.features-search-status {
+  margin: 5px 0 0;
+  padding: 0 2px;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+/* The empty state: a sentence and a way back, in the flow of the page. */
+.features-empty {
+  margin: 0;
+  padding: 16px 18px;
+  background: var(--paper);
+  border: var(--border) solid var(--ink);
+  box-shadow: 3px 3px 0 0 var(--ink);
+}
+.features-clear {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--ink);
+  background: var(--paper);
+  border: var(--border) solid var(--ink);
+  border-radius: var(--radius-btn);
+  padding: 3px 12px;
+  cursor: pointer;
+}
+.features-clear:hover, .features-clear:focus-visible { background: var(--ink); color: var(--paper); }
+
+/* ---- Category windows ----------------------------------------------- */
+/* The category title bars carry a real h2 (the page's outline needs one),
+   drawn exactly like the span the shared sheet expects; the same recipe the
+   hero's keys window uses for its own heading. */
+.feature-category .titlebar .title { margin: 0; font-weight: normal; }
+/* The shared sheet centres prose at 74ch inside a window; here the column
+   is already a measure, so the body fills it and the tables get the room. */
+.feature-category > .window-body { max-width: none; }
+.feature-category-lede {
+  color: var(--muted);
+  margin-bottom: 1.2em;
+}
+
+/* ---- One feature ---------------------------------------------------- */
+/* Entries are separated by a hairline mixed from the ink, never by boxes:
+   a directory is a list, not a grid of cards. */
+.feature {
+  padding: 16px 0;
+  border-top: 1px solid color-mix(in srgb, var(--ink) 28%, transparent);
+}
+.feature-category-lede + .feature { border-top: 0; padding-top: 0; }
+.feature:last-child { padding-bottom: 0; }
+.feature-title {
+  font-family: var(--font-display);
+  font-weight: normal;
+  font-size: 17px;
+  line-height: 1.25;
+  margin: 0 0 0.45em;
+  letter-spacing: 0.01em;
+}
+/* Every heading is its own permalink, drawn as a heading: the hand and
+   the underline on hover are the only tell, and the URL bar does the
+   rest. */
+.feature-title a {
+  color: var(--ink);
+  text-decoration: none;
+}
+.feature-title a:visited { color: var(--ink); }
+.feature-title a:hover,
+.feature-title a:focus-visible { text-decoration: underline; text-decoration-thickness: 2px; }
+.feature-list { margin: 0 0 1em; padding-left: 1.2em; }
+.feature-list li + li { margin-top: 0.35em; }
+
+/* The facts under an entry: a two-column definition list, terms muted,
+   values in the ink. dd carries min-width: 0 so a long Settings path wraps
+   inside its column instead of pushing the page wider. */
+.feature-meta {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  gap: 3px 14px;
+  margin: 0.7em 0 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+.feature-meta dt { color: var(--muted); }
+.feature-meta dd { margin: 0; min-width: 0; }
+.feature-related {
+  margin: 0.7em 0 0;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+.feature-path {
+  margin: 0 0 0.6em;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ---- Chips ----------------------------------------------------------- */
+/* Keys are keycaps, one size smaller than the hero's .key so they sit in
+   a sentence; a status is a plain framed word, so the difference between
+   a default and an option is the word, never a colour. */
+.features-body kbd,
+.features-intro kbd {
+  display: inline-block;
+  padding: 0 6px;
+  font-family: var(--font-display);
+  font-size: 0.86em;
+  line-height: 1.45;
+  background: var(--paper);
+  border: var(--border) solid var(--ink);
+  border-radius: 5px;
+  box-shadow: 0 1.5px 0 0 var(--ink);
+  vertical-align: 0.05em;
+  white-space: nowrap;
+}
+.feature-status {
+  display: inline-block;
+  margin-right: 6px;
+  padding: 0 6px;
+  font-family: var(--font-display);
+  font-size: 12px;
+  line-height: 1.6;
+  border: var(--border) solid var(--ink);
+  border-radius: 3px;
+  background: var(--paper);
+  white-space: nowrap;
+}
+.feature-placeholder { font-style: normal; color: var(--muted); }
+
+/* ---- The Settings reference ----------------------------------------- */
+.settings-tab + .settings-tab { margin-top: 1.6em; }
+.settings-tab-title {
+  font-size: 20px;
+  padding-bottom: 4px;
+  border-bottom: var(--border) solid var(--ink);
+  margin-bottom: 0.4em;
+}
+.feature-setting .feature-title { font-size: 16px; }
+/* Dense values in a real table, scrolled inside their own box on a narrow
+   screen so the page itself never scrolls sideways. */
+.features-table-wrap { overflow-x: auto; max-width: 100%; margin: 0.4em 0 0.8em; }
+.settings-table { border-collapse: collapse; width: 100%; font-size: 13.5px; line-height: 1.45; }
+.settings-table th, .settings-table td { text-align: left; vertical-align: top; padding: 0.3em 0.75em 0.3em 0; }
+.settings-table th[scope="row"] { font-weight: normal; }
+.settings-table thead th { color: var(--muted); font-weight: normal; border-bottom: 1px solid currentColor; }
+.settings-table tbody tr + tr th,
+.settings-table tbody tr + tr td { border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
+
+/* ---- Landing on a fragment, under a bar that wraps -------------------- */
+/* MEASURED, not assumed (headless Chrome, this page and the homepage
+   alike): the sticky menu bar is 35px on one row, 69px on two (701 to
+   799px, where the links wrap under the title), 71px at 501 to 700, and
+   101px on three rows below 500. The shared sheet reserves 52px, and 84px
+   below its own 700px breakpoint, so between 701 and 799 a fragment lands
+   17px UNDER the bar and below 500 it lands against it. With 84 anchors on
+   this page that is the difference between a link that works and one that
+   hides its own heading, so the page reserves what the bar actually takes.
+   Page-scoped on purpose: the same shortfall exists on the other pages and
+   belongs to the shared sheet. Generous is harmless here (a little more
+   room above the heading); short is not. */
+@media (max-width: 700px) {
+  html { scroll-padding-top: 110px; }
+}
+/* And one step narrower still: at 320px the links wrap onto a FOURTH row and
+   the bar is 132px, so the 110px above leaves a heading 22px under it.
+   Measured across 280/300/320/340/360/375/420/500: 132px at and below 320,
+   101px from 340 up. The boundary sits between those two, and being generous
+   here costs a little headroom on a narrow phone while being short costs a
+   heading. */
+@media (max-width: 350px) {
+  html { scroll-padding-top: 142px; }
+}
+@media (min-width: 701px) and (max-width: 799px) {
+  html { scroll-padding-top: 78px; }
+  /* The sticky list rides the same measurement: parked at the one-row
+     offset, its first 17px sit behind a two-row bar. */
+  .features-toc { top: 78px; }
+}
+
+/* ---- Narrow screens -------------------------------------------------- */
+/* At the site's breakpoint the two columns become one, the TOC leads and
+   stops sticking (it would cover the page), and its native summary
+   appears so the list can be folded away. */
+@media (max-width: 700px) {
+  .features-layout { grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .features-toc { position: static; }
+  .features-toc-summary { display: list-item; }
+  .features-toc-list { padding-top: 4px; }
+  .feature-meta { grid-template-columns: minmax(0, 1fr); gap: 1px 0; }
+  .feature-meta dt { margin-top: 5px; }
+  .feature-meta dt:first-child { margin-top: 0; }
+}
