@@ -2751,27 +2751,30 @@ html:not(.hacker) .cw-screen::after {
    new layout"): "Interactive demo" in its title bar, which is the
    section's heading, and the display stands bare on the left. */
 .cw-controls .titlebar .title { margin: 0; font-weight: normal; }
-/* The hint row, first in the keys window's body: "Hint:" and ONE thing
-   to try on the monitor at a time, fading out and in through a list of
-   two dozen, across the WHOLE row (2026-09-03, the user: "hint should
-   be full row, larger text. make sure that the text length variations
-   doesn't cause pane resizing/moving around"), with the automatic-demo
-   box floated at the top right so the hint's first line runs up to it
-   and its second runs under it, full width. The row is a FIXED height
-   of two lines and clips: a short tip leaves the second line empty, a
-   long one fills it, and nothing under the row moves either way. The
-   ideas are written to fit two such lines (at most 80 characters, the
-   suite holds them to it). The full list is in the document for a
-   screen reader, once; the changing line is hidden from it. */
+/* The hint row, first in the keys window's body: the automatic-demo box
+   on a line of its own at the right, then "Hint:" and ONE thing to try
+   on the monitor at a time, fading out and in through a list of two
+   dozen, across the WHOLE row on both of its lines (2026-09-03, the
+   user: "hint should be full row, larger text. make sure that the text
+   length variations doesn't cause pane resizing/moving around", and
+   then, when the box shared the hint's first line, "you need to leave
+   more room for the hints... many are cutoff. don't do it sloppy").
+   The hint is a FIXED height of two lines and clips: a short tip leaves
+   the second line empty, a long one fills it, and nothing under the row
+   moves either way. The ideas are written to fit two such lines (at
+   most 80 characters, the suite holds them to it), and the rendered
+   suite sets every one of them into this box at every fold and fails
+   if any overflows. The full list is in the document for a screen
+   reader, once; the changing line is hidden from it. */
 .cw-keys-lead-row {
   display: block;
   /* Half the body's gap under the hint: that gap is the boxes' own, and
      a whole one under a two-line hint put the rows 3px past the legend
      at 1440x760 (the rendered suite). Written as the gap's negative
      half rather than a gap of its own, so the two stay one number. */
-  margin-bottom: calc(-0.5 * clamp(8px, calc(4.2 * var(--cw-dens) - 12.5px), 26px));
+  margin-bottom: calc(-0.5 * clamp(6px, calc(2.8 * var(--cw-dens) - 7.7px), 20px));
 }
-.cw-keys-lead-row .cw-demo-mode { float: right; margin: 1px 0 4px 12px; }
+.cw-keys-lead-row .cw-demo-mode { width: max-content; margin: 0 0 0 auto; }
 .cw-hero-idea {
   margin: 0;
   height: 2.4em;                        /* two lines, always: the row never grows or shrinks with the tip */
@@ -2901,7 +2904,7 @@ html:not(.hacker) .cw-screen::after {
      layout begins at 1121px, where the display beside this window is
      ~490px tall, and runs up to a ~740px window; every one of these is
      a line from its floor at ~500px to its full size at ~710px. */
-  gap: clamp(8px, calc(4.2 * var(--cw-dens) - 12.5px), 26px);   /* more between the two sections (2026-09-03, the user, twice: "a LITTLE more, not a lot", then "still too on top of each other"): 5px more at the floor, 10 at the ceiling, over the 3 and 16 it had */
+  gap: clamp(6px, calc(2.8 * var(--cw-dens) - 7.7px), 20px);   /* more between the two sections (2026-09-03, the user, twice: "a LITTLE more, not a lot", then "still too on top of each other"): 5px more at the floor, 10 at the ceiling, over the 3 and 16 it had */
   padding: 6px 22px 14px;                 /* 14 and 16 until 2026-09-03: the top went to the sections' titles and then to the hint row under the bar */
 }
 /* What stands around the display in one screen, and gets back nowhere:
@@ -3022,7 +3025,7 @@ html:not(.hacker) .cw-screen::after {
      ~490px floor, 6px and 8px from ~620px up. A step to those floors
      under 540px left the 544px window of 1440x760 (the heading a window
      now, the display 20px shorter) 3px short per box. */
-  padding: clamp(10px, calc(1.5 * var(--cw-dens) + 2.7px), 14px) 7px clamp(2px, calc(1.5 * var(--cw-dens) - 5.3px), 7px);
+  padding: clamp(9px, calc(1.5 * var(--cw-dens) + 1.7px), 12px) 7px clamp(1px, calc(1.5 * var(--cw-dens) - 6.3px), 7px);
   /* The top is 7px more than the bottom at every size (2026-09-03, the
      user, twice: the names were "too on top of 'click to release'",
      then "need a bit more vertical padding between section title and
@@ -3048,7 +3051,7 @@ html:not(.hacker) .cw-screen::after {
   flex-direction: column;
   /* Between the keys and the rows: cut to the window's height like the
      rest, from 3px at the ~490px floor to 8px at the ~740px window. */
-  gap: clamp(3px, calc(2 * var(--cw-dens) - 7px), 8px);
+  gap: clamp(2px, calc(2 * var(--cw-dens) - 8px), 8px);
 }
 /* The box's name, on its frame line: the display face at the size the
    legend's biggest names reach, so "View applications" and "View
@@ -3072,27 +3075,30 @@ html:not(.hacker) .cw-screen::after {
    the cap, the slot's calc() saw no unit at all and fell back to auto,
    and the two boxes' Tabs sat 12px apart. The line itself is described
    at .cw-keycap-btn, which reads it. */
-.cw-group-keys { --cw-u: clamp(48px, calc(17.5 * var(--cw-dens) - 45px), 66px); display: flex; justify-content: space-evenly; gap: 0px; align-items: flex-end; flex: none; min-width: 0; }
+.cw-group-keys { --cw-u: clamp(48px, calc(17.5 * var(--cw-dens) - 45px), 60px); position: relative; display: flex; justify-content: center; gap: 0px; align-items: flex-end; flex: none; min-width: 0; }
 /* A keyset is two lines: the verb, then its cap or caps (2026-09-03,
    the user, after the verb sat beside the cap and then in a chip: "the
    alignment of the text with the keyboard buttons are all off.. have
    the text be one line above the button instead"). A wrapping row: the
    verb takes the whole first line, the caps the second. */
-/* Centred (2026-09-03, the user: "have buttons be centered under the
-   text, not aligned left. use the width of the pane correctly. lots of
-   empty space on right", and then, of equal halves, "the text and
-   keyboard buttons are too aligned right now"). Each keyset is exactly
-   as wide as its caps, its verb centred over them, and the row spaces
-   the two keysets EVENLY: the same air at the left edge, between the
-   modifier and Tab, and at the right edge, whatever the unit. Equal
-   halves had put a lone cap in a wide left half and packed Tab and
-   backtick against the right, which read as everything shoved right. */
-.cw-keyset { display: flex; flex: none; flex-wrap: wrap; justify-content: center; align-items: center; gap: 2px; min-width: 0; }
-/* The hold slot is Command's width in BOTH boxes, Option centred in it,
-   so Tab sits at one x across the boxes whatever the modifier's width;
-   the tap slot is Tab, the 4px between, and backtick, plus a hair so a
+/* The row (2026-09-03, the user, last of the day: "have cmd/option be
+   aligned to the left of the pane and made 50% smaller/width of the two
+   icons in explainer below it as a pseudo title... tab/` should be
+   centered now in the pane since it's the interaction point"): the tap
+   keyset, its verb over it, is CENTRED in the row, and the modifier
+   art stands out of the flow at the row's left edge, half size, its
+   left edge on the legend's chips below it and its foot on the caps'
+   line, so it reads as the box's mark rather than a key to reach for.
+   Each keyset is exactly as wide as its caps; the verb line and the
+   caps line have 8px between them, the two caps 2px. */
+.cw-keyset { display: flex; flex: none; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 2px; min-width: 0; }
+/* The modifier art: Command's width in both boxes before the scale, so
+   Option's smaller cap lands at the same place; scaled by half from its
+   left foot (a transform keeps the printing crisp and the layout box
+   out of the flow), 8px in, which is the legend rows' own inset. */
+.cw-group-keys > .cw-keyset:first-child { position: absolute; left: 8px; bottom: 0; width: calc(var(--cw-u) * 1.25); justify-content: flex-start; transform: scale(0.5); transform-origin: left bottom; }
+/* The tap slot is Tab, the 4px between, and backtick, plus a hair so a
    rounding never wraps backtick onto a third line. */
-.cw-group-keys > .cw-keyset:first-child { width: calc(var(--cw-u) * 1.25); }
 .cw-group-keys > .cw-keyset:last-child { width: calc(var(--cw-u) * 2.5 + 5px); }
 /* The hold slot is ONE width in both boxes, the width Command needs
    (its cap is a quarter wider than Option's), so Tab and backtick start
@@ -3116,7 +3122,7 @@ html:not(.hacker) .cw-screen::after {
      keep asking over and over", 2026-09-03). Helvetica Neue has a real
      one, and it is the face the bezel's labels already wear. */
   font-family: var(--font-panel);
-  font-size: 18px;                        /* 11, 13, 14 and 16 were each "still not larger" (2026-09-03, the user); the window widened for this one */
+  font-size: 20px;                        /* 11, 13, 14 and 16 were each "still not larger" (2026-09-03, the user), 18 held for an afternoon, then "make the font size a little bigger" */
   line-height: 1.05;                      /* one line, set tight: the line it adds over the caps is paid for in the box's height */
   color: var(--ink);
   white-space: nowrap;                    /* one line; the engine's break after "click to" collapses to a space here */
@@ -3145,7 +3151,7 @@ html:not(.hacker) .cw-screen::after {
 /* The terminal sets them in its mono face, which has a true bold too;
    at 18px it set "click to" at 86px, a hair inside the slot, so a size
    down keeps it there with room. */
-html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 17px; }
+html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
 /* Without Crossway the ⌥ group goes flat as one: its key (aria-disabled,
    below), its rows (.is-off, below) and here its name and verbs. */
 .cw-group.is-off .cw-group-label,
@@ -3274,7 +3280,8 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 17px; }
    and its legend dim, and the whole key fades, so "you cannot have this"
    reads from across the page. No wash and no dither, which would read as
    a surface where this needs to read as nothing to press. */
-.cw-keycap-btn[aria-disabled="true"] {
+.cw-keycap-btn[aria-disabled="true"],
+.cw-group.is-off .cw-keycap-btn.is-art {   /* the Option art greys with its box (2026-09-03, the user: "in macos native option needs to be greyed out too") */
   color: var(--dim);
   border-color: var(--dim);
   background: var(--paper);
@@ -3310,13 +3317,13 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 17px; }
   min-height: 0;
   align-content: space-evenly;   /* the rows spread over the height the group gives */
   grid-template-columns: minmax(0, 1fr);
-  gap: 2px 18px;
+  gap: 0 18px;                   /* no floor between rows: space-evenly is the spacing, and the shortest window needs every pixel (2026-09-03) */
 }
 .cw-legend li {
   display: grid;
   grid-template-columns: auto 1fr;
   column-gap: 10px;
-  row-gap: 2px;
+  row-gap: 0;
   align-items: baseline;
   /* The rows are cut to the window's height: the smallest window the
      side-by-side layout produces (~490px, at 1121px wide) gets the 1px
@@ -3366,7 +3373,7 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 17px; }
      on a phone) they can wrap, so two are, in the container block. */
   min-height: 1.3em;
   font-size: clamp(12px, calc(1.43 * var(--cw-dens) + 4.85px), 15px);
-  line-height: 1.25;
+  line-height: 1.2;
   color: var(--muted);
 }
 /* One row's Crossway sentence ("Go straight to the window you want. No
@@ -3416,6 +3423,7 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 17px; }
   /* The caps and their printing are on the unit's line now and need no
      step; what steps here is what is still whole pixels. */
   .cw-group-label { font-size: 17px; }    /* 20 from ~540px up (2026-09-03): two boxes' names cost the ~490px window 4px a box it did not have */
+  .cw-hero-idea { font-size: 14px; }      /* 16 from ~540px up: two lines of it, whole, are what the shortest window can spare (2026-09-03) */
   .cw-keys-body { padding-top: 6px; padding-bottom: 6px; }
   /* .cw-fine has no step-down at all any more: its three sizes are on
      the window's line in the plain rule (2026-09-02). It once had one
