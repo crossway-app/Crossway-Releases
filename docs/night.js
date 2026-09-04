@@ -59,11 +59,11 @@
     reflect();
   }
 
-  /* The lamp in the menubar (2026-09-03): the same toggle as the word,
-     for the visitor who never types it, and WITHOUT the dissolve. The
-     tiles falling away are the word's reward; the lamp is a lamp, and a
-     lamp goes off with a click. Its drawing follows the appearance in
-     CSS, so all the script keeps true is what a screen reader is told:
+  /* The lamp in the menubar: the same toggle as the word, for the
+     visitor who never types it, and WITHOUT the dissolve. The tiles
+     falling away are the word's reward; the lamp is a lamp, and a lamp
+     goes off with a click. Its drawing follows the appearance in CSS,
+     so all the script keeps true is what a screen reader is told:
      checked while the lights are on. */
   function lamps() {
     return document.querySelectorAll ? document.querySelectorAll(".lamp") : [];
@@ -79,9 +79,9 @@
     var t = e.target;
     var lamp = t && t.closest ? t.closest(".lamp") : null;
     if (!lamp) { return; }
-    /* Inert in the terminal for the reason trigger() is: the flip would
-       change nothing the visitor can see. And not under a dissolve. */
-    if (document.documentElement.classList.contains("hacker")) { return; }
+    /* The terminal is no longer inert here: it has a light palette now, so
+       the flip changes what the visitor sees in the terminal exactly as it
+       does outside it. Still not under a dissolve. */
     if (busy) { return; }
     toggle();
   }
@@ -147,14 +147,12 @@
   }
 
   function trigger() {
-    /* The terminal owns the appearance while it is on: its tokens beat
-       every light and dark value here, so flipping the state would play
-       the whole dissolve and change nothing the visitor can see. Stay
-       inert and let the terminal's own word be the way out. The state
-       itself is untouched, so it is still there to come back to. */
-    if (document.documentElement.classList.contains("hacker")) {
-      return;
-    }
+    /* The terminal used to own the appearance outright and this returned
+       early, because one dark palette meant a flip changed nothing. It has
+       a daylight palette now, so the flip is worth playing: .day and .night
+       select the terminal's two faces the same way they select the site's,
+       and leaving the terminal drops the visitor back into the appearance
+       they were already in. */
     if (busy) {
       return;
     }
