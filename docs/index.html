@@ -290,49 +290,16 @@
           <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title cw-title" id="cw-title">Interactive demo</h2></div>
           <div class="cw-keys-body">
           <div class="cw-keys-lead-row">
-          <!-- Automatic demo on a line of its own at the right, over the
-               hint (2026-09-03, the user, after it shared the hint's
-               first line: "you need to leave more room for the hints...
-               many are cutoff"), so the hint has both of its lines whole.
-               Left alone, the demo demonstrates itself. An autopilot clicks the same keys
+          <!-- Automatic demo, at the top left of the window's body and
+               on a line of its own: the hint that shared this row went
+               to the foot on 2026-09-03 (the user: "move hint to bottom
+               of pane, above the divider of 'this is just a taste',
+               below view windows"). Left alone, the demo demonstrates itself. An autopilot clicks the same keys
                a visitor would, through scenes whose commits put the
                desktop back exactly where it started, in whichever world
                the switch is set to, and the visitor's first real click on
                the keys, the screen or the switch takes over. -->
           <label class="cw-demo-mode"><input type="checkbox" id="cw-demo" checked> Automatic demo</label>
-          <!-- One thing to try at a time, cycled by hero-init.js through
-               the list under it; this line is what is seen, the list is
-               what a screen reader gets, once. Every idea is one line at
-               1280px wide, in plain words with nothing bolded, and every
-               one is something the desktop really does. The window has
-               nothing else: its title bar is the heading. -->
-          <p class="cw-hero-idea" aria-hidden="true"><span class="cw-hero-hint">Hint:</span> <span class="cw-hero-idea-text">Drag a window by its title bar.</span></p>
-          <ul class="cw-hero-ideas sr-only" aria-label="Things to try on the monitor">
-            <li>Drag a window by its title bar.</li>
-            <li>Resize a window from any edge or corner.</li>
-            <li>Click a window to bring it to the front.</li>
-            <li>Minimize a window with its yellow button.</li>
-            <li>Close a window with its red button.</li>
-            <li>Click a window's green button to fill the screen. Click again to shrink back.</li>
-            <li>Restore a minimized window from the Dock.</li>
-            <li>Launch an app from the Dock.</li>
-            <li>Click the app's name in the menu bar to open its menu.</li>
-            <li>Quit the front app from the menu bar.</li>
-            <li>Tap Tab to switch apps, then pause to land on one.</li>
-            <li>Tap Tab again and again to walk along the row.</li>
-            <li>Tap backtick again to move along the window strip.</li>
-            <li>Tap backtick to switch windows.</li>
-            <li>Use backtick to reach a window buried under another.</li>
-            <li>Under View windows, tap Tab to see every window on one grid.</li>
-            <li>Under View windows, tap backtick to see only the front app's windows.</li>
-            <li>Hover a preview in the switcher, then click it to jump there.</li>
-            <li>Click the wallpaper while the switcher is up to dismiss it.</li>
-            <li>Turn the blur wheel on the bezel to frost what is behind the switcher.</li>
-            <li>Press Include Minimized Windows on the bezel and watch the switcher change.</li>
-            <li>Throw the switch to macOS Native and compare.</li>
-            <li>Watch the film keep playing inside its preview.</li>
-            <li>Let the automatic demo run, then take over with a click.</li>
-          </ul>
           </div>
           <!-- The verbs beside the caps say the one thing visitors kept
                missing: these keys are CLICKED. macOS keeps the real ones.
@@ -428,12 +395,52 @@
                display (caught by the fit checks at 1200x1000 and, in the
                terminal appearance, 1280x700). One block, two sentences: the
                link still immediately follows the sentence it belongs to. -->
+          <!-- The foot: the changing hint, then the divider and the
+               small print under it. ONE block, because the window's body
+               is a flex column whose gap is the boxes' own: a fourth
+               child there would have cost a whole gap at every fold, and
+               the hint's place is against the divider anyway. -->
+          <div class="cw-keys-foot">
+            <!-- One thing to try at a time, cycled by hero-init.js through
+                 the list under it; this line is what is seen, the list is
+                 what a screen reader gets, once. Every idea is one line at
+                 1280px wide, in plain words with nothing bolded, and every
+                 one is something the desktop really does. The window has
+                 nothing else: its title bar is the heading. -->
+            <p class="cw-hero-idea" aria-hidden="true"><span class="cw-hero-hint">Hint:</span> <span class="cw-hero-idea-text">Drag a window by its title bar.</span></p>
+            <ul class="cw-hero-ideas sr-only" aria-label="Things to try on the monitor">
+              <li>Drag a window by its title bar.</li>
+              <li>Resize a window from any edge or corner.</li>
+              <li>Click a window to bring it to the front.</li>
+              <li>Minimize a window with its yellow button.</li>
+              <li>Close a window with its red button.</li>
+              <li>Click a window's green button to fill the screen. Click again to shrink back.</li>
+              <li>Restore a minimized window from the Dock.</li>
+              <li>Launch an app from the Dock.</li>
+              <li>Click the app's name in the menu bar to open its menu.</li>
+              <li>Quit the front app from the menu bar.</li>
+              <li>Tap Tab to switch apps, then pause to land on one.</li>
+              <li>Tap Tab again and again to walk along the row.</li>
+              <li>Tap backtick again to move along the window strip.</li>
+              <li>Tap backtick to switch windows.</li>
+              <li>Use backtick to reach a window buried under another.</li>
+              <li>Under View windows, tap Tab to see every window on one grid.</li>
+              <li>Under View windows, tap backtick to see only the front app's windows.</li>
+              <li>Hover a preview in the switcher, then click it to jump there.</li>
+              <li>Click the wallpaper while the switcher is up to dismiss it.</li>
+              <li>Turn the blur wheel on the bezel to frost what is behind the switcher.</li>
+              <li>Press Include Minimized Windows on the bezel and watch the switcher change.</li>
+              <li>Throw the switch to macOS Native and compare.</li>
+              <li>Watch the film keep playing inside its preview.</li>
+              <li>Let the automatic demo run, then take over with a click.</li>
+            </ul>
           <!-- The middle sentence went on 2026-09-03 (the user: remove
-               "Crossway has many more settings and features for you to
-               explore and customize", and nothing else): the first
-               sentence and the link stay as they were. -->
-          <p class="cw-fine">This is just a first taste.<!-- HELD until 2.0 (distribution/releases-repo/HOLD): the feature directory is not live, so its link waits here:
-            <a class="cw-features-link" href="features/">Click here to see the full list of features.</a> --></p>
+                 "Crossway has many more settings and features for you to
+                 explore and customize", and nothing else): the first
+                 sentence and the link stay as they were. -->
+            <p class="cw-fine">This is just a first taste.<!-- HELD until 2.0 (distribution/releases-repo/HOLD): the feature directory is not live, so its link waits here:
+              <a class="cw-features-link" href="features/">Click here to see the full list of features.</a> --></p>
+          </div>
           </div>
         </section>
       </div>
