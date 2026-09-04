@@ -2799,9 +2799,9 @@
      words bolded", the user). With reduced motion there is no fade, and
      the ideas change less often.
      ==================================================================== */
-  var IDEAS_DWELL = 3200;   /* how long an idea stands */
+  var IDEAS_DWELL = 4800;   /* how long an idea stands (3200 until 2026-09-03: the user, "the hints are also rotating too quickly, slow it down by 50%") */
   var IDEAS_FADE = 400;     /* how long it takes to go, and to come */
-  var IDEAS_DWELL_REDUCED = 6000;
+  var IDEAS_DWELL_REDUCED = 9000;
 
   function createIdeas(o) {
     o = o || {};
