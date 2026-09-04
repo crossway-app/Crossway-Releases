@@ -311,13 +311,13 @@
             <li>Launch an app from the Dock.</li>
             <li>Click the app's name in the menu bar to open its menu.</li>
             <li>Quit the front app from the menu bar.</li>
-            <li>Hold Command and tap Tab to switch apps.</li>
+            <li>Tap Tab to switch apps, then pause to land on one.</li>
             <li>Tap Tab again and again to walk along the row.</li>
-            <li>Keep Command held and tap backtick again to move along the window strip.</li>
-            <li>Hold Command and tap backtick to switch windows.</li>
-            <li>Use Command and backtick to reach a window buried under another.</li>
-            <li>Hold Option and tap Tab to see every window on one grid.</li>
-            <li>Hold Option and tap backtick to see only the front app's windows.</li>
+            <li>Tap backtick again to move along the window strip.</li>
+            <li>Tap backtick to switch windows.</li>
+            <li>Use backtick to reach a window buried under another.</li>
+            <li>Under View windows, tap Tab to see every window on one grid.</li>
+            <li>Under View windows, tap backtick to see only the front app's windows.</li>
             <li>Hover a preview in the switcher, then click it to jump there.</li>
             <li>Click the wallpaper while the switcher is up to dismiss it.</li>
             <li>Turn the blur wheel on the bezel to frost what is behind the switcher.</li>
@@ -353,14 +353,21 @@
                modifier goes down first if it is not already (wireKeys):
                the first click on either frame does something on the
                screen. The caps keep MacBook Pro proportions and the
-               legends their real keys carry; the verbs beside them say
-               the one thing a cap cannot: it is CLICKED. -->
+               legends their real keys carry; the verb over the tap keys
+               says the one thing a cap cannot: it is CLICKED. The
+               modifiers are ART (2026-09-03, the user: "make it so you
+               don't interact with them. remove 'click to hold' aspect
+               entirely. instead, they are art that activate as the user
+               interacts with tab and `. this removes a layer of
+               complexity"): a tap on a box's key holds its modifier for
+               you and the cap lights, and a pause lets it go, which is
+               what commits. Nothing on them is clickable, and a screen
+               reader is not told about them. -->
           <fieldset class="cw-group" data-group="cmd">
             <legend class="cw-group-label">View applications</legend>
             <div class="cw-group-keys">
               <span class="cw-keyset">
-                <span class="cw-keyset-verb">click to&#10;hold</span>
-                <button type="button" class="cw-keycap-btn cw-key-cmd" data-key="cmd" aria-pressed="false" aria-label="Command"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg><span class="cw-keycap-word" aria-hidden="true">command</span></button>
+                <span class="cw-keycap-btn cw-key-cmd is-art" data-key="cmd" data-held="false" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg><span class="cw-keycap-word" aria-hidden="true">command</span></span>
               </span>
               <span class="cw-keyset">
                 <span class="cw-keyset-verb">click to&#10;tap</span>
@@ -385,8 +392,7 @@
             <legend class="cw-group-label">View windows</legend>
             <div class="cw-group-keys">
               <span class="cw-keyset">
-                <span class="cw-keyset-verb">click to&#10;hold</span>
-                <button type="button" class="cw-keycap-btn cw-key-opt" data-key="opt" aria-pressed="false" data-crossway-only="1" aria-label="Option"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h5.5l7 14H21M14 5h7"/></svg><span class="cw-keycap-word" aria-hidden="true">option</span></button>
+                <span class="cw-keycap-btn cw-key-opt is-art" data-key="opt" data-held="false" data-crossway-only="1" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h5.5l7 14H21M14 5h7"/></svg><span class="cw-keycap-word" aria-hidden="true">option</span></span>
               </span>
               <span class="cw-keyset">
                 <span class="cw-keyset-verb">click to&#10;tap</span>
