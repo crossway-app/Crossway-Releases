@@ -1,0 +1,1170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>Crossway Features</title>
+<meta name="description" content="A complete reference to Crossway commands, previews, settings, privacy, and compatibility.">
+<link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<script>try{var v=localStorage.getItem("crossway-night");if(v==="1")document.documentElement.classList.add("night");else if(v==="0")document.documentElement.classList.add("day");if(localStorage.getItem("crossway-hacker")==="1")document.documentElement.classList.add("hacker");if(localStorage.getItem("crossway-retro")==="1")document.documentElement.classList.add("retro")}catch(e){}</script>
+<link rel="stylesheet" href="../style.css">
+<link rel="stylesheet" href="../features.css">
+<script src="../night.js" defer></script>
+<script src="../cameo.js" defer></script>
+<script src="../hacker.js" defer></script>
+<script src="../features.js" defer></script>
+</head>
+<body id="top">
+
+<!-- The phosphor filter for the menubar app icon. It is a PNG, so no token
+     and no fill can reach it the way they reach the heart and the cameo; a
+     filter is the only lever. Kept inert and out of the layout, and never
+     referenced outside html.hacker, so the ordinary page is untouched.
+     Not display:none — that stops the filter resolving in some engines. -->
+<svg class="phosphor-defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <defs>
+    <filter id="phosphor-icon" color-interpolation-filters="sRGB">
+      <feColorMatrix type="saturate" values="0"/>
+      <feComponentTransfer>
+        <feFuncR type="table" tableValues="0.063 0.651"/>
+        <feFuncG type="table" tableValues="0.106 1"/>
+        <feFuncB type="table" tableValues="0.071 0.745"/>
+      </feComponentTransfer>
+    </filter>
+  </defs>
+</svg>
+
+<nav class="menubar" aria-label="Site">
+  <a class="apptitle" href="../"><img class="appicon" src="../assets/favicon-32.png" width="18" height="18" alt="">Crossway</a>
+  <span class="spacer"></span>
+  <a href="../#demo">Try&nbsp;it</a>
+  <a href="./" aria-current="page">Features</a>
+  <a href="../#readme">Read&nbsp;Me</a>
+  <a href="../#privacy">Privacy</a>
+  <a href="../#contact">Contact</a>
+  <a href="../#download">Download</a>
+  <a href="../#donate">Donate</a>
+  <button type="button" class="lamp" role="switch" aria-checked="true" aria-label="Lights">
+    <svg class="lamp-art" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
+      <defs>
+        <linearGradient id="lamp-beam-fade" x1="0" y1="0" x2="0" y2="1">
+          <stop class="lamp-beam-stop" offset="0" stop-opacity="0.55"/>
+          <stop class="lamp-beam-stop" offset="1" stop-opacity="0"/>
+        </linearGradient>
+      </defs>
+      <path class="lamp-beam" d="M4.6 12.9h14.8L22.6 24H1.4z"/>
+      <circle class="lamp-bulb" cx="12" cy="14.8" r="1.95"/>
+      <path class="lamp-body" d="M11.2 1h1.6v1.6h-1.6z"/>
+      <path class="lamp-body" d="M7.6 2.6h8.8a.6.6 0 0 1 .56.4l3.3 8.9a.7.7 0 0 1-.66.95H4.4a.7.7 0 0 1-.66-.95l3.3-8.9a.6.6 0 0 1 .56-.4z"/>
+      <path class="lamp-body" d="M10.6 16.3h2.8v1.1h-2.8z"/>
+      <path class="lamp-body" d="M11.25 17.3h1.5v2.8h-1.5z"/>
+      <path class="lamp-body" d="M6.4 20h11.2a1.3 1.3 0 0 1 1.3 1.3v.4A1.3 1.3 0 0 1 17.6 23H6.4a1.3 1.3 0 0 1-1.3-1.3v-.4A1.3 1.3 0 0 1 6.4 20z"/>
+      <path class="lamp-chain" d="M19.2 12.9v2.7"/>
+      <circle class="lamp-chain-end" cx="19.2" cy="16.3" r="0.85"/>
+    </svg>
+  </button>
+</nav>
+
+<main class="desktop">
+
+  <!-- The directory is plain HTML first: every section and every feature has
+       its own id, the sections list below is ordinary fragment links, and each
+       feature's heading links to itself. Nothing here needs a script to read
+       or to navigate; the compact search only narrows what is already on the
+       page, reading each article's data-search aliases. -->
+  <section class="mac-window features-intro" aria-labelledby="features-title">
+    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Features</span></div>
+    <div class="window-body">
+      <h1 id="features-title">Crossway feature guide</h1>
+      <p>This guide covers every command and setting in Crossway. Use the
+      sections list or search box to find a feature.</p>
+      <p class="caption">This page describes Crossway 2.0.</p>
+    </div>
+  </section>
+
+  <div class="features-layout">
+
+    <nav class="mac-window features-toc" aria-label="Feature sections">
+      <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Contents</span></div>
+      <div class="window-body">
+        <p class="features-nav-buttons">
+          <a class="btn features-site-home-link" href="../" aria-label="Homepage" title="Homepage">
+            <svg class="features-home-icon" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path d="M1.5 7.5 8 2l6.5 5.5M3 6.25V14h10V6.25M6 14V9.5h4V14"/>
+            </svg>
+          </a>
+          <a class="btn features-top-link" href="#top">Top</a>
+        </p>
+        <!-- The search control ships HIDDEN and is revealed from features.js
+             only once the index and the handlers are ready. A control that
+             cannot work must not be on screen, and with JavaScript off there
+             is simply a list of sections. -->
+        <div class="features-search" hidden>
+          <label class="sr-only" for="features-search">Search features</label>
+          <input class="features-search-field" id="features-search" type="search"
+                 placeholder="Search features" autocomplete="off" spellcheck="false"
+                 aria-describedby="features-search-status">
+          <p class="features-search-status" id="features-search-status" role="status"></p>
+        </div>
+        <!-- A native disclosure, open in the markup: on a phone the list
+             folds under its summary with no script, on a desktop the summary
+             is hidden and the list is simply the window's contents. -->
+        <details class="features-toc-disclosure" open>
+        <summary class="features-toc-summary">Jump to a section</summary>
+        <ol class="features-toc-list">
+          <li><a href="#get-around">Get around</a></li>
+          <li><a href="#while-the-switcher-is-open">While the switcher is open</a></li>
+          <li><a href="#windows-and-previews">Windows and previews</a></li>
+          <li><a href="#layout-and-display">Layout and display</a></li>
+          <li><a href="#badges">Badges</a></li>
+          <li><a href="#settings-reference">Settings reference</a></li>
+          <li><a href="#privacy-permissions-and-data">Privacy, permissions, and data</a></li>
+          <li><a href="#menu-bar-and-updates">Menu bar and updates</a></li>
+          <li><a href="#compatibility">Compatibility</a></li>
+        </ol>
+        </details>
+      </div>
+    </nav>
+
+    <div class="features-body">
+
+      <!-- Shown only when a query matches nothing. It is a sentence and a
+           button, not a replacement interface: the directory is still the
+           page, one clear away. -->
+      <p class="features-empty" hidden>No features match that search.
+        <button class="features-clear" type="button">Clear the search</button></p>
+
+      <section class="mac-window feature-category" id="get-around" aria-labelledby="get-around-title">
+        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title" id="get-around-title">Get around</h2></div>
+        <div class="window-body">
+          <p class="feature-category-lede">Opening Crossway, moving through items, and completing a selection.</p>
+
+          <article class="feature" id="switch-apps" data-search="cmd tab command tab ⌘ application switcher apps app row">
+            <h3 class="feature-title"><a href="#switch-apps">Switch apps</a></h3>
+            <p>Hold <kbd>⌘</kbd> and press <kbd>Tab</kbd> to open the app row. Press <kbd>Tab</kbd> again to select another app. Release <kbd>⌘</kbd> to switch to the selected app. Its windows appear below the row after the preview delay.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd><kbd>⌘</kbd> <kbd>Tab</kbd></dd>
+              <dt>Where</dt><dd>App row</dd>
+              <dt>Settings</dt><dd>Keybindings → Hotkeys → Switch apps</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Can be switched off or rebound</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#hold-to-reveal">Holding the shortcut</a> and <a href="#quick-tap">Quick tap</a>.</p>
+          </article>
+
+          <article class="feature" id="switch-windows" data-search="cmd grave command backtick ⌘ ` windows window strip cycle">
+            <h3 class="feature-title"><a href="#switch-windows">Switch windows</a></h3>
+            <p>Hold <kbd>⌘</kbd> and press <kbd>`</kbd> to open the front app's window strip. Press <kbd>`</kbd> again to select another window. Release <kbd>⌘</kbd> to activate the selected window. From the app row, <kbd>`</kbd> opens the selected app's window strip.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd><kbd>⌘</kbd> <kbd>`</kbd></dd>
+              <dt>Where</dt><dd>Window strip</dd>
+              <dt>Settings</dt><dd>Keybindings → Hotkeys → Switch windows</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Can be switched off or rebound</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#arrow-keys">Arrow keys</a> and <a href="#native-window-cycling">Native window cycling</a>.</p>
+          </article>
+
+          <article class="feature" id="all-windows" data-search="option tab alt tab ⌥ exposé expose grid every window all windows">
+            <h3 class="feature-title"><a href="#all-windows">All windows</a></h3>
+            <p>Hold <kbd>⌥</kbd> and press <kbd>Tab</kbd> to open a grid of all windows, ordered by recent use. Press <kbd>Tab</kbd> to select the next tile; selection wraps at the end. The arrow keys move in four directions. Release <kbd>⌥</kbd> to activate the selected window.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd><kbd>⌥</kbd> <kbd>Tab</kbd></dd>
+              <dt>Where</dt><dd>Grid</dd>
+              <dt>Settings</dt><dd>Keybindings → Exposé → All windows; the grid itself is Optional → Exposé → Enable Exposé</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Can be switched off or rebound</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#focused-app-windows">Focused app's windows</a> and <a href="#expose-preview-size">Exposé tile sizes</a>.</p>
+          </article>
+
+          <article class="feature" id="focused-app-windows" data-search="option grave alt backtick ⌥ ` exposé expose grid front app focused app windows">
+            <h3 class="feature-title"><a href="#focused-app-windows">Focused app's windows</a></h3>
+            <p>Hold <kbd>⌥</kbd> and press <kbd>`</kbd> to open a grid containing only the front app's windows. Navigation and selection work as they do in <a href="#all-windows">All windows</a>.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd><kbd>⌥</kbd> <kbd>`</kbd></dd>
+              <dt>Where</dt><dd>Grid</dd>
+              <dt>Settings</dt><dd>Keybindings → Exposé → Focused app's windows</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Can be switched off or rebound</dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="quick-tap" data-search="tap fast native speed no interface instant switch previous app previous window">
+            <h3 class="feature-title"><a href="#quick-tap">Quick tap</a></h3>
+            <p>Press and release a shortcut before the show delay to switch without displaying the interface. A quick <kbd>⌘</kbd> <kbd>Tab</kbd> returns to the previous app. A quick <kbd>⌘</kbd> <kbd>`</kbd> activates the front app's previous window.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#hold-to-reveal">Holding the shortcut</a> and <a href="#native-window-cycling">Native window cycling</a>.</p>
+          </article>
+
+          <article class="feature" id="hold-to-reveal" data-search="hold delay show delay preview delay expose exposé show delay grid reveal 0.1 s 100 ms 400 ms fluid fast custom preset">
+            <h3 class="feature-title"><a href="#hold-to-reveal">Holding the shortcut</a></h3>
+            <p>Hold a shortcut past the show delay to display Crossway. The default show delay is 0.10 s. The app row's window strip appears after a further 0.40 s; the window shortcut displays its strip immediately. The grid has its own show delay, also 0.10 s by default, measured from the keypress.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>Show delay 0.10 s, window preview show delay 0.40 s, exposé show delay 0.10 s</dd>
+              <dt>Settings</dt><dd>General → Previews → UX presets (Fluid, Fast, or Custom), Switcher show delay, Window preview show delay, Exposé show delay</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span> Timing is adjustable</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#previews-timing">Preview timing</a> in the Settings reference.</p>
+          </article>
+
+          <article class="feature" id="release-to-commit" data-search="release let go commit activate land select">
+            <h3 class="feature-title"><a href="#release-to-commit">Releasing the keys</a></h3>
+            <p>Release any modifier in the shortcut that opened Crossway to activate the selected app, window, or grid tile. Moving the selection does not activate it.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#escape">Esc</a> and <a href="#click-outside">Click outside</a>.</p>
+          </article>
+
+          <article class="feature" id="shift-reverses" data-search="shift ⇧ reverse backwards previous">
+            <h3 class="feature-title"><a href="#shift-reverses">Shift reversal</a></h3>
+            <p>Add <kbd>⇧</kbd> to a shortcut to move in reverse. For example, <kbd>⌘</kbd> <kbd>⇧</kbd> <kbd>Tab</kbd> moves backward through the app row. If <kbd>⇧</kbd> is part of the recorded shortcut, it does not reverse direction.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="custom-shortcuts" data-search="rebind record shortcut keybinding hotkey disable turn off conflict shadow warning ⚠ restore defaults control ctrl">
+            <h3 class="feature-title"><a href="#custom-shortcuts">Custom shortcuts</a></h3>
+            <p>Each command has a separate enable switch and shortcut recorder. Disabling a command returns its shortcut to macOS. When shortcuts overlap, the one with more modifiers takes precedence and Settings displays a ⚠ warning. Restore defaults enables all four commands and restores their original shortcuts.</p>
+            <dl class="feature-meta">
+              <dt>Settings</dt><dd>Keybindings → Hotkeys and Keybindings → Exposé</dd>
+              <dt>Status</dt><dd><span class="feature-status">Optional</span> Defaults are ⌘ Tab, ⌘ `, ⌥ Tab, ⌥ `</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#session-modifier">Session modifiers</a> and <a href="#keybindings-tab">Keybindings</a> in the Settings reference.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="mac-window feature-category" id="while-the-switcher-is-open" aria-labelledby="while-the-switcher-is-open-title">
+        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title" id="while-the-switcher-is-open-title">While the switcher is open</h2></div>
+        <div class="window-body">
+          <p class="feature-category-lede">Keyboard and pointer controls available during a switching session.</p>
+
+          <article class="feature feature-note" id="session-modifier" data-search="modifier control ctrl command option armed session chord letter keys">
+            <h3 class="feature-title"><a href="#session-modifier">Session modifiers</a></h3>
+            <p>The letter commands below use the modifiers from the shortcut that opened Crossway. Their tables show <kbd>⌘</kbd>, the default modifier. If Switch apps is set to <kbd>⌃</kbd> <kbd>Tab</kbd>, <kbd>⌃</kbd> <kbd>W</kbd> uses the same modifier during that session. Esc and the arrow keys require no modifier.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="escape" data-search="esc escape cancel dismiss switcher stay">
+            <h3 class="feature-title"><a href="#escape">Esc</a></h3>
+            <p>Press Esc to dismiss Crossway without activating the selected item. Esc also resets a sequence of quick <kbd>⌘</kbd> <kbd>`</kbd> presses.</p>
+            <dl class="feature-meta">
+              <dt>Key</dt><dd><kbd>Esc</kbd></dd>
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="arrow-keys" data-search="arrows left right up down ← → ↑ ↓ navigate move rows">
+            <h3 class="feature-title"><a href="#arrow-keys">Arrow keys</a></h3>
+            <p>The arrow keys move the selection while Crossway is open. The keys are not passed to the active app.</p>
+            <ul class="feature-list">
+              <li><strong>App row:</strong> <kbd>←</kbd> and <kbd>→</kbd> move through apps and wrap at the ends. In a multi-row layout, <kbd>↑</kbd> and <kbd>↓</kbd> move between rows. From the bottom row, <kbd>↓</kbd> opens the selected app's window strip.</li>
+              <li><strong>Window strip:</strong> <kbd>←</kbd> and <kbd>→</kbd> select the previous or next window. <kbd>↑</kbd> returns to the app row. <kbd>↓</kbd> has no effect.</li>
+              <li><strong>Grid:</strong> all four arrows move between tiles and stop at the grid's edges. Press the grid shortcut again to select the next tile and wrap.</li>
+            </ul>
+            <dl class="feature-meta">
+              <dt>Keys</dt><dd><kbd>←</kbd> <kbd>→</kbd> <kbd>↑</kbd> <kbd>↓</kbd></dd>
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="close-window" data-search="cmd w command w ⌘w close window close">
+            <h3 class="feature-title"><a href="#close-window">Close window</a></h3>
+            <p>In the window strip, this closes the selected window. In the app row, it closes the selected app's front window. A window remains listed while its app displays a save confirmation.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd><kbd>⌘</kbd> <kbd>W</kbd> (<a href="#session-modifier">or your shortcut's modifiers</a>)</dd>
+              <dt>Where</dt><dd>App row, window strip. Not available on the grid.</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="quit-app" data-search="cmd q command q ⌘q quit application quit app">
+            <h3 class="feature-title"><a href="#quit-app">Quit app</a></h3>
+            <p>Quits the selected app, or the app that owns the selected window. The app is removed from the row and Crossway remains open.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd><kbd>⌘</kbd> <kbd>Q</kbd> (<a href="#session-modifier">or your shortcut's modifiers</a>)</dd>
+              <dt>Where</dt><dd>App row, window strip. Not available on the grid.</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="new-window" data-search="cmd n command n ⌘n new window create window">
+            <h3 class="feature-title"><a href="#new-window">New window</a></h3>
+            <p>Sends the New Window command to the selected app. Crossway selects the new window when it appears. Repeating the command selects each new window in turn.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd><kbd>⌘</kbd> <kbd>N</kbd> (<a href="#session-modifier">or your shortcut's modifiers</a>)</dd>
+              <dt>Where</dt><dd>App row, window strip. Not available on the grid.</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="minimize-window" data-search="cmd m command m ⌘m minimize minimise dock">
+            <h3 class="feature-title"><a href="#minimize-window">Minimize window</a></h3>
+            <p>Minimizes the selected window, or the selected app's front window, to the Dock. The window moves to the back of the strip and the next window is selected.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd><kbd>⌘</kbd> <kbd>M</kbd> (<a href="#session-modifier">or your shortcut's modifiers</a>)</dd>
+              <dt>Where</dt><dd>App row, window strip. Not available on the grid.</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#minimized-windows">Minimized windows</a>.</p>
+          </article>
+
+          <article class="feature" id="hide-app" data-search="cmd h command h ⌘h hide app hidden">
+            <h3 class="feature-title"><a href="#hide-app">Hide app</a></h3>
+            <p>Hides the selected app, or the app that owns the selected window. The app remains in the row. Selecting it later unhides and activates it.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd><kbd>⌘</kbd> <kbd>H</kbd> (<a href="#session-modifier">or your shortcut's modifiers</a>)</dd>
+              <dt>Where</dt><dd>App row, window strip. Not available on the grid.</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="mouse-hover" data-search="mouse pointer hover trackpad highlight select">
+            <h3 class="feature-title"><a href="#mouse-hover">Pointer selection</a></h3>
+            <p>Moving the pointer over an app, window, or grid tile selects it. A stationary pointer does not change a keyboard selection. Keyboard input immediately returns control to the keyboard.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="click-to-activate" data-search="click activate mouse open window tile">
+            <h3 class="feature-title"><a href="#click-to-activate">Clicking a tile</a></h3>
+            <p>Click an app, window, or grid tile to activate it immediately and close Crossway. Clicking a window always activates that exact window.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="click-outside" data-search="click outside away dismiss cancel">
+            <h3 class="feature-title"><a href="#click-outside">Clicking outside</a></h3>
+            <p>Click outside Crossway to dismiss it without activating the selected item. This is the same as pressing <a href="#escape">Esc</a>.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="live-list" data-search="launch quit while open dynamic live update reconcile new window appears disappears">
+            <h3 class="feature-title"><a href="#live-list">Live app and window list</a></h3>
+            <p>Apps and windows are added or removed while Crossway is open. Existing items keep their order, and the current selection is retained when possible.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#dynamic-windows">Window list updates</a>.</p>
+          </article>
+
+          <article class="feature" id="open-app-cell" data-search="open app windowless no windows launch tile">
+            <h3 class="feature-title"><a href="#open-app-cell">Apps with no windows</a></h3>
+            <p>A running app with no windows shows one <em>Open <span class="feature-placeholder">App</span></em> tile. Select or click the tile to open the app as if you had clicked its Dock icon.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+        </div>
+      </section>
+
+      <section class="mac-window feature-category" id="windows-and-previews" aria-labelledby="windows-and-previews-title">
+        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title" id="windows-and-previews-title">Windows and previews</h2></div>
+        <div class="window-body">
+          <p class="feature-category-lede">Window tiles, preview timing, and window availability.</p>
+
+          <article class="feature" id="window-previews" data-search="thumbnails previews tiles strip pictures of windows under the app">
+            <h3 class="feature-title"><a href="#window-previews">Window strip</a></h3>
+            <p>During app switching, the selected app's windows appear below the app row after the preview delay. Each tile includes the window title. The Switch windows command opens the front app's strip immediately.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip</dd>
+              <dt>Settings</dt><dd>General → Previews sets the delays; Scaling → Window preview size sets the size</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#hold-to-reveal">Holding the shortcut</a> and <a href="#cached-stills">Still image, then live feed</a>.</p>
+          </article>
+
+          <article class="feature" id="cached-stills" data-search="still snapshot cached picture thumbnail live stream feed sequence first">
+            <h3 class="feature-title"><a href="#cached-stills">Still image, then live feed</a></h3>
+            <p>A tile first displays the most recent still captured for its window. If live previews are enabled, a live feed replaces the still after the preview settles.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#live-previews">Live previews</a> and <a href="#background-capture">Background capture</a>.</p>
+          </article>
+
+          <article class="feature" id="preview-placeholder" data-search="icon placeholder blank tile no picture yet shape aspect">
+            <h3 class="feature-title"><a href="#preview-placeholder">Tiles without a still</a></h3>
+            <p>Before a still is available, the tile displays the app icon in the window's aspect ratio. The tile keeps the same dimensions when the still arrives.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="live-previews" data-search="live previews stream video moving realtime recording indicator purple optional toggle">
+            <h3 class="feature-title"><a href="#live-previews">Live previews</a></h3>
+            <p>When live previews are enabled, each tile changes from a still to a live feed after the preview settles. A master switch controls the feature, with separate switches for the app switcher and grid. Disabled surfaces continue to display stills. macOS shows its purple recording indicator while live feeds are active.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip, grid</dd>
+              <dt>Settings</dt><dd>Optional → Previews → Enable live previews, Application switcher, Exposé</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional, per surface</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#cached-stills">Still image, then live feed</a> and <a href="#screen-recording-permission">Screen Recording permission</a>.</p>
+          </article>
+
+          <article class="feature" id="background-capture" data-search="background capture warm stills between sessions fresh pictures idle capture toggle">
+            <h3 class="feature-title"><a href="#background-capture">Background capture</a></h3>
+            <p>Background capture refreshes stills between sessions: when you switch apps, switch to another window of the same app, change Spaces, wake or unlock the Mac, connect a display, change the system appearance, or open a window in the front app. Moving between windows of one app captures the window you just left. Crossway does not capture while the screen is locked, and window pixels are not written to disk. When this setting is off, capture occurs only while Crossway is open.</p>
+            <dl class="feature-meta">
+              <dt>Settings</dt><dd>Optional → Previews → Background capture</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#memory-only-capture">Memory-only window captures</a>.</p>
+          </article>
+
+          <article class="feature" id="minimized-windows" data-search="minimized minimised dock include minimized windows badge still icon">
+            <h3 class="feature-title"><a href="#minimized-windows">Minimized windows</a></h3>
+            <p>Minimized windows remain available in the window strip and grid. Their tiles display the last still, or the app icon, with a <em>Minimized</em> label. Crossway can capture a still of a minimized window but cannot provide a live feed. Activating the tile restores the window from the Dock. Turn off Include minimized windows to omit them.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip, grid</dd>
+              <dt>Settings</dt><dd>Optional → Window inclusion → Include minimized windows</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#minimize-window">Minimize window</a> and <a href="#minimized-badge">Minimized label</a>.</p>
+          </article>
+
+          <article class="feature" id="other-space-windows" data-search="spaces desktops other space full screen mission control">
+            <h3 class="feature-title"><a href="#other-space-windows">Windows on other Spaces</a></h3>
+            <p>Windows on other Spaces are listed with windows on the current Space. Activating one moves to its Space. Tabs within a window do not appear as separate tiles.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="window-titles" data-search="title label caption name under tile empty title app name">
+            <h3 class="feature-title"><a href="#window-titles">Window titles</a></h3>
+            <p>Each window tile displays its title. If a window has no title, the app name appears in a lighter color.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="dynamic-windows" data-search="windows come and go new window closed window while open order kept live update">
+            <h3 class="feature-title"><a href="#dynamic-windows">Window list updates</a></h3>
+            <p>New windows are added while Crossway is open, and closed windows are removed. Existing tiles keep their order.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#live-list">Live app and window list</a> and <a href="#new-window">New window</a>.</p>
+          </article>
+
+          <article class="feature" id="windows-only-previews" data-search="exposé expose grid master switch enable windows-only previews turn off grid">
+            <h3 class="feature-title"><a href="#windows-only-previews">Grid master switch</a></h3>
+            <p>The Enable Exposé setting controls the grid. When it is off, All windows and Focused app's windows are disabled and their shortcuts return to macOS.</p>
+            <dl class="feature-meta">
+              <dt>Settings</dt><dd>Optional → Exposé → Enable Exposé</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#all-windows">All windows</a> and <a href="#settings-expose">Exposé settings</a>.</p>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="mac-window feature-category" id="layout-and-display" aria-labelledby="layout-and-display-title">
+        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title" id="layout-and-display-title">Layout and display</h2></div>
+        <div class="window-body">
+          <p class="feature-category-lede">Position, size, ordering, displays, and system appearance.</p>
+
+          <article class="feature" id="preview-alignment" data-search="alignment left center centre under app carousel glide position of previews">
+            <h3 class="feature-title"><a href="#preview-alignment">Preview alignment</a></h3>
+            <p>Left aligns tiles with the left edge of the window strip. Center keeps the selected window in the middle. Under app keeps the selected window below the selected app icon. Center and Under app animate every selection change, including wraparound.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>Left</dd>
+              <dt>Settings</dt><dd>General → Previews → Alignment (Left, Center, Under app)</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Choice</dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="single-row-app-switcher" data-search="single row one row app row wrap multiple rows number of app rows icon size">
+            <h3 class="feature-title"><a href="#single-row-app-switcher">Single-row app switcher</a></h3>
+            <p>In single-row mode, app icons shrink as needed to fit one row. When the setting is off, icons remain full size and wrap to additional rows. Use <kbd>↑</kbd> and <kbd>↓</kbd> to move between rows.</p>
+            <dl class="feature-meta">
+              <dt>Settings</dt><dd>Optional → Number of app rows → Single-row app switcher</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#arrow-keys">Arrow keys</a>.</p>
+          </article>
+
+          <article class="feature" id="interface-scale" data-search="scale scaling size bigger smaller app row icons interface scale">
+            <h3 class="feature-title"><a href="#interface-scale">Interface scale</a></h3>
+            <p>Sets the size of the app row and app icons, from half size to double size. The Settings preview updates while you drag. Crossway uses the new scale the next time it opens.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>1.0, from 0.5 to 2.0</dd>
+              <dt>Settings</dt><dd>Scaling → Interface scale</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Adjustable</dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="window-preview-size" data-search="scale scaling preview size thumbnails bigger smaller strip">
+            <h3 class="feature-title"><a href="#window-preview-size">Window preview size</a></h3>
+            <p>Sets the size of tiles in the window strip, independently of the app row.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>1.0, from 0.5 to 2.0</dd>
+              <dt>Settings</dt><dd>Scaling → Window preview size</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Adjustable</dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="expose-preview-size" data-search="scale scaling exposé expose grid tiles size bigger smaller">
+            <h3 class="feature-title"><a href="#expose-preview-size">Exposé tile sizes</a></h3>
+            <p>Each grid has its own tile size, app icon size, and title text size, so All windows and Focused app's windows can be sized independently. These six controls depend on the grid master switch; see <a href="#settings-expose">Exposé settings</a>.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>1.0 for all six, from 0.5 to 2.0</dd>
+              <dt>Settings</dt><dd>Scaling → Exposé: All windows; Scaling → Exposé: Focused app's windows</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Adjustable</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#windows-only-previews">Grid master switch</a>.</p>
+          </article>
+
+          <article class="feature" id="background-blur" data-search="blur dim backdrop frosted glass amount intensity behind the switcher">
+            <h3 class="feature-title"><a href="#background-blur">Background blur</a></h3>
+            <p>Background blur has separate switches for the app switcher and grid, plus a shared amount. It uses a frosted blur on macOS 26 and a translucent dim on macOS 14 and 15.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>Off for both; Amount 1.0, from 0.2 to 1.0</dd>
+              <dt>Settings</dt><dd>Optional → Background blur</dd>
+              <dt>Status</dt><dd><span class="feature-status">Off by default</span> Optional</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#platform-presentation">macOS 26 and macOS 14 to 15</a>.</p>
+          </article>
+
+          <article class="feature" id="app-order" data-search="order apps most recently used alphabetical sort app row">
+            <h3 class="feature-title"><a href="#app-order">Order of apps</a></h3>
+            <p>Most recently used places the previous app first. Alphabetical orders apps by name.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>Most recently used</dd>
+              <dt>Settings</dt><dd>General → Ordering → Applications</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Choice</dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="window-order" data-search="order windows most recently focused alphabetical macos window order sort strip grid">
+            <h3 class="feature-title"><a href="#window-order">Order of windows</a></h3>
+            <p>Most recently focused places recent windows first. Alphabetical sorts by window title. macOS window order uses the system's front-to-back order. Minimized windows follow unminimized windows in every order.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>Most recently focused</dd>
+              <dt>Settings</dt><dd>General → Ordering → Windows</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Choice</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#native-window-cycling">Native window cycling</a>.</p>
+          </article>
+
+          <article class="feature" id="native-window-cycling" data-search="native window cycling cycle fast taps ping pong walk windows back and forth ⌘` repeat">
+            <h3 class="feature-title"><a href="#native-window-cycling">Native window cycling</a></h3>
+            <p>When Native window cycling is off, quick <kbd>⌘</kbd> <kbd>`</kbd> presses alternate between the app's two most recent windows. When it is on, quick presses move through every window in the selected window order; add <kbd>⇧</kbd> to move in reverse. Most recently focused order is updated when previews appear. Alphabetical and macOS window order remain fixed. The same rules apply to quick presses of Focused app's windows.</p>
+            <dl class="feature-meta">
+              <dt>Settings</dt><dd>General → Ordering → Native window cycling</dd>
+              <dt>Status</dt><dd><span class="feature-status">Off by default</span> Optional</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#window-order">Order of windows</a> and <a href="#quick-tap">Quick tap</a>.</p>
+          </article>
+
+          <article class="feature" id="monitors" data-search="monitors displays screens multi-monitor active monitor only which screen">
+            <h3 class="feature-title"><a href="#monitors">Multiple displays</a></h3>
+            <p>Crossway appears on the display containing the focused window, or on the display under the pointer when no window is focused. By default, the app switcher and grid list windows from all displays. Each can instead be limited to the active display.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>All monitors, for both</dd>
+              <dt>Settings</dt><dd>General → Monitors → Application switcher and Exposé</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Choice</dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="reduce-motion" data-search="reduce motion accessibility animation snap no animation instant">
+            <h3 class="feature-title"><a href="#reduce-motion">Reduce Motion</a></h3>
+            <p>When Reduce Motion is enabled in macOS, Crossway removes reveal, slide, and scrolling animations. Brief opacity fades remain for selection and badge changes.</p>
+            <dl class="feature-meta">
+              <dt>Settings</dt><dd>System Settings → Accessibility → Display → Reduce motion</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="platform-presentation" data-search="macos 26 tahoe liquid glass sonoma sequoia macos 14 15 compatibility look appearance">
+            <h3 class="feature-title"><a href="#platform-presentation">macOS 26 and macOS 14 to 15</a></h3>
+            <p>On macOS 26, Crossway uses the system glass appearance. On macOS 14 and 15, it uses a translucent compatibility panel and replaces frosted background blur with a translucent dim. Layout and behavior are unchanged.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#compatibility-macos">Supported macOS versions</a>.</p>
+          </article>
+
+          <article class="feature" id="screen-sharing-exclusion" data-search="screen sharing recording invisible hidden from capture zoom facetime privacy">
+            <h3 class="feature-title"><a href="#screen-sharing-exclusion">Screen-sharing exclusion</a></h3>
+            <p>Crossway excludes its panels from captures made by other apps. The app row, window strip, and grid do not appear in screen sharing, recordings, or third-party screenshots.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#privacy-permissions-and-data">Privacy, permissions, and data</a>.</p>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="mac-window feature-category" id="badges" aria-labelledby="badges-title">
+        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title" id="badges-title">Badges</h2></div>
+        <div class="window-body">
+          <p class="feature-category-lede">Dock badges in the app row and grid.</p>
+
+          <article class="feature" id="dock-badges" data-search="badge red count unread notifications dock badge number on icon">
+            <h3 class="feature-title"><a href="#dock-badges">App-row badges</a></h3>
+            <p>Crossway mirrors each app's Dock badge on its app-row icon. The badge may be a count or a dot. Crossway does not read notifications, and macOS supplies one badge per app rather than per window.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#grid-badges">Badges on the grid</a>.</p>
+          </article>
+
+          <article class="feature" id="grid-badges" data-search="badge grid tile corner app icon exposé expose count">
+            <h3 class="feature-title"><a href="#grid-badges">Grid badges</a></h3>
+            <p>Each grid tile includes the app icon and its Dock badge. All windows from the same app display the same app-level badge.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="badge-freshness" data-search="badge fresh up to date stale refresh seconds live update while open">
+            <h3 class="feature-title"><a href="#badge-freshness">Badge refresh</a></h3>
+            <p>A badge change is reflected within 2 seconds while Crossway is open and within 5 seconds between sessions. Badge information comes from the Dock, not from notifications.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>App row, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="minimized-badge" data-search="minimized label corner tile badge">
+            <h3 class="feature-title"><a href="#minimized-badge">Minimized label</a></h3>
+            <p>A minimized window tile displays a <em>Minimized</em> label over its still or app icon. Activating the tile restores the window from the Dock.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Window strip, grid</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#minimized-windows">Minimized windows</a>.</p>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="mac-window feature-category" id="settings-reference" aria-labelledby="settings-reference-title">
+        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title" id="settings-reference-title">Settings reference</h2></div>
+        <div class="window-body">
+          <p class="feature-category-lede">All Settings controls, in window order, with choices and defaults.</p>
+
+          <article class="feature" id="settings-window" data-search="settings preferences window open settings cmd comma ⌘, tabs general scaling keybindings optional footer version donate">
+            <h3 class="feature-title"><a href="#settings-window">Settings</a></h3>
+            <p>Open Settings from the Crossway menu, or press <kbd>⌘</kbd> <kbd>,</kbd> while Crossway is frontmost. The window has General, Scaling, Keybindings, and Optional tabs. Most changes apply the next time Crossway opens. Scaling changes also appear in the Settings preview while you drag.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Menu bar → Settings, or <kbd>⌘</kbd> <kbd>,</kbd></dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <div class="settings-tab" id="general-tab">
+            <h3 class="feature-title settings-tab-title"><a href="#general-tab">General</a></h3>
+            <p class="feature-category-lede">Monitors, preview timing and placement, ordering, and startup.</p>
+
+            <article class="feature feature-setting" id="settings-monitors" data-search="monitors displays screens active monitor only all monitors general">
+              <h4 class="feature-title"><a href="#settings-monitors">Monitors</a></h4>
+              <p class="feature-path">Settings → General → Monitors</p>
+              <p>Controls which displays supply windows. The app switcher and the grid each have their own scope.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Application switcher</th><td>All monitors, Active monitor only</td><td>All monitors</td></tr>
+                  <tr><th scope="row">Exposé</th><td>All monitors, Active monitor only</td><td>All monitors</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="feature-related">See <a href="#monitors">Multiple displays</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="previews-timing" data-search="previews delay timing show delay window preview show delay expose exposé show delay grid delay animation speed reveal presets fluid fast custom alignment window alignment">
+              <h4 class="feature-title"><a href="#previews-timing">Previews</a></h4>
+              <p class="feature-path">Settings → General → Previews</p>
+              <p>Sets window-strip alignment and timing. Fluid and Fast set all three delays and the animation speed; Custom uses the slider values.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Window alignment</th><td>Left, Center, Under app</td><td>Left</td></tr>
+                  <tr><th scope="row">UX presets</th><td>Fluid, Fast, Custom</td><td>Fluid</td></tr>
+                  <tr><th scope="row">Switcher show delay</th><td>0 to 1.00 s, in steps of 0.01</td><td>0.10 s</td></tr>
+                  <tr><th scope="row">Window preview show delay</th><td>0 to 2.00 s, in steps of 0.1</td><td>0.40 s</td></tr>
+                  <tr><th scope="row">Window preview animation speed</th><td>0 to 0.50 s, in steps of 0.01</td><td>0.28 s</td></tr>
+                  <tr><th scope="row">Exposé show delay</th><td>0 to 1.00 s, in steps of 0.01</td><td>0.10 s</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>Fast sets every delay and the animation to 0 s. Animation speed sets the duration of the window-strip reveal. The switcher show delay covers <kbd>⌘</kbd> <kbd>Tab</kbd> and <kbd>⌘</kbd> <kbd>`</kbd>; the exposé show delay covers the two grid shortcuts and is measured from the keypress, not added to the switcher's. The grid is built during that wait, so a longer delay gives its previews more time to arrive before you see them. Exposé show delay depends on the grid master switch; see <a href="#settings-expose">Exposé settings</a>.</p>
+              <p class="feature-related">See <a href="#hold-to-reveal">Holding the shortcut</a> and <a href="#preview-alignment">Preview alignment</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="settings-ordering" data-search="ordering order apps by order windows by most recently used alphabetical macos window order native window cycling">
+              <h4 class="feature-title"><a href="#settings-ordering">Ordering</a></h4>
+              <p class="feature-path">Settings → General → Ordering</p>
+              <p>Sets app and window order, and controls native window cycling.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Order apps by</th><td>Most recently used, Alphabetical</td><td>Most recently used</td></tr>
+                  <tr><th scope="row">Order windows by</th><td>Most recently focused, Alphabetical, macOS window order</td><td>Most recently focused</td></tr>
+                  <tr><th scope="row">Native window cycling</th><td>On or off</td><td>Off</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>The help button beside Native window cycling describes its behavior with the selected window order.</p>
+              <p class="feature-related">See <a href="#app-order">Order of apps</a>, <a href="#window-order">Order of windows</a>, and <a href="#native-window-cycling">Native window cycling</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="settings-startup" data-search="startup launch at login auto-update automatically check for updates frequency check now hours days weeks months">
+              <h4 class="feature-title"><a href="#settings-startup">Startup</a></h4>
+              <p class="feature-path">Settings → General → Startup and updates</p>
+              <p>Controls launch at login and update checks.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Launch at login</th><td>On or off</td><td>On</td></tr>
+                  <tr><th scope="row">Auto-update</th><td>On or off</td><td>Off</td></tr>
+                  <tr><th scope="row">Frequency</th><td>1 to 999 hours, days, weeks, or months</td><td>1 week</td></tr>
+                  <tr><th scope="row">Check now</th><td>Button</td><td></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>Auto-update performs a metadata check only. A month is treated as 30 days. Check now performs an immediate check.</p>
+              <p class="feature-related">See <a href="#update-checks">Update checks</a>.</p>
+            </article>
+
+          </div>
+
+          <div class="settings-tab" id="scaling-tab">
+            <h3 class="feature-title settings-tab-title"><a href="#scaling-tab">Scaling</a></h3>
+            <p class="feature-category-lede">Independent sizes for the app row, window strip, and grid.</p>
+
+            <article class="feature feature-setting" id="settings-scaling" data-search="scaling scale size interface scale window preview size exposé preview size bigger smaller">
+              <h4 class="feature-title"><a href="#settings-scaling">Scaling</a></h4>
+              <p class="feature-path">Settings → Scaling</p>
+              <p>The tab has three sections. Scaling holds Interface scale and Window preview size. Exposé: All windows and Exposé: Focused app's windows each hold a preview size, an app icon size, and a title text size. Every slider is independent, so the app row, the window strip, and each grid can be sized on its own. The preview panel updates while you drag. Crossway uses the new values the next time it opens.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Interface scale</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Window preview size</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Preview size (Exposé: All windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">App icon size (Exposé: All windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Title text size (Exposé: All windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Preview size (Exposé: Focused app's windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">App icon size (Exposé: Focused app's windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Title text size (Exposé: Focused app's windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>The six Exposé sliders depend on the grid master switch; see <a href="#settings-expose">Exposé settings</a>.</p>
+              <p class="feature-related">See <a href="#interface-scale">Interface scale</a>, <a href="#window-preview-size">Window preview size</a>, and <a href="#expose-preview-size">Exposé tile sizes</a>.</p>
+            </article>
+
+          </div>
+
+          <div class="settings-tab" id="keybindings-tab">
+            <h3 class="feature-title settings-tab-title"><a href="#keybindings-tab">Keybindings</a></h3>
+            <p class="feature-category-lede">Enable switches and shortcut recorders for the four entry commands.</p>
+
+            <article class="feature feature-setting" id="settings-hotkeys" data-search="hotkeys keybindings shortcuts switch apps switch windows record rebind enable disable cmd tab cmd grave">
+              <h4 class="feature-title"><a href="#settings-hotkeys">Hotkeys</a></h4>
+              <p class="feature-path">Settings → Keybindings → Hotkeys</p>
+              <p>Configures the commands that open the app row and window strip. Each command has an enable switch and shortcut recorder.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Switch apps</th><td>On or off, plus any shortcut you record</td><td>On, ⌘ Tab</td></tr>
+                  <tr><th scope="row">Switch windows</th><td>On or off, plus any shortcut you record</td><td>On, ⌘ `</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>Click a recorder and press a shortcut; press Esc to cancel. Recording a shortcut already in use moves it to the new command and leaves the other command unbound. A partial conflict displays a ⚠ warning without changing either shortcut. A disabled command retains its shortcut.</p>
+              <p class="feature-related">See <a href="#custom-shortcuts">Custom shortcuts</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="settings-expose-keys" data-search="exposé expose keybindings shortcuts all windows focused app's windows record rebind option tab option grave alt">
+              <h4 class="feature-title"><a href="#settings-expose-keys">Exposé</a></h4>
+              <p class="feature-path">Settings → Keybindings → Exposé</p>
+              <p>Configures the two grid commands. These rows use the same enable switches and shortcut recorders as Hotkeys. They depend on the grid master switch under Optional.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">All windows</th><td>On or off, plus any shortcut you record</td><td>On, ⌥ Tab</td></tr>
+                  <tr><th scope="row">Focused app's windows</th><td>On or off, plus any shortcut you record</td><td>On, ⌥ `</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="feature-related">See <a href="#all-windows">All windows</a> and <a href="#windows-only-previews">Grid master switch</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="settings-restore-defaults" data-search="restore defaults reset shortcuts keybindings default">
+              <h4 class="feature-title"><a href="#settings-restore-defaults">Restore defaults</a></h4>
+              <p class="feature-path">Settings → Keybindings → Restore defaults</p>
+              <p>Restores the four default shortcuts and enables all four commands. It does not change the grid master switch or any other setting.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Restore defaults</th><td>Button</td><td></td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </article>
+
+          </div>
+
+          <div class="settings-tab" id="optional-tab">
+            <h3 class="feature-title settings-tab-title"><a href="#optional-tab">Optional</a></h3>
+            <p class="feature-category-lede">Live capture, background capture, blur, grid, window inclusion, and app-row options.</p>
+
+            <article class="feature feature-setting" id="settings-live-previews" data-search="live previews enable live previews application switcher windows-only previews background capture capture window previews in the background optional">
+              <h4 class="feature-title"><a href="#settings-live-previews">Previews</a></h4>
+              <p class="feature-path">Settings → Optional → Previews</p>
+              <p>Controls live feeds by surface and still capture between sessions. The per-surface switches depend on Enable live previews. Exposé also depends on the grid master switch.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Enable live previews</th><td>On or off</td><td>On</td></tr>
+                  <tr><th scope="row">Application switcher</th><td>On or off</td><td>On</td></tr>
+                  <tr><th scope="row">Exposé</th><td>On or off</td><td>On</td></tr>
+                  <tr><th scope="row">Capture window previews in the background</th><td>On or off</td><td>On</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>Background capture is independent of live previews. When enabled, it refreshes stills at launch and during normal app activity. When disabled, stills are captured only while Crossway is open. The help button beside Enable live previews describes the macOS recording indicator.</p>
+              <p class="feature-related">See <a href="#live-previews">Live previews</a> and <a href="#background-capture">Background capture</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="settings-background-blur" data-search="background blur dim frosted blur amount application switcher windows-only previews optional">
+              <h4 class="feature-title"><a href="#settings-background-blur">Background blur</a></h4>
+              <p class="feature-path">Settings → Optional → Background blur</p>
+              <p>Controls the background effect separately for the app switcher and grid. Blur amount is available when either surface is enabled.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Application switcher</th><td>On or off</td><td>Off</td></tr>
+                  <tr><th scope="row">Exposé</th><td>On or off</td><td>Off</td></tr>
+                  <tr><th scope="row">Blur amount</th><td>0.2 to 1.0, in steps of 0.05</td><td>1.0</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="feature-related">See <a href="#background-blur">Background blur</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="settings-expose" data-search="exposé expose windows-only previews enable grid scope all monitors active monitor only optional">
+              <h4 class="feature-title"><a href="#settings-expose">Exposé (windows-only previews)</a></h4>
+              <p class="feature-path">Settings → Optional → Exposé (windows-only previews)</p>
+              <p>Controls the grid. When it is off, the two Exposé keybindings and their enable switches, Exposé live previews, Exposé blur, the Exposé display scope under General → Monitors, the Exposé show delay under General → Previews, and all six Exposé sliders under Scaling are disabled. Their values are retained.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Enable Exposé</th><td>On or off</td><td>On</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="feature-related">See <a href="#windows-only-previews">Grid master switch</a> and <a href="#monitors">Multiple displays</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="settings-window-inclusion" data-search="window inclusion include minimized windows minimised optional">
+              <h4 class="feature-title"><a href="#settings-window-inclusion">Window inclusion</a></h4>
+              <p class="feature-path">Settings → Optional → Window inclusion</p>
+              <p>Controls whether minimized windows appear in Crossway.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Include minimized windows</th><td>On or off</td><td>On</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="feature-related">See <a href="#minimized-windows">Minimized windows</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="settings-app-rows" data-search="number of app rows single-row app switcher macos native wrap rows optional">
+              <h4 class="feature-title"><a href="#settings-app-rows">Number of app rows</a></h4>
+              <p class="feature-path">Settings → Optional → Number of app rows</p>
+              <p>Controls whether app icons fit on one row or wrap at full size.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Single-row app switcher (macOS native)</th><td>On or off</td><td>On</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="feature-related">See <a href="#single-row-app-switcher">Single-row app switcher</a>.</p>
+            </article>
+
+          </div>
+
+        </div>
+      </section>
+
+      <section class="mac-window feature-category" id="privacy-permissions-and-data" aria-labelledby="privacy-permissions-and-data-title">
+        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title" id="privacy-permissions-and-data-title">Privacy, permissions, and data</h2></div>
+        <div class="window-body">
+          <p class="feature-category-lede">Permissions, window capture, local storage, and network access. See the shorter <a href="../#privacy">Privacy</a> summary on the homepage.</p>
+
+          <article class="feature" id="accessibility-permission" data-search="accessibility permission privacy security system settings trusted grant">
+            <h3 class="feature-title"><a href="#accessibility-permission">Accessibility permission</a></h3>
+            <p>Accessibility permission lets Crossway intercept its shortcuts and activate the selected app or window. Grant it in System Settings → Privacy &amp; Security → Accessibility. Crossway detects the grant without restarting.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>System Settings → Privacy &amp; Security → Accessibility</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span> Required</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#onboarding">Guided setup</a>.</p>
+          </article>
+
+          <article class="feature" id="screen-recording-permission" data-search="screen recording permission privacy previews capture relaunch grant">
+            <h3 class="feature-title"><a href="#screen-recording-permission">Screen Recording permission</a></h3>
+            <p>Screen Recording permission lets Crossway capture window stills and live feeds. Without it, tiles display app icons only. Grant it in System Settings → Privacy &amp; Security → Screen Recording. Crossway relaunches once after the permission is granted, as required by macOS.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>System Settings → Privacy &amp; Security → Screen Recording</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span> Required for previews</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#capture-indicator">Recording indicator</a> and <a href="#memory-only-capture">Memory-only window captures</a>.</p>
+          </article>
+
+          <article class="feature" id="onboarding" data-search="onboarding first launch setup wizard guided permissions in order launch at login auto-update">
+            <h3 class="feature-title"><a href="#onboarding">Guided setup</a></h3>
+            <p>On first launch, setup requests Accessibility and then Screen Recording permission. It detects each grant automatically, then presents Launch at login and Auto-update options. Setup opens again if a required permission is later removed.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#settings-startup">Startup</a> in the Settings reference.</p>
+          </article>
+
+          <article class="feature" id="memory-only-capture" data-search="memory only no disk pictures pixels cache privacy stored nothing written">
+            <h3 class="feature-title"><a href="#memory-only-capture">Memory-only window captures</a></h3>
+            <p>Window stills remain in memory and are never written to disk. They are kept between switching sessions and associated with the specific window that produced them. Settings are stored separately in the standard macOS preferences file; see <a href="#settings-storage">Stored settings</a>.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#permission-revocation">Permission revocation</a> and <a href="#screen-sharing-exclusion">Screen-sharing exclusion</a>.</p>
+          </article>
+
+          <article class="feature" id="permission-revocation" data-search="revoke permission remove take away purge clear pictures stop">
+            <h3 class="feature-title"><a href="#permission-revocation">Permission revocation</a></h3>
+            <p>Removing Accessibility or Screen Recording permission clears all captured stills immediately. Crossway remains unavailable until the required permission is restored.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="locked-screen" data-search="locked screen lock capture paused sleep unlock">
+            <h3 class="feature-title"><a href="#locked-screen">Screen lock</a></h3>
+            <p>Crossway does not capture windows while the Mac is locked. It refreshes its stills after the Mac is unlocked.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#background-capture">Background capture</a>.</p>
+          </article>
+
+          <article class="feature" id="capture-indicator" data-search="purple indicator recording indicator menu bar screen is being captured system privacy">
+            <h3 class="feature-title"><a href="#capture-indicator">Recording indicator</a></h3>
+            <p>macOS shows its purple recording indicator while Crossway captures a still. The indicator remains visible while live previews are running. With live previews off, it appears only during still capture.</p>
+            <dl class="feature-meta">
+              <dt>Settings</dt><dd>Optional → Previews</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#live-previews">Live previews</a>.</p>
+          </article>
+
+          <article class="feature" id="no-telemetry" data-search="telemetry analytics tracking crash reporter third party sdk none privacy phone home">
+            <h3 class="feature-title"><a href="#no-telemetry">No telemetry</a></h3>
+            <p>Crossway contains no analytics, crash reporter, or third-party SDKs. It sends no usage, device, app, window, or shortcut data.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#one-request">The only network request</a>.</p>
+          </article>
+
+          <article class="feature" id="no-logging" data-search="logging logs unified log console release nothing">
+            <h3 class="feature-title"><a href="#no-logging">Logging</a></h3>
+            <p>Release builds write nothing to the macOS system log. Window titles and switching activity are not recorded there.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="settings-storage" data-search="storage preferences plist userdefaults what is stored settings file data">
+            <h3 class="feature-title"><a href="#settings-storage">Stored settings</a></h3>
+            <p>Crossway stores preferences in its standard macOS preferences file: shortcuts, timing, scales, ordering, display choices, optional settings, update schedule, and setup status. It also stores a process identifier used to keep one copy running. The file contains no window stills, titles, or switching history.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="one-request" data-search="network request internet connection github api update check only request metadata https">
+            <h3 class="feature-title"><a href="#one-request">Update-check request</a></h3>
+            <p>A manual or scheduled update check makes one HTTPS request for public release metadata. Crossway adds no user or device identifier. It compares the response with the running version and does not retain the response. Homepage and Donate open URLs in the default browser; Crossway does not fetch those pages.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#update-checks">Update checks</a>.</p>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="mac-window feature-category" id="menu-bar-and-updates" aria-labelledby="menu-bar-and-updates-title">
+        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title" id="menu-bar-and-updates-title">Menu bar and updates</h2></div>
+        <div class="window-body">
+          <p class="feature-category-lede">Status menu, startup, update checks, and installation.</p>
+
+          <article class="feature" id="menu-bar-only" data-search="menu bar app no dock icon lives in the menu bar icon background">
+            <h3 class="feature-title"><a href="#menu-bar-only">Menu bar app</a></h3>
+            <p>Crossway has no Dock icon or main window. It runs from a menu bar icon and opens a window only for Settings.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="status-menu" data-search="menu items settings check for updates homepage donate quit cmd q cmd comma">
+            <h3 class="feature-title"><a href="#status-menu">Status menu</a></h3>
+            <p>The status menu contains Settings (<kbd>⌘</kbd> <kbd>,</kbd> while Crossway is frontmost), Check for Updates, Homepage, Donate, and Quit Crossway (<kbd>⌘</kbd> <kbd>Q</kbd>). Homepage and Donate open in the default browser.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#settings-window">Settings</a>.</p>
+          </article>
+
+          <article class="feature" id="update-checks" data-search="update check for updates check now auto-update automatic new version download alert latest release">
+            <h3 class="feature-title"><a href="#update-checks">Update checks</a></h3>
+            <p>Check for Updates in the menu and Check now in Settings perform an immediate check. The result reports that Crossway is current, identifies an available version and release date, or reports a failed check. Auto-update uses the selected schedule and displays an alert only when a new version is available. Download opens the release in the default browser.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd>Menu bar → Check for Updates; Settings → General → Startup and updates</dd>
+              <dt>Status</dt><dd><span class="feature-status">Off by default</span> Auto-update is opt-in; manual checks are always available</dd>
+            </dl>
+            <p class="feature-related">See also <a href="#no-auto-install">Manual installation</a> and <a href="#settings-startup">Startup</a>.</p>
+          </article>
+
+          <article class="feature" id="no-auto-install" data-search="auto install automatic download install itself replace helper daemon background">
+            <h3 class="feature-title"><a href="#no-auto-install">Manual installation</a></h3>
+            <p>Crossway never downloads or installs an update. It installs no update helper, and its update timer runs only while Crossway is running. To update, download the new version in a browser and replace the copy in Applications.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="launch-at-login" data-search="launch at login start at login startup login items open automatically">
+            <h3 class="feature-title"><a href="#launch-at-login">Launch at login</a></h3>
+            <p>Crossway uses the standard macOS login-item service. It appears in System Settings → General → Login Items and can be disabled there or in Crossway Settings.</p>
+            <dl class="feature-meta">
+              <dt>Default</dt><dd>On</dd>
+              <dt>Settings</dt><dd>General → Startup and updates → Launch at login</dd>
+              <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional</dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="single-instance" data-search="second copy two copies duplicate instance double handled">
+            <h3 class="feature-title"><a href="#single-instance">Single running copy</a></h3>
+            <p>Launching Crossway while another copy is running quits the older copy. Only one copy handles the system shortcuts.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="agent-skill" data-search="agent skill ai agent install update helper skill.md claude">
+            <h3 class="feature-title"><a href="#agent-skill">Optional Agent Skill</a></h3>
+            <p>The optional Crossway Agent Skill can install or replace the app when invoked from a compatible local agent. It presents a plan and requests confirmation before changing the installation. The skill is separate from Crossway and adds no helper, unattended update process, or app network access.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Optional</span> Separate from the app</dd>
+            </dl>
+          </article>
+
+        </div>
+      </section>
+
+      <section class="mac-window feature-category" id="compatibility" aria-labelledby="compatibility-title">
+        <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title" id="compatibility-title">Compatibility</h2></div>
+        <div class="window-body">
+          <p class="feature-category-lede">Supported systems, processor architectures, and installation.</p>
+
+          <article class="feature" id="compatibility-macos" data-search="macos 14 sonoma 15 sequoia 26 tahoe requirements minimum version supported">
+            <h3 class="feature-title"><a href="#compatibility-macos">Supported macOS versions</a></h3>
+            <p>Crossway supports macOS 14 Sonoma or later, including the latest public release, macOS 26 Tahoe. macOS 26 uses the system glass appearance. macOS 14 and 15 use the compatibility appearance with the same features.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">See also <a href="#platform-presentation">macOS 26 and macOS 14 to 15</a>.</p>
+          </article>
+
+          <article class="feature" id="apple-silicon-intel" data-search="apple silicon intel m1 m2 m3 m4 universal architecture native">
+            <h3 class="feature-title"><a href="#apple-silicon-intel">Apple silicon and Intel</a></h3>
+            <p>The universal application runs natively on Apple silicon and Intel Macs.</p>
+            <dl class="feature-meta">
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+          </article>
+
+          <article class="feature" id="download-and-install" data-search="download install zip applications drag notarized gatekeeper github release outside app store">
+            <h3 class="feature-title"><a href="#download-and-install">Download and installation</a></h3>
+            <p>Download the signed and notarized zip from the public releases page. Expand it, then move Crossway to Applications. Crossway is not distributed through the App Store because its shortcut interception and window-capture permissions are not available to App Store applications.</p>
+            <dl class="feature-meta">
+              <dt>Where</dt><dd><a href="../#download">Download</a></dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
+            </dl>
+            <p class="feature-related">For installation problems, see <a href="../troubleshooting/">Troubleshooting</a>.</p>
+          </article>
+
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <footer class="footer">
+    <p class="links">
+      <a href="../">Home</a>
+      &ensp;·&ensp;
+      <a href="../troubleshooting/">Troubleshooting</a>
+      &ensp;·&ensp;
+      <a href="https://github.com/crossway-app/Crossway-Releases" rel="noopener">GitHub</a>
+      &ensp;·&ensp;
+      <a href="../terms/">Terms</a>
+    </p>
+    <p class="fineprint">© 2026 Crossway&ensp;·&ensp;Version 2.0&ensp;·&ensp;No analytics on this page.</p>
+  </footer>
+
+</main>
+
+</body>
+</html>
