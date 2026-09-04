@@ -14,6 +14,8 @@ Crossway replaces the built-in app switcher with one that understands *windows*,
 - Keyboard-first, with full mouse support: hover to select, click to activate, arrow keys work on every surface.
 - Quick taps behave exactly like native macOS — Crossway's UI only appears when you *hold* the shortcut.
 
+<!-- HELD until 2.0 (distribution/releases-repo/HOLD): That is the short version. [The full list of features](https://crosswayapp.com/features/) has every command, setting and privacy promise, with a link for each. -->
+
 ![The Crossway switcher showing app icons with window previews](switcher.png)
 
 ## Requirements
