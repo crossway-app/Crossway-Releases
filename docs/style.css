@@ -1813,31 +1813,31 @@ html:not(.hacker) .cw-screen::after {
    drawing the display's bezel wears. Template-style, ink only. Shown
    while Crossway is on the screen; hidden, and out of the bar, in
    Native, as a quit menu-bar app's item is. */
+/* A TEMPLATE icon, as a real menu-bar item is (2026-09-03, the user:
+   "should not be filled with white, but should also be see-through in
+   the gaps, like in real macos"): the ink is painted and the four panes
+   are simply not, so the bar's blur and the wallpaper behind it show
+   through them. It was an ink box with the panes painted in paper,
+   which read as a white-filled badge on a translucent bar.
+
+   The ink is the 1.5px frame (a border, so the corners round with the
+   box) plus, inside it, the band between the app row and the windows
+   and the two bars that divide them: three gradients positioned in the
+   10x8 box the border leaves. */
 .cw-menu-mark {
+  --mark-ink: color-mix(in srgb, var(--scr-ink) 85%, transparent);
   position: relative;
   flex: none;
+  box-sizing: border-box;
   width: 13px;
   height: 11px;
   margin-right: 2px;
+  border: 1.5px solid var(--mark-ink);
   border-radius: 2px;
-  background: color-mix(in srgb, var(--scr-ink) 85%, transparent);
-}
-.cw-menu-mark::before, .cw-menu-mark::after {
-  content: "";
-  position: absolute;
-  left: 1.5px;
-  right: 1.5px;
-  border-radius: 0.5px;
-  background: var(--scr-paper);
-}
-.cw-menu-mark::before { top: 1.5px; height: 3px; }
-.cw-menu-mark::after {
-  top: 6px;
-  height: 3.5px;
-  background: linear-gradient(to right,
-    var(--scr-paper) 0 29%, transparent 29% 35.5%,
-    var(--scr-paper) 35.5% 64.5%, transparent 64.5% 71%,
-    var(--scr-paper) 71% 100%);
+  background:
+    linear-gradient(var(--mark-ink) 0 0) 0 3px / 100% 1.5px no-repeat,
+    linear-gradient(var(--mark-ink) 0 0) 2.9px 4.5px / 0.65px 3.5px no-repeat,
+    linear-gradient(var(--mark-ink) 0 0) 6.45px 4.5px / 0.65px 3.5px no-repeat;
 }
 .cw-menu-mark[hidden] { display: none; }
 
@@ -3662,18 +3662,20 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
      narrowed by 10.4px when the switch was thrown and every control on
      the panel slid 4.4px sideways — the badge stayed centred, but the
      furniture moved under it. Wide enough for the wider of the two, and
-     the narrower one centres in it. */
-  width: 48px;
+     the narrower one centres in it: 53px since the mark grew a tenth on
+     2026-09-03 (47.3 becomes 52.0, and the box has to clear it). */
+  width: 53px;
 }
 /* No `display` on this shared rule: it would out-specify the two rules
    below that show one badge and hide the other, and both would paint —
    which is exactly what happened first time round. Size and paint only. */
 .cw-bezel-logo svg {
-  /* Twice the size it shipped at (2026-08-28, the user). It is the one
-     thing on the panel with no label under it, so it does not belong on
-     the controls' row: it centres on the PANEL, across both rows, which
-     is where a maker's mark sits. */
-  height: 40px;
+  /* Twice the size it shipped at (2026-08-28, the user), and a tenth
+     bigger again on 2026-09-03 ("10% bigger than they are now"). It is
+     the one thing on the panel with no label under it, so it does not
+     belong on the controls' row: it centres on the PANEL, across both
+     rows, which is where a maker's mark sits. */
+  height: 44px;
   width: auto;
   overflow: visible;
 }
