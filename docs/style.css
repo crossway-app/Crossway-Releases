@@ -2632,22 +2632,33 @@ html:not(.hacker) .cw-screen::after {
 .cw-panel.is-native .cw-strip-fold { display: none; }
 
 /* ---- the display ----------------------------------------------------
-   A 1993 Apple display, drawn as its manual would have drawn it: paper,
-   the page's own ink line, form carried by a few solid blacks, and the
-   page's own hard offset shadow. No tone and no dot pattern anywhere:
-   the QuickDraw patterns the laptop wore read as perforation at this
-   size, which is what got it rejected. One fixed-viewBox SVG for the
-   furniture and a DOM overlay for the screen, registered in PERCENTAGES
-   of the same box so it tracks the drawing at every width with no
-   measuring JavaScript.
+   A display, drawn as a manual would have drawn it: paper, the page's
+   own ink line, form carried by a few solid blacks, and the page's own
+   hard offset shadow. No tone and no dot pattern anywhere: the QuickDraw
+   patterns the laptop wore read as perforation at this size, which is
+   what got it rejected. One fixed-viewBox SVG for the furniture and a
+   DOM overlay for the screen, registered in PERCENTAGES of the same box
+   so it tracks the drawing at every width with no measuring JavaScript.
 
-   The well is x14 y14 w316 h197.5 of a 344x262 box: 8:5, as every Apple
-   display of the era was, and 91.86% of the drawing's width, which is
-   the contract: the screen is the product, the drawing is its frame.
-   Change the rect and these four numbers together, or the screen slides
-   off its own bezel:
-     left 14/344 = 4.0698%      top 14/262 = 5.3435%
-     width 316/344 = 91.8605%   height 197.5/262 = 75.3817% */
+   The well is x5 y5 w316 h197.5 of a 326x244 box: 8:5, and 96.93% of
+   the drawing's width, which is the contract: the screen is the
+   product, the drawing is its frame. Change the rect and these four
+   numbers together, or the screen slides off its own bezel:
+     left 5/326 = 1.5337%       top 5/244 = 2.0492%
+     width 316/326 = 96.9325%   height 197.5/244 = 80.9426%
+
+   The chin under it is deeper than the bezel around it, as a modern
+   panel's is, and that is measured too: the drawing's aspect is what
+   sets the display's height at a width-bound viewport, and the keys
+   window beside it is as tall as the display. A 238-tall first cut
+   left the ~490px window 4px short of its own rows (the rendered
+   suite, at 1200x1000); the chin carries those pixels rather than the
+   type, which is where the user had just put them.
+
+   It was a 1993 monitor until 2026-09-03 — a 14-unit bezel, a sunk CRT
+   recess, a neck-and-foot stand, 344x262 — and the user had the stand
+   and the bezels taken off so it reads as a modern panel, with the
+   space they gave back going to the screen. */
 
 .cw-machine {
   position: relative;
@@ -2660,10 +2671,11 @@ html:not(.hacker) .cw-screen::after {
      Subtracting that first is what makes the display as large as fits,
      bounded by the column the keys leave it, and floored at 640px, where
      the screen is the size the laptop's was: the redraw's contract was
-     that it never gets smaller. The 1.313 turns the height left into a
-     width: the drawing is 344 x 262. Every constant here is measured,
-     and scripts/test-site-layout.mjs pins the result. */
-  max-width: min(100%, max(640px, calc((100vh - var(--cw-fold-overhead)) * 1.313)));
+     that it never gets smaller. The 1.3361 turns the height left into a
+     width: the drawing is 326 x 244 (it was 344 x 262, and 1.313, while
+     the case had a stand and a 14-unit bezel). Every constant here is
+     measured, and scripts/test-site-layout.mjs pins the result. */
+  max-width: min(100%, max(640px, calc((100vh - var(--cw-fold-overhead)) * 1.3361)));
   margin: 0 auto;
 }
 /* The screen's own containing block. Below 700px the bezel becomes a
@@ -2691,11 +2703,6 @@ html:not(.hacker) .cw-screen::after {
   stroke-width: var(--border);
 }
 .cw-chassis .cw-case, .cw-chassis .cw-strip { fill: var(--cw-case); stroke: currentColor; }
-.cw-chassis .cw-bezel-inner { fill: none; stroke: currentColor; }
-/* The recess: the screen sits INTO the case, and a manual drawing says so
-   with a solid band on the two walls away from the light. It is the
-   page's own shadow weight, 3px, never a bar that scales. */
-.cw-chassis .cw-recess { stroke: currentColor; stroke-width: 3px; }
 /* The well under the live desktop wears the wallpaper's own tone, so
    the desktop reads edge to edge and a sub-pixel of well at a corner can
    never show as a different colour. */
@@ -2707,10 +2714,10 @@ html:not(.hacker) .cw-screen::after {
 /* Registered to the drawn well: the four numbers in the header above. */
 .cw-screen-mount {
   position: absolute;
-  left: 4.0698%;
-  top: 5.3435%;
-  width: 91.8605%;
-  height: 75.3817%;
+  left: 1.5337%;
+  top: 2.0492%;
+  width: 96.9325%;
+  height: 80.9426%;
   /* The CRT face has rounded corners, and the live desktop clips to the
      same ones: 3 of 316 by 3 of 197.5. */
   border-radius: 0.95% / 1.52%;
@@ -3535,13 +3542,13 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
   /* THE SCREEN'S OWN WIDTH. The tray used to start well inside it, at
      x56 of the 344-unit drawing, leaving the bare bezel to the left of
      it carrying the mark and the power light. It runs the full width of
-     the well now — x14, w316, the same numbers .cw-screen-mount uses —
+     the well now — x5, w316, the same numbers .cw-screen-mount uses —
      so the panel and the screen are one column and the machine reads as
      two stacked rectangles rather than three. */
-  left: 4.0698%;
-  top: 82.4427%;
-  width: 91.8605%;
-  height: 9.9237%;
+  left: 1.5337%;
+  top: 85.0410%;
+  width: 96.9325%;
+  height: 12.2951%;
   /* Three columns, and the middle one is what makes the badge CENTRED on
      the monitor rather than merely between its neighbours: the two 1fr
      columns are equal by definition, so the logo sits on the panel's
