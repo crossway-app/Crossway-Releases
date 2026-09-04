@@ -2076,6 +2076,10 @@
           if (verb.textContent !== text) { verb.textContent = text; }
         }
         cls(holdSet, "is-next", !off && held === null);
+        /* Held: "click to release" stands bold in ink (2026-09-03, the
+           user: "'click to release' should be bold too, but not green,
+           keep it black"), while the tap verb takes the guide colour. */
+        cls(holdSet, "is-held", !off && mine);
         cls(tapSet, "is-next", !off && mine);
       });
     }
