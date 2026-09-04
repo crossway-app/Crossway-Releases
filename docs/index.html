@@ -1297,8 +1297,16 @@
              the first, what it runs on under it. A hard break, not a
              wrap: the middle column's width changes with the button
              beside it, and a balanced wrap would still find its own
-             place to break at some width. -->
-        <p class="caption">Signed &amp; notarized&ensp;·&ensp;macOS 14+<br>Apple&nbsp;Silicon &amp; Intel</p>
+             place to break at some width.
+
+             BOTH ENDS of the range, not "14+" (2026-09-03, the user:
+             "update download to be explicit not just 14+ but up until
+             the version we support in practice"): Sonoma is the app's
+             deployment target and Tahoe is the newest macOS it is built
+             and tested against, so 14 to 26 is what it runs on. The
+             suite reads the floor from project.yml, so a bump there
+             cannot leave this line behind. -->
+        <p class="caption">Signed &amp; notarized&ensp;·&ensp;macOS 14 to 26<br>Apple&nbsp;Silicon &amp; Intel</p>
       </div>
       <div class="dialog-actions">
         <div class="btn-row">
