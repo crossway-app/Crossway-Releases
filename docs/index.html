@@ -1291,7 +1291,14 @@
            needed either given the button says 'download crossway'. keep
            icon, though"): the floppy, what the download is, the button. -->
       <div>
-        <p class="caption">Signed &amp; notarized&ensp;·&ensp;macOS 14+&ensp;·&ensp;Apple&nbsp;Silicon &amp; Intel</p>
+        <!-- Two lines, broken where the sense breaks (2026-09-03, the
+             user: "the text should be layed out better so that & Intel
+             isn't the only thing on the second line"): what it is on
+             the first, what it runs on under it. A hard break, not a
+             wrap: the middle column's width changes with the button
+             beside it, and a balanced wrap would still find its own
+             place to break at some width. -->
+        <p class="caption">Signed &amp; notarized&ensp;·&ensp;macOS 14+<br>Apple&nbsp;Silicon &amp; Intel</p>
       </div>
       <div class="dialog-actions">
         <div class="btn-row">
