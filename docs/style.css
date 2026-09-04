@@ -1236,7 +1236,7 @@ pre.cmd {
 /* Centred, and the icon with it: the window holds three things and each
    sits on its own centre line (2026-09-03, the user: "center things and
    stack them up a bit more beautifully"). */
-.download-grid .caption { margin: 0; text-align: center; }
+.download-grid .caption { margin: 0; text-align: center; white-space: nowrap; }
 .download-grid .dialog-icon { justify-self: center; }
 
 /* ---------- read-me list ---------- */
@@ -1465,6 +1465,7 @@ pre.cmd {
   .donate-grid .dialog-actions { grid-column: 1; }
   .download-grid { grid-template-columns: 1fr; }
   .download-grid .dialog-actions { grid-column: 1; }
+  .download-grid .caption { white-space: normal; }   /* a phone column may be narrower than the line; there it may wrap */
   .dialog-icon { grid-row: auto; }
   .dialog-actions { grid-column: 1; }
   }
