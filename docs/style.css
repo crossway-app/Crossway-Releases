@@ -3075,7 +3075,7 @@ html:not(.hacker) .cw-screen::after {
    the cap, the slot's calc() saw no unit at all and fell back to auto,
    and the two boxes' Tabs sat 12px apart. The line itself is described
    at .cw-keycap-btn, which reads it. */
-.cw-group-keys { --cw-u: clamp(48px, calc(17.5 * var(--cw-dens) - 45px), 60px); position: relative; display: flex; justify-content: center; gap: 0px; align-items: flex-end; flex: none; min-width: 0; }
+.cw-group-keys { --cw-u: clamp(48px, calc(17.5 * var(--cw-dens) - 45px), 60px); --cw-art-u: clamp(40px, calc(var(--cw-u) * 0.75), 45px); position: relative; display: flex; justify-content: center; gap: 0px; align-items: flex-end; flex: none; min-width: 0; }
 /* A keyset is two lines: the verb, then its cap or caps (2026-09-03,
    the user, after the verb sat beside the cap and then in a chip: "the
    alignment of the text with the keyboard buttons are all off.. have
@@ -3092,11 +3092,18 @@ html:not(.hacker) .cw-screen::after {
    Each keyset is exactly as wide as its caps; the verb line and the
    caps line have 8px between them, the two caps 2px. */
 .cw-keyset { display: flex; flex: none; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 2px; min-width: 0; }
-/* The modifier art: Command's width in both boxes before the scale, so
-   Option's smaller cap lands at the same place; scaled by half from its
-   left foot (a transform keeps the printing crisp and the layout box
-   out of the flow), 8px in, which is the legend rows' own inset. */
-.cw-group-keys > .cw-keyset:first-child { position: absolute; left: 8px; bottom: 0; width: calc(var(--cw-u) * 1.25); justify-content: flex-start; transform: scale(0.5); transform-origin: left bottom; }
+/* The modifier art: out of the flow at the row's left edge, 8px in,
+   which is the legend rows' own inset, so its left edge sits over the
+   two chips of the row below and it reads as that box's mark. It is
+   drawn at its OWN cap unit rather than transform-scaled (2026-09-03,
+   the user: "they need to be about the width of the two apps below and
+   right now it's barely 60% of it"): the cap's every dimension, its
+   printing included, comes from --cw-u, so a smaller unit redraws the
+   whole cap at that size instead of shrinking a picture of it, and the
+   unit is picked so the WIDER art (Command, 1.25u) lands on the chips'
+   own ~55px. --cw-art-u is declared on the parent and read here, which
+   is what keeps it out of a custom-property cycle. */
+.cw-group-keys > .cw-keyset:first-child { position: absolute; left: 8px; bottom: 0; --cw-u: var(--cw-art-u); width: calc(var(--cw-u) * 1.25); justify-content: flex-start; }
 /* The tap slot is Tab, the 4px between, and backtick, plus a hair so a
    rounding never wraps backtick onto a third line. */
 .cw-group-keys > .cw-keyset:last-child { width: calc(var(--cw-u) * 2.5 + 5px); }
