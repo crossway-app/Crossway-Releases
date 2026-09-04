@@ -14,7 +14,7 @@ Crossway replaces the built-in app switcher with one that understands *windows*,
 - Keyboard-first, with full mouse support: hover to select, click to activate, arrow keys work on every surface.
 - Quick taps behave exactly like native macOS — Crossway's UI only appears when you *hold* the shortcut.
 
-<!-- HELD until 2.0 (distribution/releases-repo/HOLD): That is the short version. [The full list of features](https://crosswayapp.com/features/) has every command, setting and privacy promise, with a link for each. -->
+That is the short version. [The full list of features](https://crosswayapp.com/features/) has every command, setting and privacy promise, with a link for each.
 
 ![The Crossway switcher showing app icons with window previews](switcher.png)
 
@@ -78,7 +78,7 @@ Your Gatekeeper setting allows App Store apps only. In System Settings → Priva
 
 - **When downloading:** the release title says it — for example *Crossway 1.11* — and every release also includes a version-named copy of the zip (like `Crossway-1.11.zip`), so the file itself tells you what it is.
 - **Once installed:** click the Crossway menu-bar icon → **Settings…** — your version is shown at the bottom of the Settings window. Or select `/Applications/Crossway.app` in Finder and press ⌘I (Get Info).
-- **To see if you're current:** click the menu-bar icon → **Check for Updates…**, or **Check now** beside Auto-update in **Settings → General → Startup**, for a manual check; or opt into **Auto-update** there and choose a schedule. Each compares your build against the newest release here; if something newer is available, Crossway offers the browser download.
+- **To see if you're current:** click the menu-bar icon → **Check for Updates…**, or **Check now** beside Auto-update in **Settings → General → Startup and updates**, for a manual check; or opt into **Auto-update** there and choose a schedule. Each compares your build against the newest release here; if something newer is available, Crossway offers the browser download.
 
 ## Terms
 
