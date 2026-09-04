@@ -2702,6 +2702,7 @@
     var paused = o.paused || function () { return false; };
     var random = o.random || Math.random;
     var running = false, handle = null, scene = 0, step = 0, taps = 0, loops = 0;
+    var started = false; /* a tap of this scene has landed, so its modifier is down */
     var world = null;   /* which switcher the last scene ran under */
     var waiting = false; /* the pending timer is a look-again while nobody can see the demo */
 
@@ -2722,10 +2723,16 @@
       waiting = false;
       handle = later(function () { handle = null; if (running) { fn(); } }, ms);
     }
-    /* The modifier goes down. A demo nobody is looking at can wait: it
-       looks again after a rest, and `wake` (the visibility wiring) cuts
-       that short the moment the demo comes into view, so the first
-       switcher is 1.5 s from THEN, not from whenever the last look was. */
+    /* A scene begins. A demo nobody is looking at can wait: it looks
+       again after a rest, and `wake` (the visibility wiring) cuts that
+       short the moment the demo comes into view, so the first switcher
+       is 1.5 s from THEN, not from whenever the last look was.
+       NOTHING is held here (2026-09-03, the user: "the auto demo has a
+       problem: it starts with just cmd being held... the auto demo
+       should just be clicking tab and ` a few times for each
+       applications/windows sections"). The modifiers are art now, so a
+       scene does what a visitor does: it clicks the box's own key, and
+       that key holds the box's modifier for it. */
     function begin() {
       if (paused()) { schedule(begin, pace.rest); waiting = true; return; }
       /* The switch was flipped between scenes: the other world's loop,
@@ -2733,10 +2740,7 @@
       var w = controller.state.crosswayEnabled;
       if (world !== null && w !== world) { scene = 0; }
       world = w;
-      var sc = current()[scene];
-      step = 0; taps = 0;
-      keys.hold(sc.hold);
-      if (keys._held() !== sc.hold) { next(); return; }
+      step = 0; taps = 0; started = false;
       schedule(tapNext, pace.hold);
     }
     /* One tap of the scene's current key; on to the next key once its
@@ -2746,10 +2750,17 @@
       if (!sc) { next(); return; }
       /* The latch can be dropped under a running scene (a rebuild at
          the breakpoint, a switch flipped from the keyboard): then the
-         scene is over, not sixteen taps of nothing. */
-      if (keys._held() !== sc.hold) { next(); return; }
+         scene is over, not sixteen taps of nothing. Only once a tap has
+         landed, since the first tap is what puts the modifier down. */
+      if (started && keys._held() !== sc.hold) { next(); return; }
       if (!t) { schedule(letGo, pace.settle); return; }
-      keys.tap(t.key);
+      /* Tapped in the scene's own BOX, so its modifier goes down for it
+         exactly as a visitor's click does. A box whose modifier cannot
+         be had (⌥ without Crossway) holds nothing, and the guard above
+         ends the scene on the next beat. */
+      keys.tap(t.key, null, sc.hold);
+      if (!started && keys._held() !== sc.hold) { next(); return; }
+      started = true;
       taps += 1;
       /* `min` (2026-09-03): a target one tap away would end the walk
          before it was seen, so a scene may ask for a few taps first. */
