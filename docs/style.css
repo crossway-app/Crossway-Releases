@@ -170,7 +170,13 @@
    chrome, a darker wallpaper. The five app marks keep their colour —
    real app icons do not change with the appearance. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not(.day) {
+  :root:not([data-theme="light"]):not(.day):not(.hacker) {
+    /* :not(.hacker) is load-bearing. This selector scores (0,3,0) and
+       the terminal's own rule only (0,1,1), so without it the dark-macOS
+       screen tokens BEAT its phosphor ones — and they beat them on
+       specificity, which no amount of source order can answer. The page
+       went green while the drawn Mac stayed neutral grey, but only for a
+       visitor whose SYSTEM is dark, which is why it survived review. */
     --scr-ink: #ececec;
     --scr-paper: #2b2b2b;
     --scr-wall-a: #3f4a55;
@@ -293,79 +299,48 @@ html.hacker body {
 }
 
 /* ---- the terminal in daylight -----------------------------------------
-   The terminal used to ignore light and dark entirely: one dark palette,
-   and night.js stayed inert while it was on. A phosphor screen is a dark
-   object, so dark remains what it is by default and what a night visitor
-   keeps — but a visitor reading in light asked for light, and the answer
-   was to hand them a black page anyway.
+   A phosphor screen is a DARK object in every light. An earlier cut of this
+   section handed a light-mode visitor a pale green page, and it was wrong in
+   the way that matters: the drawn Mac's own screen keeps its phosphor tokens
+   (--scr-*, set on the terminal's own rule below), so the page went to paper
+   while the machine on it stayed lit, and the two halves no longer read as
+   one picture.
+   The terminal is also a mood, and paper is not it.
 
-   So: the same six steps re-cut for paper. Deep phosphor ink on a pale
-   green ground, the ordering preserved so disabled chrome still reads as
-   disabled and captions still recede. It applies on an explicit .day, and
-   on a light system when the visitor has chosen neither — the site's own
-   rule everywhere else. Both selectors outrank `html.hacker`, so source
-   order does not decide this. */
+   So both appearances stay dark and only the DEPTH changes: light gets this
+   step, a phosphor dark lifted just off the deepest black, and dark keeps the
+   deeper base above untouched. Same six-step ramp, same tonal ordering, so
+   disabled chrome still reads as disabled and captions still recede.
+
+   It applies on an explicit .day, and on a light system when the visitor has
+   chosen neither. Both selectors outrank `html.hacker`, so source order does
+   not decide this. */
 html.hacker.day {
-  --ink: #0b3a1c;
-  --paper: #e2f2e5;          /* window fill: paper with a phosphor cast */
-  --desktop-a: #cfe6d4;      /* dither, cell A */
-  --desktop-b: #e8f5eb;      /* cell B */
-  --dim: #7aa888;            /* disabled chrome */
-  --muted: #46795a;          /* captions, fine print */
-  --link: #06522a;           /* the strongest step, which on paper is the darkest */
-  --guide: #06522a;
-  --lamp: #06522a;
-  --link-visited: #3c7a52;
-  color-scheme: light;
-  --font-display: var(--font-mono);
-  --font-body: var(--font-mono);
-  --font-panel: var(--font-mono);
+  --paper: #16241a;          /* window fill, lifted off the base's #101b12 */
+  --desktop-a: #111c13;      /* phosphor dither, cell A */
+  --desktop-b: #0d150f;      /* cell B */
+  --dim: #35774a;            /* disabled chrome */
+  --muted: #5fa972;          /* captions, fine print */
 }
 html.hacker.day body {
-  background-color: #eef7f0;
-  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.55) 0, rgba(255, 255, 255, 0.55) 44px, rgba(255, 255, 255, 0) 820px),
+  background-color: #0a1109; /* the deepest step here, still a near-black */
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.4) 44px, rgba(0, 0, 0, 0) 820px),
     repeating-conic-gradient(var(--desktop-a) 0% 25%, var(--desktop-b) 0% 50%);
   background-size: auto, 2px 2px;
-  /* No bloom on paper: a glow behind dark type on a light ground reads as
-     a printing fault rather than as light coming off a screen. */
-  text-shadow: none;
-}
-/* The glass, re-cut: scanlines and vignette drawn in the ink rather than in
-   black, or the paper terminal wears a grey veil. */
-html.hacker.day body::after {
-  background-image:
-    radial-gradient(ellipse at center,
-      transparent 58%, rgba(11, 58, 28, 0.16) 100%),
-    repeating-linear-gradient(180deg,
-      rgba(11, 58, 28, 0.10) 0 1px, transparent 1px 3px);
 }
 @media (prefers-color-scheme: light) {
   html.hacker:not(.night) {
-    --ink: #0b3a1c;
-    --paper: #e2f2e5;
-    --desktop-a: #cfe6d4;
-    --desktop-b: #e8f5eb;
-    --dim: #7aa888;
-    --muted: #46795a;
-    --link: #06522a;
-    --guide: #06522a;
-    --lamp: #06522a;
-    --link-visited: #3c7a52;
-    color-scheme: light;
+    --paper: #16241a;
+    --desktop-a: #111c13;
+    --desktop-b: #0d150f;
+    --dim: #35774a;
+    --muted: #5fa972;
   }
   html.hacker:not(.night) body {
-    background-color: #eef7f0;
-    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.55) 0, rgba(255, 255, 255, 0.55) 44px, rgba(255, 255, 255, 0) 820px),
+    background-color: #0a1109;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.4) 0, rgba(0, 0, 0, 0.4) 44px, rgba(0, 0, 0, 0) 820px),
       repeating-conic-gradient(var(--desktop-a) 0% 25%, var(--desktop-b) 0% 50%);
     background-size: auto, 2px 2px;
-    text-shadow: none;
-  }
-  html.hacker:not(.night) body::after {
-    background-image:
-      radial-gradient(ellipse at center,
-        transparent 58%, rgba(11, 58, 28, 0.16) 100%),
-      repeating-linear-gradient(180deg,
-        rgba(11, 58, 28, 0.10) 0 1px, transparent 1px 3px);
   }
 }
 
