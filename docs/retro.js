@@ -4,10 +4,10 @@
    JavaScript off the word simply does nothing and the PowerBook stands.
 
    The figures live in a <template>, not behind display:none. Chrome
-   keeps running CSS animations inside a hidden subtree — measured here
-   in 2026-08 — and those figures hold about twenty flipbook reels, so
-   hiding them would cost every visitor style recalc forever. A template
-   subtree is inert until cloned.
+   keeps running CSS animations inside a hidden subtree, and those
+   figures hold about twenty flipbook reels, so hiding them would cost
+   every visitor style recalc forever. A template subtree is inert
+   until cloned.
 
    Unlike the terminal, this swaps ONE section rather than repainting the
    page, so it needs no class on <html> and no appearance rules. It is
