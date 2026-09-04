@@ -101,11 +101,11 @@
      like watercolour rather than drawn: no horizon, no hill, nothing
      that resolves into a place. It was a deep blue mesh, which read as
      a stock desktop. */
-  --scr-wall-a: #e3d7bd;       /* wallpaper base, top: sand */
-  --scr-wall-b: #bfb193;       /* wallpaper base, bottom (the well under the screen wears it too) */
-  --scr-wall-c: #9ec092;       /* wash, upper left: sage */
-  --scr-wall-d: #d8c79f;       /* wash, upper right: dry grass */
-  --scr-wall-e: #6f9a72;       /* wash, below: moss */
+  --scr-wall-a: #9c8f8c;       /* the light at the top: a warm dusk grey */
+  --scr-wall-b: #33382e;       /* the deep foreground (the well under the screen wears it too) */
+  --scr-wall-c: #6f7c4e;       /* the green mass across the middle */
+  --scr-wall-d: #b3a49f;       /* the haze, palest of them */
+  --scr-wall-e: #3f4a33;       /* the dark mass under the green */
   --scr-sheen: #ffffff;        /* the light across the glass (.cw-screen::after mixes it thin) */
   /* A terminal is dark in BOTH appearances, so it cannot be a mix of
      the screen's ink and paper, which trade places at night. Neutral. */
@@ -187,11 +187,11 @@
   :root:not([data-theme="light"]):not(.day) {
     --scr-ink: #ececec;
     --scr-paper: #2b2b2b;
-    --scr-wall-a: #3b3a2e;
-    --scr-wall-b: #23241c;
-    --scr-wall-c: #46543f;
-    --scr-wall-d: #423f30;
-    --scr-wall-e: #33452f;
+    --scr-wall-a: #4c4642;
+    --scr-wall-b: #1b1e17;
+    --scr-wall-c: #3d4629;
+    --scr-wall-d: #5c5450;
+    --scr-wall-e: #232a1b;
     --scr-sheen: #ffffff;
     --scr-term: #161616;
   }
@@ -199,11 +199,11 @@
 html.night {
   --scr-ink: #ececec;
   --scr-paper: #2b2b2b;
-  --scr-wall-a: #3b3a2e;
-  --scr-wall-b: #23241c;
-  --scr-wall-c: #46543f;
-  --scr-wall-d: #423f30;
-  --scr-wall-e: #33452f;
+  --scr-wall-a: #4c4642;
+  --scr-wall-b: #1b1e17;
+  --scr-wall-c: #3d4629;
+  --scr-wall-d: #5c5450;
+  --scr-wall-e: #232a1b;
   --scr-sheen: #ffffff;
   --scr-term: #161616;
 }
@@ -1715,33 +1715,50 @@ pre.cmd {
      from their tokens with transparency, so the base shows through
      them; nothing is patterned. */
   background:
-    /* Each wash holds its colour for a third of its radius and then
-       lets go: a bloom with a body reads as paint, where one that fades
-       from its own centre reads as a light. */
-    /* Sage, sweeping in from the upper left. */
-    radial-gradient(105% 82% at 2% 0%,
+    /* BANDS, not lobes, and they MULTIPLY into each other (the list
+       under this one): a translucent wash laid over another darkens
+       where the two meet, which is what a glaze does and what a lit
+       lobe cannot. Each band is a very flat ellipse, so it reads as
+       something laid on rather than as a light behind the glass, and
+       each holds its colour before it lets go. Two of them overlap at
+       different heights, which is what keeps the green's top edge from
+       reading as a horizon: strata, not a landscape.
+
+       Darker than the page it sits on (2026-09-03, the user: "go darker
+       palette, to contrast with our site's lighter background"), and
+       muted throughout: the windows are the bright things here. */
+    /* The haze, across the upper middle. */
+    radial-gradient(124% 26% at 42% 33%,
+      color-mix(in srgb, var(--scr-wall-d) 72%, transparent) 0%,
+      color-mix(in srgb, var(--scr-wall-d) 42%, transparent) 46%, transparent 80%),
+    /* The green, in two passes at different heights so its upper edge
+       is uneven and nothing in it lines up. */
+    radial-gradient(64% 21% at 20% 60%,
       color-mix(in srgb, var(--scr-wall-c) 92%, transparent) 0%,
-      color-mix(in srgb, var(--scr-wall-c) 80%, transparent) 34%, transparent 68%),
-    /* Dry grass along the top right, wide and thin. */
-    radial-gradient(88% 52% at 100% 2%,
-      color-mix(in srgb, var(--scr-wall-d) 92%, transparent) 0%,
-      color-mix(in srgb, var(--scr-wall-d) 78%, transparent) 30%, transparent 66%),
-    /* Moss gathering at the foot, off centre so nothing is symmetric. */
-    radial-gradient(92% 62% at 20% 108%,
-      color-mix(in srgb, var(--scr-wall-e) 78%, transparent) 0%,
-      color-mix(in srgb, var(--scr-wall-e) 58%, transparent) 26%, transparent 64%),
-    /* A second moss bloom at the other corner: two washes meeting is
-       what makes a wash read as painted rather than lit. */
-    radial-gradient(58% 52% at 98% 98%,
-      color-mix(in srgb, var(--scr-wall-e) 60%, transparent) 0%,
-      color-mix(in srgb, var(--scr-wall-e) 40%, transparent) 22%, transparent 66%),
-    /* Sand holding the middle open, so the windows sit on something
-       quiet rather than in the middle of the picture. */
-    radial-gradient(66% 52% at 62% 46%,
-      color-mix(in srgb, var(--scr-wall-a) 92%, transparent) 0%,
-      color-mix(in srgb, var(--scr-wall-a) 74%, transparent) 34%, transparent 76%),
-    linear-gradient(168deg, var(--scr-wall-a) 0%,
-      color-mix(in srgb, var(--scr-wall-a) 45%, var(--scr-wall-b)) 58%, var(--scr-wall-b) 100%);
+      color-mix(in srgb, var(--scr-wall-c) 64%, transparent) 46%, transparent 74%),
+    radial-gradient(76% 18% at 80% 66%,
+      color-mix(in srgb, var(--scr-wall-c) 84%, transparent) 0%,
+      color-mix(in srgb, var(--scr-wall-c) 54%, transparent) 44%, transparent 76%),
+    /* The dark mass beneath it, flatter and wider. */
+    radial-gradient(96% 17% at 46% 78%,
+      color-mix(in srgb, var(--scr-wall-e) 88%, transparent) 0%,
+      color-mix(in srgb, var(--scr-wall-e) 52%, transparent) 44%, transparent 78%),
+    /* A cool passage along the very foot, which lifts it off the frame. */
+    radial-gradient(130% 20% at 52% 106%,
+      color-mix(in srgb, var(--scr-wall-d) 58%, transparent) 0%,
+      color-mix(in srgb, var(--scr-wall-d) 30%, transparent) 40%, transparent 72%),
+    /* The canvas: a grain so fine it is felt rather than seen, and the
+       one thing here that is not a wash. */
+    repeating-linear-gradient(51deg,
+      color-mix(in srgb, var(--scr-wall-e) 9%, transparent) 0 1px,
+      transparent 1px 3px),
+    linear-gradient(176deg, var(--scr-wall-a) 0%,
+      color-mix(in srgb, var(--scr-wall-a) 55%, var(--scr-wall-d)) 26%,
+      color-mix(in srgb, var(--scr-wall-c) 40%, var(--scr-wall-b)) 64%, var(--scr-wall-b) 100%);
+  /* One per layer above, in the same order: the haze and the four
+     masses glaze, the grain sits in the surface, and the ground is the
+     ground. */
+  background-blend-mode: multiply, multiply, multiply, multiply, multiply, overlay, normal;
 }
 /* A sheen across the glass, top left, so the screen reads as lit glass
    and not as a slab (2026-09-03, the same pass). Above everything on
