@@ -2074,7 +2074,7 @@
       ["cmd", "opt"].forEach(function (g) {
         var tapSet = keyset(capFor("tab", g));
         if (!tapSet) { return; }
-        /* One verb per box, over its tap keys: "click to tap", the step
+        /* One verb per box, over its tap keys: "Click to tap", the step
            to take, bold in the guide colour unless the box is off. The
            modifier carries none (2026-09-03, the user: the modifiers are
            art; "remove 'click to hold' aspect entirely"). */
