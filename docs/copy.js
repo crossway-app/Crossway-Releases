@@ -4,7 +4,7 @@
    Progressive enhancement only. The button ships with the hidden attribute set
    and nothing here runs without this file, so a visitor with JavaScript off
    never meets a control that does nothing: they read the line and select it by
-   hand, which is exactly what the page did before this file existed.
+   hand, which the static markup supports on its own.
 
    A failed clipboard write is not worth an error message in a hero, so it
    falls back to selecting the text for the visitor and says nothing. */
