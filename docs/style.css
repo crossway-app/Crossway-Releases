@@ -1213,14 +1213,15 @@ pre.cmd {
 .download-grid p,
 .donate-grid p { max-width: 62ch; }
 .donate-grid .dialog-actions { grid-column: 3; margin-top: 0; }
-/* Download's third column is the button with its line under it, the
-   two centred on each other. */
-.download-grid .dialog-actions { grid-column: 3; margin-top: 0; display: flex; flex-direction: column; align-items: center; gap: 6px; }
+/* Download's third column is the button alone, and its middle column is
+   the spec line (2026-09-03, the user: the line "shouldn't be below the
+   download button. use the space of the window properly", and then, of
+   the heading that stood over it, "not needed either given the button
+   says 'download crossway'. keep icon, though"), which is how the
+   Donate window beside it is built too: mark, words, button. */
+.download-grid .dialog-actions { grid-column: 3; margin-top: 0; }
 .download-grid .dialog-actions .btn-row { margin: 0; }
-/* The line is as wide as the button and wraps under it: sized to its
-   longest word and then stretched to the column, so it never widens the
-   column and squeezes the words beside it into two-line headings. */
-.download-grid .caption { margin: 0; text-align: center; width: min-content; min-width: 100%; }
+.download-grid .caption { margin: 0; text-align: left; }
 
 /* ---------- read-me list ---------- */
 
@@ -1447,8 +1448,7 @@ pre.cmd {
   .donate-grid { grid-template-columns: 1fr; }
   .donate-grid .dialog-actions { grid-column: 1; }
   .download-grid { grid-template-columns: 1fr; }
-  .download-grid .dialog-actions { grid-column: 1; align-items: flex-start; }
-  .download-grid .caption { text-align: left; }
+  .download-grid .dialog-actions { grid-column: 1; }
   .dialog-icon { grid-row: auto; }
   .dialog-actions { grid-column: 1; }
   }
@@ -2752,7 +2752,9 @@ html:not(.hacker) .cw-screen::after {
    section's heading, and the display stands bare on the left. */
 .cw-controls .titlebar .title { margin: 0; font-weight: normal; }
 /* The hint row, first in the keys window's body: the automatic-demo box
-   on a line of its own at the right, then "Hint:" and ONE thing to try
+   on a line of its own at the LEFT (2026-09-03, the user: "align auto
+   demo left and make sure it's the same font size as hint"), then
+   "Hint:" and ONE thing to try
    on the monitor at a time, fading out and in through a list of two
    dozen, across the WHOLE row on both of its lines (2026-09-03, the
    user: "hint should be full row, larger text. make sure that the text
@@ -2774,14 +2776,15 @@ html:not(.hacker) .cw-screen::after {
      half rather than a gap of its own, so the two stay one number. */
   margin-bottom: calc(-0.5 * clamp(6px, calc(2.8 * var(--cw-dens) - 7.7px), 20px));
 }
-.cw-keys-lead-row .cw-demo-mode { width: max-content; margin: 0 0 0 auto; }
+.cw-keys-lead-row .cw-demo-mode { width: max-content; margin: 0; }   /* at the left, over the hint (2026-09-03, the user: "align auto demo left") */
 .cw-hero-idea {
   margin: 0;
-  height: 2.4em;                        /* two lines, always: the row never grows or shrinks with the tip */
+  height: calc(2.4em + 3px);            /* two lines, always, plus the nudge below: the row never grows or shrinks with the tip. The page is border-box, so the padding has to be ADDED here or it eats a line and every long tip is cut (measured 2026-09-03). */
   overflow: hidden;
   font-family: var(--font-panel);       /* the panel face: crisper than Geneva at this size (2026-09-03, the user: "improve fonts so they look crisp") */
-  font-size: 16px;                      /* "larger text" (2026-09-03, the user): the legend's 14 was the first cut */
+  font-size: 17px;                      /* the automatic-demo box's own size, traded with it (2026-09-03, the user: "hint font size should be auto demo's and vice versa"); "larger text" took it from the legend's 14 to 16 that afternoon */
   line-height: 1.2;
+  padding-top: 3px;                     /* the hint a few pixels lower under the box, which the fixed height above absorbs, so nothing below it moves */
   color: var(--ink);
   text-align: left;
 }
@@ -2823,7 +2826,7 @@ html:not(.hacker) .cw-screen::after {
      user): this is the one control in the keys window that says whether
      the demo is playing itself, and at the lead's own size it read as
      part of the sentence beside it rather than as a switch. */
-  font-size: 17px;
+  font-size: 17px;                      /* the hint's own size (2026-09-03, the user: "make sure it's the same font size as hint"); the two traded sizes earlier that day and then met at 17 */
   line-height: 1;
   color: var(--ink);
   cursor: pointer;
@@ -3430,7 +3433,14 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
   /* The caps and their printing are on the unit's line now and need no
      step; what steps here is what is still whole pixels. */
   .cw-group-label { font-size: 17px; }    /* 20 from ~540px up (2026-09-03): two boxes' names cost the ~490px window 4px a box it did not have */
-  .cw-hero-idea { font-size: 14px; }      /* 16 from ~540px up: two lines of it, whole, are what the shortest window can spare (2026-09-03) */
+  /* 17 from ~540px up: two lines of it, whole, are what the shortest
+     window can spare, and there it gives back the nudge as well, since
+     every pixel under it belongs to the rows (2026-09-03). */
+  .cw-hero-idea { font-size: 15px; height: 2.4em; padding-top: 0; }
+  /* The verb stands 6px off the caps from ~540px up; at the shortest
+     window it gives 2px of that back to each box's rows, which is the
+     last of what the hint's own line cost them (2026-09-03). */
+  .cw-keyset { gap: 4px 2px; }
   .cw-keys-body { padding-top: 6px; padding-bottom: 6px; }
   /* .cw-fine has no step-down at all any more: its three sizes are on
      the window's line in the plain rule (2026-09-02). It once had one
