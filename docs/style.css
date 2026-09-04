@@ -3132,6 +3132,10 @@ html:not(.hacker) .cw-screen::after {
    the taps, while the hold verb reads "click to release". The engine
    moves these (wireKeys.guide). */
 .cw-keyset.is-next .cw-keyset-verb { font-weight: bold; color: var(--guide); }
+/* Held: "click to release" is bold too, in ink, not the guide colour
+   (2026-09-03, the user: "keep it black"): the modifier is in hand, and
+   the green belongs to the one step still to take. */
+.cw-keyset.is-held .cw-keyset-verb { font-weight: bold; }
 /* Opt-in motion, as every transition in the hero is: the shift eases
    over a third of a second for a visitor who has not asked for less. */
 @media (prefers-reduced-motion: no-preference) {
