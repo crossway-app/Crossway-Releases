@@ -2603,38 +2603,46 @@
      ==================================================================== */
   var DEMO_SCENES = [
     /* The shape of every scene since 2026-09-03 (the user: "it should be
-       clicking tab a few times, then ` a few times, then the same for
-       the windows section"): Tab a few times, then backtick a few
-       times, under one modifier, and the ⌥ box gets the same pair as
-       two scenes of its own (the system's grids take one key each).
-       Targets are still named: a tap is repeated until the named app or
-       window is selected, so a scene still lands if the visitor left
-       the desktop rearranged; `min` taps first where the target would
-       otherwise be one tap away, so the walk is seen.
-       1. ⌘Tab a lap and one more, to Terminal (the row seen walked
-       round), then ⌘` a lap of Terminal's three, home to the one in
-       front: Terminal comes forward. */
+       clicking tab a few times, then ` a few times"): Tab a few times,
+       then backtick a few times, under one box. And the boxes ALTERNATE
+       (the user, the same day: "the auto demo needs to intermix cmd and
+       option demos. right now it's very cmd heavy or at least very
+       front-loaded just cmds"), so a visitor who watches any two scenes
+       sees both halves of the window used.
+       Targets are named, not counted: a tap is repeated until the named
+       app or window is selected, so a scene still lands if the visitor
+       left the desktop rearranged; `min` taps first where the target
+       would otherwise be one tap away, so the walk is seen.
+       The loop closes because of its LAST FOUR commits, in this order:
+       sa2, fd1, tm1, sa1. A commit moves its window to the front and
+       its app to the front of the MRU, so the stack at the end is those
+       four in reverse, then the windows nothing touched (tm2, and the
+       two minimized). That is the desktop it started on. Everything
+       before those four is free, which is what leaves the boxes room to
+       alternate.
+       1. VIEW APPLICATIONS: ⌘Tab a lap of the row and one more, to
+       Terminal, then ⌘` a lap of its three windows, home to the one in
+       front. Terminal comes forward. */
     { hold: "cmd", taps: [{ key: "tab", app: "terminal", min: 4 }, { key: "tick", win: "tm1" }] },
-    /* 2. ⌥Tab: every window, three along, to the film: it is seen
-       playing in its tile, and letting go brings the mostly hidden
-       window forward. */
+    /* 2. VIEW WINDOWS: ⌥Tab, every window, three along to the film. It
+       is seen playing in its tile, and letting go brings the mostly
+       hidden window forward. */
     { hold: "opt", taps: [{ key: "tab", win: "sa2" }] },
-    /* 3. ⌥`: the front app's windows, Safari's, a lap of three back to
-       the film: a no-op for state. */
-    { hold: "opt", taps: [{ key: "tick", win: "sa2" }] },
-    /* 4. ⌘Tab a lap back to Safari, ⌘` a lap of its strip back to the
-       film: both walks seen whole, and a no-op for state. */
+    /* 3. Applications again: ⌘Tab a lap back to Safari, ⌘` a lap of its
+       strip back to the film. Both walks seen whole, and a no-op for
+       state, so it can sit anywhere in the loop. */
     { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa2" }] },
-    /* And the three that close the loop, in the one order that does:
-       from here the stack is sa2, tm1, sa1, fd1, tm2, and committing
-       fd1, then tm1, then sa1 leaves sa1, tm1, fd1, sa2, tm2: the
-       opening stack.
-       5. ⌘Tab two along, to Finder (one window, so no strip to walk). */
+    /* 4. Windows again: ⌥`, the front app's own, a lap of Safari's
+       three back to the film. Also a no-op. */
+    { hold: "opt", taps: [{ key: "tick", win: "sa2" }] },
+    /* 5. Applications: ⌘Tab two along to Finder, which has one window,
+       so there is no strip to walk. */
     { hold: "cmd", taps: [{ key: "tab", app: "finder" }] },
-    /* 6. ⌘Tab two along to Terminal, ⌘` a lap home to tm1. */
-    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm1" }] },
-    /* 7. ⌘Tab two along to Safari, ⌘` a lap and one more, to its first
-       window: the desktop is exactly as it began. */
+    /* 6. Windows: ⌥Tab across everything to a Terminal window, which is
+       the grid doing what the strip did in scene 1, from the other box. */
+    { hold: "opt", taps: [{ key: "tab", win: "tm1" }] },
+    /* 7. Applications: ⌘Tab two along to Safari, ⌘` a lap and one more
+       to its first window. The desktop is exactly as it began. */
     { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa1", min: 4 }] },
   ];
   /* The same demo without Crossway, in what the system has: Command-Tab
