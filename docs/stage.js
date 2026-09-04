@@ -2602,65 +2602,66 @@
      automatic demo off; the box over the keys turns it back on.
      ==================================================================== */
   var DEMO_SCENES = [
-    /* ⌘Tab one along, to Terminal: its window comes forward. */
-    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }] },
-    /* A LAP of Terminal's strip, three windows round to the one in
-       front: the highlight seen to walk, and a no-op for state. */
-    { hold: "cmd", taps: [{ key: "tick", win: "tm1" }] },
-    /* ⌘Tab back to Safari, ⌘` to its second window, the film: its tile
-       is seen PLAYING in the strip before it is chosen, which is the
-       live previews, shown, and letting go brings the mostly hidden
+    /* The shape of every scene since 2026-09-03 (the user: "it should be
+       clicking tab a few times, then ` a few times, then the same for
+       the windows section"): Tab a few times, then backtick a few
+       times, under one modifier, and the ⌥ box gets the same pair as
+       two scenes of its own (the system's grids take one key each).
+       Targets are still named: a tap is repeated until the named app or
+       window is selected, so a scene still lands if the visitor left
+       the desktop rearranged; `min` taps first where the target would
+       otherwise be one tap away, so the walk is seen.
+       1. ⌘Tab a lap and one more, to Terminal (the row seen walked
+       round), then ⌘` a lap of Terminal's three, home to the one in
+       front: Terminal comes forward. */
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal", min: 4 }, { key: "tick", win: "tm1" }] },
+    /* 2. ⌥Tab: every window, three along, to the film: it is seen
+       playing in its tile, and letting go brings the mostly hidden
        window forward. */
+    { hold: "opt", taps: [{ key: "tab", win: "sa2" }] },
+    /* 3. ⌥`: the front app's windows, Safari's, a lap of three back to
+       the film: a no-op for state. */
+    { hold: "opt", taps: [{ key: "tick", win: "sa2" }] },
+    /* 4. ⌘Tab a lap back to Safari, ⌘` a lap of its strip back to the
+       film: both walks seen whole, and a no-op for state. */
     { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa2" }] },
-    /* A LAP of Safari's strip too, and the point of both laps is the
-       KEY: the other scenes tap ` once and move on, so a visitor never
-       saw the thing ⌘` is actually for. Here it is pressed until the
-       highlight is home again. It lands on the window it started from,
-       so the scene is a no-op for state and the loop closes exactly as
-       it did without it. */
-    { hold: "cmd", taps: [{ key: "tick", win: "sa2" }] },
-    /* ⌥`: the focused app's windows, Safari's, to its other one. */
-    { hold: "opt", taps: [{ key: "tick", win: "sa1" }] },
-    /* ⌥Tab: every window, a few along, to the Finder window. */
-    { hold: "opt", taps: [{ key: "tab", win: "fd1" }] },
-    /* ⌘Tab, ⌘`: Terminal's other window forward, the rest left as
-       they were. */
-    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm2" }] },
-    /* And the four that close the loop, in the one order that does:
-       with the scene above, the stack's five, deepest first (tm2, sa2,
-       fd1, tm1, sa1), each committed last in that order; a third lap,
-       Safari's again, sits between the first two of them as a no-op. */
-    { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa2" }] },
-    { hold: "cmd", taps: [{ key: "tick", win: "sa2" }] },
+    /* And the three that close the loop, in the one order that does:
+       from here the stack is sa2, tm1, sa1, fd1, tm2, and committing
+       fd1, then tm1, then sa1 leaves sa1, tm1, fd1, sa2, tm2: the
+       opening stack.
+       5. ⌘Tab two along, to Finder (one window, so no strip to walk). */
     { hold: "cmd", taps: [{ key: "tab", app: "finder" }] },
+    /* 6. ⌘Tab two along to Terminal, ⌘` a lap home to tm1. */
     { hold: "cmd", taps: [{ key: "tab", app: "terminal" }, { key: "tick", win: "tm1" }] },
-    { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa1" }] },
+    /* 7. ⌘Tab two along to Safari, ⌘` a lap and one more, to its first
+       window: the desktop is exactly as it began. */
+    { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa1", min: 4 }] },
   ];
   /* The same demo without Crossway, in what the system has: Command-Tab
      lands on an app's front window, and Command-backtick raises the
      front app's next window at once, with no session to read, so those
      targets name the window that must be IN FRONT afterwards. One key
      per scene: the system's switcher has no strip for ` to descend into,
-     so a ` under a held ⌘Tab does nothing there.
-
+     so a ` under a held ⌘Tab does nothing there. The same shape as
+     Crossway's since 2026-09-03: Tab a few times, then ` a few times.
      Twelve scenes that close the loop, checked by walking them: the
-     raises are fd1, tm1, tm2, sa1, sa2, tm2, tm1, sa2, sa1, fd1, tm1,
-     sa1, and a window's place at the end is its LAST raise, so the last
-     raise of each of the five is tm2, sa2, fd1, tm1, sa1 in that order:
-     the opening stack, deepest first. Every raise is a Safari, Finder or
-     Terminal window, so nothing else can drift. It opens on Finder
-     where Crossway's loop opens on Terminal, so a flip of the switch
-     between scenes can be seen to start the other loop. */
+     system's ` ping-pongs an app's two most recent windows, so the
+     raises are tm1, tm2, sa1, sa2, sa1, tm2, tm1, sa1, sa1 (after a
+     ping-pong), fd1, tm1, sa1, and the last raise of each of the five
+     leaves sa1, tm1, fd1, sa2, tm2: the opening stack. It opens on
+     Terminal after a lap of the row where Crossway's loop opens on
+     Terminal's strip, so a flip of the switch between scenes can be
+     seen to start the other loop. */
   var DEMO_SCENES_NATIVE = [
-    { hold: "cmd", taps: [{ key: "tab", app: "finder" }] },
-    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }] },
-    { hold: "cmd", taps: [{ key: "tick", front: "tm2" }] },
-    { hold: "cmd", taps: [{ key: "tab", app: "safari" }] },
-    { hold: "cmd", taps: [{ key: "tick", front: "sa2" }] },
-    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }] },
-    { hold: "cmd", taps: [{ key: "tick", front: "tm1" }] },
-    { hold: "cmd", taps: [{ key: "tab", app: "safari" }] },
-    { hold: "cmd", taps: [{ key: "tick", front: "sa1" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal", min: 4 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "tm2", min: 3 }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "safari", min: 4 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "sa2", min: 3 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "sa1", min: 3 }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal", min: 4 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "tm1", min: 3 }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "safari", min: 4 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "sa1", min: 4 }] },
     { hold: "cmd", taps: [{ key: "tab", app: "finder" }] },
     { hold: "cmd", taps: [{ key: "tab", app: "terminal" }] },
     { hold: "cmd", taps: [{ key: "tab", app: "safari" }] },
@@ -2750,7 +2751,9 @@
       if (!t) { schedule(letGo, pace.settle); return; }
       keys.tap(t.key);
       taps += 1;
-      if (onTarget(t) || taps >= DEMO_MAX_TAPS) { step += 1; taps = 0; }
+      /* `min` (2026-09-03): a target one tap away would end the walk
+         before it was seen, so a scene may ask for a few taps first. */
+      if ((onTarget(t) && taps >= (t.min || 1)) || taps >= DEMO_MAX_TAPS) { step += 1; taps = 0; }
       schedule(tapNext, jittered(pace.tap));
     }
     /* The modifier goes up, which commits, exactly as a visitor's does. */
