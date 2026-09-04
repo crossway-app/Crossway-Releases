@@ -24,4 +24,19 @@
     /* Automatic demo: the box over the keys. */
     demo: document.getElementById("cw-demo"),
   });
+
+  /* The hint line's marquee: one thing to try at a time, read from the
+     list the markup carries for a screen reader, written into the text
+     span after the "Hint:" label (the label is markup, so the marquee
+     must never write over it). */
+  var ideasList = document.querySelector(".cw-hero-ideas");
+  var ideaLine = document.querySelector(".cw-hero-idea-text");
+  if (ideasList && ideaLine && CrosswayStage.createIdeas) {
+    var items = Array.prototype.map.call(ideasList.children, function (li) { return li.textContent.trim(); });
+    CrosswayStage.createIdeas({
+      items: items,
+      line: ideaLine,
+      reduced: !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches),
+    }).start();
+  }
 })();
