@@ -2758,10 +2758,12 @@ html:not(.hacker) .cw-screen::after {
    new layout"): "Interactive demo" in its title bar, which is the
    section's heading, and the display stands bare on the left. */
 .cw-controls .titlebar .title { margin: 0; font-weight: normal; }
-/* The hint row, first in the keys window's body: the automatic-demo box
-   on a line of its own at the LEFT (2026-09-03, the user: "align auto
-   demo left and make sure it's the same font size as hint"), then
-   "Hint:" and ONE thing to try
+/* The top row of the keys window's body: the automatic-demo box, on a
+   line of its own at the LEFT (2026-09-03, the user: "align auto demo
+   left and make sure it's the same font size as hint"). The hint that
+   shared it went to the FOOT the same day ("move hint to bottom of
+   pane, above the divider of 'this is just a taste', below view
+   windows"), where it stands over the divider: "Hint:" and ONE thing to try
    on the monitor at a time, fading out and in through a list of two
    dozen, across the WHOLE row on both of its lines (2026-09-03, the
    user: "hint should be full row, larger text. make sure that the text
@@ -2783,7 +2785,11 @@ html:not(.hacker) .cw-screen::after {
      half rather than a gap of its own, so the two stay one number. */
   margin-bottom: calc(-0.5 * clamp(6px, calc(2.8 * var(--cw-dens) - 7.7px), 20px));
 }
-.cw-keys-lead-row .cw-demo-mode { width: max-content; margin: 0; }   /* at the left, over the hint (2026-09-03, the user: "align auto demo left") */
+.cw-keys-lead-row .cw-demo-mode { width: max-content; margin: 0; }   /* at the left (2026-09-03, the user: "align auto demo left") */
+/* The foot: the hint, then the divider and the small print. ONE block,
+   because the body is a flex column whose gap is the boxes' own, and a
+   fourth child there would have cost a whole gap at every fold. */
+.cw-keys-foot { display: flex; flex-direction: column; }
 .cw-hero-idea {
   margin: 0;
   height: calc(2.4em + 3px);            /* two lines, always, plus the nudge below: the row never grows or shrinks with the tip. The page is border-box, so the padding has to be ADDED here or it eats a line and every long tip is cut (measured 2026-09-03). */
@@ -3085,7 +3091,7 @@ html:not(.hacker) .cw-screen::after {
    the cap, the slot's calc() saw no unit at all and fell back to auto,
    and the two boxes' Tabs sat 12px apart. The line itself is described
    at .cw-keycap-btn, which reads it. */
-.cw-group-keys { --cw-u: clamp(48px, calc(17.5 * var(--cw-dens) - 45px), 60px); --cw-art-u: clamp(40px, calc(var(--cw-u) * 0.75), 45px); position: relative; display: flex; justify-content: center; gap: 0px; align-items: flex-end; flex: none; min-width: 0; }
+.cw-group-keys { --cw-u: clamp(48px, calc(17.5 * var(--cw-dens) - 45px), 60px); --cw-art-u: clamp(40px, calc(var(--cw-u) * 0.75), 45px); --cw-tap-panel: color-mix(in srgb, var(--ink) 7%, var(--paper)); position: relative; display: flex; justify-content: center; gap: 0px; align-items: flex-end; flex: none; min-width: 0; }
 /* A keyset is two lines: the verb, then its cap or caps (2026-09-03,
    the user, after the verb sat beside the cap and then in a chip: "the
    alignment of the text with the keyboard buttons are all off.. have
@@ -3115,8 +3121,22 @@ html:not(.hacker) .cw-screen::after {
    is what keeps it out of a custom-property cycle. */
 .cw-group-keys > .cw-keyset:first-child { position: absolute; left: 8px; bottom: 0; --cw-u: var(--cw-art-u); width: calc(var(--cw-u) * 1.25); justify-content: flex-start; }
 /* The tap slot is Tab, the 4px between, and backtick, plus a hair so a
-   rounding never wraps backtick onto a third line. */
-.cw-group-keys > .cw-keyset:last-child { width: calc(var(--cw-u) * 2.5 + 5px); }
+   rounding never wraps backtick onto a third line. It carries a quiet
+   panel behind it (2026-09-03, the user: "click to tap should maybe
+   also have some shading behind it and the buttons to visually group it
+   together"), which is the verb and its two keys read as one thing.
+   Drawn with a SPREAD SHADOW rather than padding: the slot's width is
+   the caps' own measure and the row is centred on it, so padding would
+   have moved the keys to make room for their own backdrop. A spread
+   paints outside the box and takes no space at all, and its corner
+   radius is the box's plus the spread. */
+.cw-group-keys > .cw-keyset:last-child {
+  width: calc(var(--cw-u) * 2.5 + 5px);
+  border-radius: 10px;
+  background: var(--cw-tap-panel);
+  box-shadow: 0 0 0 6px var(--cw-tap-panel);
+}
+.cw-group.is-off .cw-group-keys > .cw-keyset:last-child { --cw-tap-panel: transparent; }   /* a box you cannot use is flat: nothing to group */
 /* The hold slot is ONE width in both boxes, the width Command needs
    (its cap is a quarter wider than Option's), so Tab and backtick start
    at the same x in the applications box and the windows box (2026-09-03,
