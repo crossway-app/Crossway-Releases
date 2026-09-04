@@ -3072,7 +3072,7 @@ html:not(.hacker) .cw-screen::after {
    the cap, the slot's calc() saw no unit at all and fell back to auto,
    and the two boxes' Tabs sat 12px apart. The line itself is described
    at .cw-keycap-btn, which reads it. */
-.cw-group-keys { --cw-u: clamp(48px, calc(17.5 * var(--cw-dens) - 45px), 66px); display: flex; justify-content: space-evenly; gap: 0px; align-items: center; flex: none; min-width: 0; }
+.cw-group-keys { --cw-u: clamp(48px, calc(17.5 * var(--cw-dens) - 45px), 66px); display: flex; justify-content: space-evenly; gap: 0px; align-items: flex-end; flex: none; min-width: 0; }
 /* A keyset is two lines: the verb, then its cap or caps (2026-09-03,
    the user, after the verb sat beside the cap and then in a chip: "the
    alignment of the text with the keyboard buttons are all off.. have
@@ -3132,10 +3132,11 @@ html:not(.hacker) .cw-screen::after {
    the taps, while the hold verb reads "click to release". The engine
    moves these (wireKeys.guide). */
 .cw-keyset.is-next .cw-keyset-verb { font-weight: bold; color: var(--guide); }
-/* Held: "click to release" is bold too, in ink, not the guide colour
-   (2026-09-03, the user: "keep it black"): the modifier is in hand, and
-   the green belongs to the one step still to take. */
-.cw-keyset.is-held .cw-keyset-verb { font-weight: bold; }
+/* The modifier caps are ART (2026-09-03, the user: "you don't interact
+   with them... they are art that activate as the user interacts with
+   tab and `"): no pointer, no click, no hover; the engine lights them
+   (is-held) while their box's chord is in hand. */
+.cw-keycap-btn.is-art { pointer-events: none; }   /* no cursor of its own: with no pointer events its value is never seen, and the rendered suite reads the cap family's hand */
 /* Opt-in motion, as every transition in the hero is: the shift eases
    over a third of a second for a visitor who has not asked for less. */
 @media (prefers-reduced-motion: no-preference) {
