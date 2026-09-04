@@ -94,11 +94,18 @@
      gets the same mesh, deeper; the terminal its phosphor. Everything
      else on the screen stays neutral, and a test reads every token and
      checks. */
-  --scr-wall-a: #2f47a3;       /* wallpaper base, top */
-  --scr-wall-b: #0f1a4d;       /* wallpaper base, bottom (the well under the screen wears it too) */
-  --scr-wall-c: #7eb2ff;       /* lobe, upper left: sky */
-  --scr-wall-d: #b08cff;       /* lobe, upper right: violet */
-  --scr-wall-e: #7fdcff;       /* lobe, below: cyan */
+  /* The wallpaper: a painting of nothing in particular (2026-09-03, the
+     user: "something that evokes a sense of a painting of nature
+     without it being explicit... think lighter pastels of sand and
+     greens"). Washes of sand, sage and moss over a warm ground, laid
+     like watercolour rather than drawn: no horizon, no hill, nothing
+     that resolves into a place. It was a deep blue mesh, which read as
+     a stock desktop. */
+  --scr-wall-a: #e3d7bd;       /* wallpaper base, top: sand */
+  --scr-wall-b: #bfb193;       /* wallpaper base, bottom (the well under the screen wears it too) */
+  --scr-wall-c: #9ec092;       /* wash, upper left: sage */
+  --scr-wall-d: #d8c79f;       /* wash, upper right: dry grass */
+  --scr-wall-e: #6f9a72;       /* wash, below: moss */
   --scr-sheen: #ffffff;        /* the light across the glass (.cw-screen::after mixes it thin) */
   /* A terminal is dark in BOTH appearances, so it cannot be a mix of
      the screen's ink and paper, which trade places at night. Neutral. */
@@ -180,11 +187,11 @@
   :root:not([data-theme="light"]):not(.day) {
     --scr-ink: #ececec;
     --scr-paper: #2b2b2b;
-    --scr-wall-a: #1b2c74;
-    --scr-wall-b: #0a1240;
-    --scr-wall-c: #4c7ee0;
-    --scr-wall-d: #7c5fd6;
-    --scr-wall-e: #4fb3d9;
+    --scr-wall-a: #3b3a2e;
+    --scr-wall-b: #23241c;
+    --scr-wall-c: #46543f;
+    --scr-wall-d: #423f30;
+    --scr-wall-e: #33452f;
     --scr-sheen: #ffffff;
     --scr-term: #161616;
   }
@@ -192,11 +199,11 @@
 html.night {
   --scr-ink: #ececec;
   --scr-paper: #2b2b2b;
-  --scr-wall-a: #1b2c74;
-  --scr-wall-b: #0a1240;
-  --scr-wall-c: #4c7ee0;
-  --scr-wall-d: #7c5fd6;
-  --scr-wall-e: #4fb3d9;
+  --scr-wall-a: #3b3a2e;
+  --scr-wall-b: #23241c;
+  --scr-wall-c: #46543f;
+  --scr-wall-d: #423f30;
+  --scr-wall-e: #33452f;
   --scr-sheen: #ffffff;
   --scr-term: #161616;
 }
@@ -1708,14 +1715,33 @@ pre.cmd {
      from their tokens with transparency, so the base shows through
      them; nothing is patterned. */
   background:
-    radial-gradient(85% 70% at 16% 10%,
-      color-mix(in srgb, var(--scr-wall-c) 85%, transparent) 0%, transparent 60%),
-    radial-gradient(70% 60% at 84% 26%,
-      color-mix(in srgb, var(--scr-wall-d) 70%, transparent) 0%, transparent 62%),
-    radial-gradient(85% 55% at 55% 104%,
-      color-mix(in srgb, var(--scr-wall-e) 55%, transparent) 0%, transparent 60%),
-    linear-gradient(165deg, var(--scr-wall-a) 0%,
-      color-mix(in srgb, var(--scr-wall-a) 55%, var(--scr-wall-b)) 55%, var(--scr-wall-b) 100%);
+    /* Each wash holds its colour for a third of its radius and then
+       lets go: a bloom with a body reads as paint, where one that fades
+       from its own centre reads as a light. */
+    /* Sage, sweeping in from the upper left. */
+    radial-gradient(105% 82% at 2% 0%,
+      color-mix(in srgb, var(--scr-wall-c) 92%, transparent) 0%,
+      color-mix(in srgb, var(--scr-wall-c) 80%, transparent) 34%, transparent 68%),
+    /* Dry grass along the top right, wide and thin. */
+    radial-gradient(88% 52% at 100% 2%,
+      color-mix(in srgb, var(--scr-wall-d) 92%, transparent) 0%,
+      color-mix(in srgb, var(--scr-wall-d) 78%, transparent) 30%, transparent 66%),
+    /* Moss gathering at the foot, off centre so nothing is symmetric. */
+    radial-gradient(92% 62% at 20% 108%,
+      color-mix(in srgb, var(--scr-wall-e) 78%, transparent) 0%,
+      color-mix(in srgb, var(--scr-wall-e) 58%, transparent) 26%, transparent 64%),
+    /* A second moss bloom at the other corner: two washes meeting is
+       what makes a wash read as painted rather than lit. */
+    radial-gradient(58% 52% at 98% 98%,
+      color-mix(in srgb, var(--scr-wall-e) 60%, transparent) 0%,
+      color-mix(in srgb, var(--scr-wall-e) 40%, transparent) 22%, transparent 66%),
+    /* Sand holding the middle open, so the windows sit on something
+       quiet rather than in the middle of the picture. */
+    radial-gradient(66% 52% at 62% 46%,
+      color-mix(in srgb, var(--scr-wall-a) 92%, transparent) 0%,
+      color-mix(in srgb, var(--scr-wall-a) 74%, transparent) 34%, transparent 76%),
+    linear-gradient(168deg, var(--scr-wall-a) 0%,
+      color-mix(in srgb, var(--scr-wall-a) 45%, var(--scr-wall-b)) 58%, var(--scr-wall-b) 100%);
 }
 /* A sheen across the glass, top left, so the screen reads as lit glass
    and not as a slab (2026-09-03, the same pass). Above everything on
@@ -2061,7 +2087,12 @@ html:not(.hacker) .cw-screen::after {
   border-radius: 0.267em;
   position: relative;
 }
-.cw-appicon::before, .cw-appicon::after { content: ""; position: absolute; background: var(--app-glyph); }
+/* box-sizing is NOT inherited and `*` does not match a pseudo-element,
+   so these start at content-box however the page's own reset is written
+   (found 2026-09-03: the Finder smile's border pushed its ellipse a
+   border-width right and low, and the face read off centre). Every
+   glyph here is drawn to its border box. */
+.cw-appicon::before, .cw-appicon::after { content: ""; position: absolute; box-sizing: border-box; background: var(--app-glyph); }
 
 /* Six solid marks, one hue each, glyph knocked out in white. These are
    the only coloured icons on the page besides the traffic lights, and
@@ -2115,7 +2146,7 @@ html:not(.hacker) .cw-screen::after {
    corners, so it is a smile and not a grin. The features are the
    face's own ink, never the white the other glyphs knock out. */
 .cw-glyph-face::before { left: 0.27em; top: 0.3em; width: 0.09em; height: 0.2em; border-radius: 0.045em; background: var(--app-face-ink); box-shadow: 0.37em 0 0 var(--app-face-ink); }
-.cw-glyph-face::after { left: 0.2em; top: 0.36em; width: 0.6em; height: 0.4em; background: transparent; border: 0.067em solid transparent; border-bottom-color: var(--app-face-ink); border-radius: 50%; }
+.cw-glyph-face::after { left: 0.15em; top: 0.375em; width: 0.7em; height: 0.415em; background: transparent; border: 0.067em solid transparent; border-bottom-color: var(--app-face-ink); border-radius: 50%; }
 /* reel: a ring with a play mark in it, a player */
 .cw-glyph-reel::before { inset: 0.18em; border-radius: 50%; background: transparent; border: 0.067em solid var(--app-glyph); }
 .cw-glyph-reel::after { left: 0.42em; top: 0.36em; width: 0.24em; height: 0.28em; clip-path: polygon(0 0, 100% 50%, 0 100%); }
