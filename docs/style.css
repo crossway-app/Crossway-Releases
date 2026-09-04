@@ -14,39 +14,33 @@
   --ink: #000000;
   --paper: #ffffff;
   /* The display's case: the page's own paper, the colour of its windows,
-     in every appearance. Platinum, a warm off-white and a light grey
-     were each tried and rejected (2026-08-27): now that the machine on
-     the screen has a personality of its own (its cursors, its greyer
-     windows), one uniform white for the site's things reads calmer, and
-     the screen's windows stay distinct by being the slightly grey ones.
-     Still a token of its own, because the tray and the mark's panes
-     wear it, and a case colour is one decision, made here. */
+     in every appearance. Because the machine on the screen has a
+     personality of its own (its cursors, its greyer windows), one
+     uniform white for the site's things reads calmer, and the screen's
+     windows stay distinct by being the slightly grey ones. Still a token
+     of its own, because the tray and the mark's panes wear it, and a
+     case colour is one decision, made here. */
   --cw-case: var(--paper);
-  /* The two cells of the desktop dither. A quiet, cool, near-paper pair
-     since 2026-09-03 (the user, of the "modern" candidate: "a step in
-     the right direction, we can make the new default"): the mid grey
-     the page wore (#9c9c9c over #d6d6d6) read as battleship grey, and
-     the site "old". The grain is still a 1px dither, just lighter and a
+  /* The two cells of the desktop dither: a quiet, cool, near-paper pair.
+     A mid grey (#9c9c9c over #d6d6d6) reads as battleship grey at this
+     size, and dates the page. The grain is a 1px dither, light and a
      touch cool, and the body's ground lifts further toward paper under
      the menu bar (see body). */
   --desktop-a: #ddd8ca;      /* 50%-dither desktop pattern, cell A: warm, the beige of the machine */
   --desktop-b: #f7f3ea;      /* cell B */
-  /* The two colours of the era itself, System 7's teal and lavender,
-     as soft blooms through the dither (2026-09-03, the user: "the site
-     is too grey... modern, fresh, 2026 art and graphic design quality...
-     but a pastiche of the era we are retroing"). One token each, the
-     alpha in the rule, so night deepens them and the terminal drops
-     them. */
+  /* The two colours of the era itself, System 7's teal and lavender, as
+     soft blooms through the dither, so the page is a pastiche of the era
+     rather than a grey copy of it. One token each, the alpha in the
+     rule, so night deepens them and the terminal drops them. */
   --bloom-a: #34a89c;        /* teal, top left */
   --bloom-b: #846ce0;        /* lavender, right */
   --dim: #8a8a8a;            /* disabled chrome */
   --muted: #4a4a4a;          /* captions, fine print */
   --link: #0000c8;           /* period hyperlink blue */
-  /* The step to take next on the virtual keyboard (2026-09-03): the GO
-     light's green from the monitor's own traffic lights (--tl-zoom),
-     deepened until 14px bold reads on paper. Two blues were turned down
-     before it; green is the one colour that already means "go" on this
-     page, and it is on the screen the keys drive. */
+  /* The step to take next on the virtual keyboard: the GO light's green
+     from the monitor's own traffic lights (--tl-zoom), deepened until
+     14px bold reads on paper. Green is the one colour that already means
+     "go" on this page, and it is on the screen the keys drive. */
   --guide: #12833a;
   --lamp: #ffc61a;           /* the lamp's light: warm, the same by day and by night */
   --link-visited: #551a8b;
@@ -84,23 +78,15 @@
      terminal, so the two halves cannot bleed into each other. */
   --scr-ink: #202020;          /* text and hairlines on the screen */
   --scr-paper: #ffffff;        /* window fill */
-  /* The wallpaper is the one screen surface with a colour: a deep blue
-     MESH, as a current Mac's is (the user's call, 2026-09-03: "the
-     background of the monitor (the blue with circles) doesn't feel high
-     quality"; it was a very pale pastel blue with rings from 2026-08-27,
-     and neutral greys before that). Five tokens: the base's top and
-     bottom, and three soft lobes of light laid over it (.cw-screen
-     draws them), so each appearance re-cuts the same picture. Night
-     gets the same mesh, deeper; the terminal its phosphor. Everything
-     else on the screen stays neutral, and a test reads every token and
-     checks. */
-  /* The wallpaper: a painting of nothing in particular (2026-09-03, the
-     user: "something that evokes a sense of a painting of nature
-     without it being explicit... think lighter pastels of sand and
-     greens"). Washes of sand, sage and moss over a warm ground, laid
-     like watercolour rather than drawn: no horizon, no hill, nothing
-     that resolves into a place. It was a deep blue mesh, which read as
-     a stock desktop. */
+  /* The wallpaper is the one screen surface with a colour, as a current
+     Mac's is. Five tokens: the base's top and bottom, and three soft
+     lobes of light laid over it (.cw-screen draws them), so each
+     appearance re-cuts the same picture. Night gets the same picture,
+     deeper; the terminal its phosphor. Everything else on the screen
+     stays neutral. */
+  /* The wallpaper: a painting of nothing in particular. Washes of sand,
+     sage and moss over a warm ground, laid like watercolour rather than
+     drawn: no horizon, no hill, nothing that resolves into a place. */
   --scr-wall-a: #5f7183;       /* the sky, at the top */
   --scr-wall-b: #2c3328;       /* the foreground, deepest (the well under the screen wears it too) */
   --scr-wall-c: #47603f;       /* the ridge, nearer and green */
@@ -111,9 +97,9 @@
      the screen's ink and paper, which trade places at night. Neutral. */
   --scr-term: #262626;
   /* What the screen's shadows are made of: black, in every appearance.
-     They used to be mixed from the screen's ink, which is LIGHT at
-     night and in the terminal, so every window wore a glow there. A
-     shadow is dark whatever the appearance. */
+     Mixed from the screen's ink they would be LIGHT at night and in the
+     terminal, and every window would wear a glow. A shadow is dark
+     whatever the appearance. */
   --scr-shade: #000000;
 
   /* The five app marks. Not Apple's art and not Apple's colours: the
@@ -130,9 +116,9 @@
   --app-face-light: #f4f9ff;/* the white face on the right */
   --app-face-ink: #10306a;  /* eyes and smile, navy on both */
   /* The power light: lit green while Crossway is the switcher on the
-     screen, dark (ink) while the system's is. One more colour, on the
-     user's word. It sat on the drawing's bezel until the panel grew to
-     the screen's width; it belongs to the switch now. */
+     screen, dark (ink) while the system's is. It sat on the drawing's
+     bezel until the panel grew to the screen's width; it belongs to the
+     switch now. */
   --cw-led: #2fcf5a;
   --radius-btn: 9px;
 }
@@ -296,6 +282,91 @@ html.hacker {
 }
 html.hacker body {
   background-color: #050806; /* the deepest step, behind the dither */
+  /* The GROUND, not just the colour under it. Without this the base rule's
+     white lift (half-opacity white over the first 820px) still paints, and
+     the top of the page — everything a visitor sees first — comes out grey
+     rather than phosphor. Night replaces the same wash with a black one;
+     the terminal needs its own for the same reason. */
+  background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.55) 0, rgba(0, 0, 0, 0.55) 44px, rgba(0, 0, 0, 0) 820px),
+    repeating-conic-gradient(var(--desktop-a) 0% 25%, var(--desktop-b) 0% 50%);
+  background-size: auto, 2px 2px;
+}
+
+/* ---- the terminal in daylight -----------------------------------------
+   The terminal used to ignore light and dark entirely: one dark palette,
+   and night.js stayed inert while it was on. A phosphor screen is a dark
+   object, so dark remains what it is by default and what a night visitor
+   keeps — but a visitor reading in light asked for light, and the answer
+   was to hand them a black page anyway.
+
+   So: the same six steps re-cut for paper. Deep phosphor ink on a pale
+   green ground, the ordering preserved so disabled chrome still reads as
+   disabled and captions still recede. It applies on an explicit .day, and
+   on a light system when the visitor has chosen neither — the site's own
+   rule everywhere else. Both selectors outrank `html.hacker`, so source
+   order does not decide this. */
+html.hacker.day {
+  --ink: #0b3a1c;
+  --paper: #e2f2e5;          /* window fill: paper with a phosphor cast */
+  --desktop-a: #cfe6d4;      /* dither, cell A */
+  --desktop-b: #e8f5eb;      /* cell B */
+  --dim: #7aa888;            /* disabled chrome */
+  --muted: #46795a;          /* captions, fine print */
+  --link: #06522a;           /* the strongest step, which on paper is the darkest */
+  --guide: #06522a;
+  --lamp: #06522a;
+  --link-visited: #3c7a52;
+  color-scheme: light;
+  --font-display: var(--font-mono);
+  --font-body: var(--font-mono);
+  --font-panel: var(--font-mono);
+}
+html.hacker.day body {
+  background-color: #eef7f0;
+  background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.55) 0, rgba(255, 255, 255, 0.55) 44px, rgba(255, 255, 255, 0) 820px),
+    repeating-conic-gradient(var(--desktop-a) 0% 25%, var(--desktop-b) 0% 50%);
+  background-size: auto, 2px 2px;
+  /* No bloom on paper: a glow behind dark type on a light ground reads as
+     a printing fault rather than as light coming off a screen. */
+  text-shadow: none;
+}
+/* The glass, re-cut: scanlines and vignette drawn in the ink rather than in
+   black, or the paper terminal wears a grey veil. */
+html.hacker.day body::after {
+  background-image:
+    radial-gradient(ellipse at center,
+      transparent 58%, rgba(11, 58, 28, 0.16) 100%),
+    repeating-linear-gradient(180deg,
+      rgba(11, 58, 28, 0.10) 0 1px, transparent 1px 3px);
+}
+@media (prefers-color-scheme: light) {
+  html.hacker:not(.night) {
+    --ink: #0b3a1c;
+    --paper: #e2f2e5;
+    --desktop-a: #cfe6d4;
+    --desktop-b: #e8f5eb;
+    --dim: #7aa888;
+    --muted: #46795a;
+    --link: #06522a;
+    --guide: #06522a;
+    --lamp: #06522a;
+    --link-visited: #3c7a52;
+    color-scheme: light;
+  }
+  html.hacker:not(.night) body {
+    background-color: #eef7f0;
+    background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.55) 0, rgba(255, 255, 255, 0.55) 44px, rgba(255, 255, 255, 0) 820px),
+      repeating-conic-gradient(var(--desktop-a) 0% 25%, var(--desktop-b) 0% 50%);
+    background-size: auto, 2px 2px;
+    text-shadow: none;
+  }
+  html.hacker:not(.night) body::after {
+    background-image:
+      radial-gradient(ellipse at center,
+        transparent 58%, rgba(11, 58, 28, 0.16) 100%),
+      repeating-linear-gradient(180deg,
+        rgba(11, 58, 28, 0.10) 0 1px, transparent 1px 3px);
+  }
 }
 
 /* These two washes are hardcoded per appearance rather than tokenised,
@@ -368,9 +439,9 @@ html.hacker .cw-keycap-btn {
   text-shadow: 0 0 0.3em currentColor;
 }
 /* Inverse video carries no bloom, as the selection rule below says. Both
-   pressed states, since 2026-08-27: a struck cap inverts now too, and a
-   glow on one and not the other would be the same gap in the terminal
-   that the colour was in the body face. */
+   pressed states: a struck cap inverts too, and a glow on one and not
+   the other would be the same gap in the terminal that the colour was in
+   the body face. */
 html.hacker .cw-keycap-btn.is-held,
 html.hacker .cw-keycap-btn.is-struck { text-shadow: none; }
 
@@ -662,29 +733,28 @@ body {
   color: var(--ink);
   background-color: #ece7da; /* explicit ground even if gradients fail */
   /* The dither, and over it a lift toward paper that fades out over the
-     first screen (2026-09-03): the windows nearest the top float on
-     near-white and the desktop deepens as the visitor scrolls. A
-     halftone gradient in the page's own one-bit language. The blooms,
-     teal at the top left and lavender at the right, are on body::before
-     below: a FIXED layer the compositor paints once and never again
-     while the page scrolls (2026-09-03, the user: scrolling should be
-     "smooth/fluid"; four blooms painted into the document meant every
-     tile the scroll brought into view was rastered through six gradient
-     layers). Fixed, they stay in view at every scroll position, so the
-     demo keeps them without a second pair further down. They tint the
-     dither rather than replace it, so the grain runs through the colour
-     the way it ran through the era's patterns. */
+     first screen: the windows nearest the top float on near-white and
+     the desktop deepens as the visitor scrolls. A halftone gradient in
+     the page's own one-bit language. The blooms, teal at the top left
+     and lavender at the right, are on body::before below: a FIXED layer
+     the compositor paints once and never again while the page scrolls,
+     which is what keeps scrolling smooth (blooms painted into the
+     document instead mean every tile the scroll brings into view is
+     rastered through six gradient layers). Fixed, they stay in view at
+     every scroll position, so the demo keeps them without a second pair
+     further down. They tint the dither rather than replace it, so the
+     grain runs through the colour the way it ran through the era's
+     patterns. */
   background-image: linear-gradient(to bottom, rgba(255, 255, 255, 0.5) 0, rgba(255, 255, 255, 0.5) 44px, rgba(255, 255, 255, 0) 820px),
     repeating-conic-gradient(var(--desktop-a) 0% 25%, var(--desktop-b) 0% 50%);
   background-size: auto, 2px 2px;
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.6;
-  /* No greyscale font smoothing (the WebKit "antialiased" setting was
-     removed 2026-09-03, the user: fonts should "look crisp and readable
-     consistently"): on a Mac it trades subpixel rendering for
-     greyscale, which reads thinner and softer at these sizes. The
-     browser's default is the crisper one. */
+  /* No greyscale font smoothing: on a Mac the WebKit "antialiased"
+     setting trades subpixel rendering for greyscale, which reads thinner
+     and softer at these sizes. The browser's default is the crisper one,
+     and type stays crisp and readable at every size on the page. */
 }
 
 /* The blooms: fixed in the viewport, behind the page's content and over
@@ -752,7 +822,7 @@ code, kbd {
 
 /* No overflow scrolling here: on narrow screens the bar WRAPS to a
    second row instead. A horizontally scrollable sticky nav turns every
-   touch into a drag of the nav itself (the reported mobile wonkiness). */
+   touch into a drag of the nav itself. */
 .menubar {
   position: sticky;
   top: 0;
@@ -866,11 +936,10 @@ html.hacker .menubar .lamp { opacity: 0.45; cursor: default; }
      demo span both; Read Me pairs with Privacy, and Contact with
      Donate.
 
-     1480, up from 1320 (2026-08-27, the user's call, with cursor.com's
-     near-full-width layout as the reference): the demo's keys take a
-     fixed 440px beside the display, so every extra pixel of column is
-     display, and on a 1512-wide laptop the screen grows from 812 to
-     about 960px wide before the fold, not the column, bounds it. */
+     1480 rather than 1320: the demo's keys take a fixed 440px beside
+     the display, so every extra pixel of column is display, and on a
+     1512-wide laptop the screen grows from 812 to about 960px wide
+     before the fold, not the column, bounds it. */
   max-width: 1480px;
   margin: 0 auto;
   /* Tight at the top: what is spent above the demo is demo the visitor
@@ -893,12 +962,10 @@ html.hacker .menubar .lamp { opacity: 0.45; cursor: default; }
 .desk-col { display: flex; flex-direction: column; gap: 26px; min-width: 0; align-self: stretch; }
 .desk-col > .mac-window:only-child { flex: 1; }
 .desk-col > .mac-window:last-child:not(:only-child) { margin-top: auto; }
-/* Download left, Donate right (2026-09-03, the user: the download in a
-   window of its own, "to the left/above if not enough width, of donate
-   window. if enough width, donate can now be half width instead of
-   full width spanning"). Each stretches to the row so their feet line
-   up; on a phone the grid is one column and Download simply comes
-   first. Donate spanned the whole width as a bookend until then. */
+/* Download left, Donate right: the download gets a window of its own,
+   beside Donate where there is width for both and above it where there
+   is not. Each stretches to the row so their feet line up; on a phone
+   the grid is one column and Download simply comes first. */
 .desktop > #download,
 .desktop > #donate { align-self: stretch; }
 
@@ -922,10 +989,10 @@ html.hacker .menubar .lamp { opacity: 0.45; cursor: default; }
 .mac-window {
   background: var(--paper);
   border: var(--border) solid var(--ink);
-  /* The era's hard 3px ink shadow, and under it a soft ambient one
-     (2026-09-03): depth is most of what a 2026 page has that a 1993 one
-     did not, and the two together say both dates at once. The dark
-     appearances cut the soft one deeper (see the night blocks). */
+  /* The era's hard 3px ink shadow, and under it a soft ambient one:
+     depth is most of what a 2026 page has that a 1993 one did not, and
+     the two together say both dates at once. The dark appearances cut
+     the soft one deeper (see the night blocks). */
   box-shadow: 3px 3px 0 0 var(--ink), 0 22px 56px -22px rgba(24, 28, 44, 0.32);
 }
 
@@ -953,7 +1020,7 @@ html.hacker .menubar .lamp { opacity: 0.45; cursor: default; }
   font-family: var(--font-display);
   font-size: 15px;
   /* 26 in a 28px bar that carries a 1.5px rule: on 28 the title's paper
-     box overhung the rule by a pixel and a half (review, 2026-08-27). */
+     box overhangs the rule by a pixel and a half. */
   line-height: 26px;
   background: var(--paper);
   padding: 0 12px;
@@ -1209,11 +1276,11 @@ pre.cmd {
 #download .window-body,
 #donate .window-body { max-width: none; }
 /* The pair are stretched to one row, so the shorter one's content would
-   sit at the top of a tall box with all its air below (2026-09-03, the
-   user, of Download: "very ugly... have the image be centered"). The
+   otherwise sit at the top of a tall box with all its air below. The
    window is a column and its body takes what the title bar leaves, so
    the row inside sits in the middle of the window. Donate's content
-   fills its box, so this is a no-op there and the two stay built alike. */
+   fills its box, so this is a no-op there and the two stay built alike.
+   */
 #download,
 #donate { display: flex; flex-direction: column; }
 #download .window-body,
@@ -1233,16 +1300,13 @@ pre.cmd {
 .donate-grid p { max-width: 62ch; }
 .donate-grid .dialog-actions { grid-column: 3; margin-top: 0; }
 /* Download's third column is the button alone, and its middle column is
-   the spec line (2026-09-03, the user: the line "shouldn't be below the
-   download button. use the space of the window properly", and then, of
-   the heading that stood over it, "not needed either given the button
-   says 'download crossway'. keep icon, though"), which is how the
-   Donate window beside it is built too: mark, words, button. */
+   the spec line, which uses the width of the window rather than stacking
+   under the button. That is how the Donate window beside it is built
+   too: mark, words, button. */
 .download-grid .dialog-actions { grid-column: 3; margin-top: 0; }
 .download-grid .dialog-actions .btn-row { margin: 0; }
 /* Centred, and the icon with it: the window holds three things and each
-   sits on its own centre line (2026-09-03, the user: "center things and
-   stack them up a bit more beautifully"). */
+   sits on its own centre line. */
 .download-grid .caption { margin: 0; text-align: center; white-space: nowrap; }
 .download-grid .dialog-icon { justify-self: center; }
 
@@ -1327,12 +1391,12 @@ pre.cmd {
   }
 }
 
-/* Window-preview strips: five pre-rendered per app, one displayed.
-   The markup default (data-strip="2") keeps the JS-less page on
-   today's exact static render. (Measured Chrome behavior, 2026-08:
-   animations inside a display:none subtree keep running and do NOT
-   restart on re-display — a re-shown movie simply joins its loop
-   mid-cycle, like a real live window.) */
+/* Window-preview strips: five pre-rendered per app, one displayed. The
+   markup default (data-strip="2") keeps the JS-less page on today's
+   exact static render. (Measured Chrome behavior: animations inside a
+   display:none subtree keep running and do NOT restart on re-display — a
+   re-shown movie simply joins its loop mid-cycle, like a real live
+   window.) */
 .demo-strip { display: none; }
 #demo-apps[data-strip="0"] .demo-strip[data-app="0"],
 #demo-apps[data-strip="1"] .demo-strip[data-app="1"],
@@ -1340,20 +1404,20 @@ pre.cmd {
 #demo-apps[data-strip="3"] .demo-strip[data-app="3"],
 #demo-apps[data-strip="4"] .demo-strip[data-app="4"] { display: inline; }
 
-/* The swap is a CROSSFADE (2026-08-21 user feedback, three rounds:
-   a per-window stepped stagger read as glitching; a translate rise
-   shimmered the crispEdges art — moving pixel art re-snaps every
-   edge to the pixel grid per frame; and any enter-only fade leaves
-   a blank first instant that reads as a flash). Seamless means the
-   OUTGOING strip lingers while the incoming fades over it, so the
-   strip area never blanks: `display 0.15s allow-discrete` keeps the
-   old strip rendered until its fade-out ends, and @starting-style
-   gives the newly displayed strip its opacity-0 starting point so
-   its fade-in actually transitions. Gated on .demo-live (added by
-   demo.js at the first swap) so first paint stays the static image.
-   Browsers without allow-discrete/@starting-style simply swap
-   instantly — the period-correct floor (this desktop never eased
-   anyway). Reduced motion also swaps instantly. */
+/* The swap is a CROSSFADE, and every alternative fails visibly: a
+   per-window stepped stagger reads as glitching; a translate rise
+   shimmers the crispEdges art — moving pixel art re-snaps every edge to
+   the pixel grid per frame; and any enter-only fade leaves a blank first
+   instant that reads as a flash. Seamless means the OUTGOING strip
+   lingers while the incoming fades over it, so the strip area never
+   blanks: `display 0.15s allow-discrete` keeps the old strip rendered
+   until its fade-out ends, and @starting-style gives the newly displayed
+   strip its opacity-0 starting point so its fade-in actually
+   transitions. Gated on .demo-live (added by demo.js at the first swap)
+   so first paint stays the static image. Browsers without
+   allow-discrete/@starting-style simply swap instantly — the
+   period-correct floor (this desktop never eased anyway). Reduced motion
+   also swaps instantly. */
 @media (prefers-reduced-motion: no-preference) {
   #demo-apps.demo-live .demo-strip {
     opacity: 0;
@@ -1616,9 +1680,9 @@ pre.cmd {
 .cw-pane-list { flex: 0 0 36%; padding: 0 8px; border-right: 1px solid color-mix(in srgb, var(--scr-ink) 10%, transparent); }
 .cw-pane-read { flex: 1; padding-left: 8px; }
 .cw-pane-read .cw-head { height: 10px; width: 60%; flex: none; border-radius: 3px; background: color-mix(in srgb, var(--scr-ink) 22%, transparent); }
-/* A Finder window (2026-09-03): a sidebar of places, then a grid of
-   files, each a rounded icon over a name bar. Distinct at a glance from
-   the mailer's three panes and the browser's toolbar. */
+/* A Finder window: a sidebar of places, then a grid of files, each a
+   rounded icon over a name bar. Distinct at a glance from the mailer's
+   three panes and the browser's toolbar. */
 .cw-body-files { display: flex; gap: 10px; }
 .cw-pane-nav { flex: 0 0 22%; padding-right: 8px; border-right: 1px solid color-mix(in srgb, var(--scr-ink) 10%, transparent); }
 .cw-pane-nav .cw-bar { width: 72%; }
@@ -1690,16 +1754,15 @@ pre.cmd {
      to walk in front of everything. container-type no longer implies
      one, so it is said outright. */
   isolation: isolate;
-  /* Its own compositor layer (2026-09-03, the user: the page should be
-     "smooth/fluid" while it scrolls): the screen animates (the film,
-     the autopilot, the Dock's dot) and carries the two backdrop blurs,
-     the menu bar's and the Dock's. Promoted, it is rastered on its own
-     and only translated as the page scrolls, so a frame of the film
-     never re-rasters the page's tiles and the blurs composite inside a
-     layer that moves whole. The stylesheet's earlier note that
-     will-change is "an optional measured optimization, not the fix"
-     still stands: the closed frosted surfaces are display: none, and
-     this is the measured extra. */
+  /* Its own compositor layer, which is what keeps the page smooth and
+     fluid while it scrolls: the screen animates (the film, the
+     autopilot, the Dock's dot) and carries the two backdrop blurs, the
+     menu bar's and the Dock's. Promoted, it is rastered on its own and
+     only translated as the page scrolls, so a frame of the film never
+     re-rasters the page's tiles and the blurs composite inside a layer
+     that moves whole. will-change is a measured optimization here, not
+     the fix: the closed frosted surfaces are display: none, and this is
+     the measured extra. */
   will-change: transform;
   /* Over the screen the pointer is the machine's own (the images are the
      appendix at the end of this sheet); what can be pressed, dragged or
@@ -1708,23 +1771,22 @@ pre.cmd {
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  /* The wallpaper: three soft lobes of light over a deep base, the
-     mesh a current Mac wears, every colour a token so night and the
-     terminal re-cut the same picture (2026-09-03, the user: the pale
-     blue with rings "doesn't feel high quality"). The lobes are mixed
-     from their tokens with transparency, so the base shows through
-     them; nothing is patterned. */
+  /* The wallpaper: three soft lobes of light over a deep base, the mesh
+     a current Mac wears, every colour a token so night and the terminal
+     re-cut the same picture. The lobes are mixed from their tokens with
+     transparency, so the base shows through them; nothing is patterned.
+     */
   background:
-    /* A LANDSCAPE, drawn rather than blended (2026-09-03, the user:
-       "too muddy and too abstract. try to still have some recognizable
-       nature features such as a sky, and maybe mountains"). Multiplying
-       washes of muted colour over one another is what made the mud, so
-       the picture is built from shapes now: a sky, peaks held back by
-       the light along the horizon, a nearer ridge, and a foreground.
-       A peak is a CONIC WEDGE from its own apex, which is the one way
-       a background can hold a straight edge at an angle; the band below
-       it covers its feet, so what shows is a mountain and not a fan.
-       Everything paints normally: no glaze, no mud. */
+    /* A LANDSCAPE, drawn rather than blended, so it keeps recognizable
+       nature features — a sky, and mountains — instead of reading as
+       muddy abstraction. Multiplying washes of muted colour over one
+       another is what makes the mud, so the picture is built from
+       shapes: a sky, peaks held back by the light along the horizon, a
+       nearer ridge, and a foreground. A peak is a CONIC WEDGE from its
+       own apex, which is the one way a background can hold a straight
+       edge at an angle; the band below it covers its feet, so what shows
+       is a mountain and not a fan. Everything paints normally: no glaze,
+       no mud. */
     /* The canvas: a grain so fine it is felt rather than seen. */
     repeating-linear-gradient(51deg,
       color-mix(in srgb, var(--scr-wall-b) 8%, transparent) 0 1px,
@@ -1768,10 +1830,9 @@ pre.cmd {
       color-mix(in srgb, var(--scr-wall-c) 45%, var(--scr-wall-b)) 74%, var(--scr-wall-b) 100%);
 }
 /* A sheen across the glass, top left, so the screen reads as lit glass
-   and not as a slab (2026-09-03, the same pass). Above everything on
-   the screen and under nothing on the page: the screen is its own
-   stacking context. Not on the terminal, whose phosphor is its own
-   light. */
+   and not as a slab. Above everything on the screen and under nothing on
+   the page: the screen is its own stacking context. Not on the terminal,
+   whose phosphor is its own light. */
 html:not(.hacker) .cw-screen::after {
   content: "";
   position: absolute;
@@ -1792,24 +1853,21 @@ html:not(.hacker) .cw-screen::after {
   align-items: center;
   /* These must FIT the screen well, clock included: a menu bar with no
      clock, or one that slices "Help" mid-word, reads instantly as fake.
-     It used to overflow by 66px because the machine was accidentally
-     stuck at the 300px replaced-element default. Measured, not guessed:
-     scripts/test-site-layout.mjs fails if it overflows again. */
+     A machine left at the 300px replaced-element default overflows the
+     bar by 66px. Measured, not guessed: it must never overflow. */
   gap: 14px;
   height: 22px;
   padding: 0 10px;
   font-family: var(--font-body);
   font-size: 11px;
   line-height: 1;
-  /* Ink at full strength and a bar the wallpaper shows through
-     (2026-09-03, the user: "the simulated menu bar text is too grey --
-     real macos is black, with transparent bar (not grey), so we should
-     be seeing the background properly behind it. sleek and modern"):
-     a real Mac's bar is a strong blur of the wallpaper lifted toward
-     paper, with the app name bold and everything else plain black. It
-     was 78% ink on 72% paper with a 10px blur, which read as a grey
-     title bar. The tint stays on the screen's own tokens, so night
-     turns it dark with light text, as a Mac's does. */
+  /* Ink at full strength and a bar the wallpaper shows through: a real
+     Mac's bar is black type over a strong blur of the wallpaper lifted
+     toward paper, with the app name bold and everything else plain, and
+     the background properly visible behind it. Weaker ink on a more
+     opaque ground (78% ink on 72% paper with a 10px blur) reads as a
+     grey title bar instead. The tint stays on the screen's own tokens,
+     so night turns it dark with light text, as a Mac's does. */
   color: var(--scr-ink);
   background: color-mix(in srgb, var(--scr-paper) 42%, transparent);
   border-bottom: 1px solid color-mix(in srgb, var(--scr-ink) 8%, transparent);
@@ -1831,10 +1889,9 @@ html:not(.hacker) .cw-screen::after {
    the visitor's own arrow, which beats the screen's inherited one. These
    two are the only buttons on the screen that should read as ordinary
    surfaces rather than as things with a hand (macOS shows the arrow over
-   its own menu bar), so they name the drawn arrow outright. An earlier
-   pass deleted their `cursor: default` believing the screen's arrow
-   would inherit down; it cannot, and the layout suite's keyword-leak
-   sweep is what found it (2026-08-27). */
+   its own menu bar), so they name the drawn arrow outright. Dropping
+   that on the belief that the screen's arrow inherits down leaks the
+   visitor's own pointer back onto the screen. */
 .cw-menu-app, .cw-menu-quit { cursor: var(--cur-arrow); }
 .cw-menu-app[aria-expanded="true"] { background: color-mix(in srgb, var(--scr-ink) 14%, transparent); }
 .cw-menu-app:focus-visible { outline: 2px solid var(--link); outline-offset: 1px; }
@@ -1880,17 +1937,16 @@ html:not(.hacker) .cw-screen::after {
    drawing the display's bezel wears. Template-style, ink only. Shown
    while Crossway is on the screen; hidden, and out of the bar, in
    Native, as a quit menu-bar app's item is. */
-/* A TEMPLATE icon, as a real menu-bar item is (2026-09-03, the user:
-   "should not be filled with white, but should also be see-through in
-   the gaps, like in real macos"): the ink is painted and the four panes
-   are simply not, so the bar's blur and the wallpaper behind it show
-   through them. It was an ink box with the panes painted in paper,
-   which read as a white-filled badge on a translucent bar.
+/* A TEMPLATE icon, as a real menu-bar item is: it is not filled with
+   white, and it is see-through in the gaps the way macOS draws one. The
+   ink is painted and the four panes are simply not, so the bar's blur
+   and the wallpaper behind it show through them. Painting the panes in
+   paper instead reads as a white-filled badge on a translucent bar.
 
    The ink is the 1.5px frame (a border, so the corners round with the
-   box) plus, inside it, the band between the app row and the windows
-   and the two bars that divide them: three gradients positioned in the
-   10x8 box the border leaves. */
+   box) plus, inside it, the band between the app row and the windows and
+   the two bars that divide them: three gradients positioned in the 10x8
+   box the border leaves. */
 .cw-menu-mark {
   --mark-ink: color-mix(in srgb, var(--scr-ink) 85%, transparent);
   position: relative;
@@ -1971,13 +2027,12 @@ html:not(.hacker) .cw-screen::after {
   max-width: calc(100% - 20px);
   /* TOP-LEFT FROZEN, not centred. The app pins the panel's top-left at
      session start precisely so the app row does not jump when the
-     thumbnail strip blooms below it (SwitcherPanel.swift:1064). Centring
-     the whole pane instead made the row slide upward the moment the
-     previews appeared, and slide again on every tab. The offset centres
-     the ROW, and everything else grows downward from it. Above the
-     middle (40%; 44% until 2026-09-03, the user: "it's too low now
-     relative to its scale"), because the pane is drawn larger than life
-     and grows downward: centred on the row it sat low on the screen. */
+     thumbnail strip blooms below it. Centring the whole pane instead
+     makes the row slide upward the moment the previews appear, and slide
+     again on every tab. The offset centres the ROW, and everything else
+     grows downward from it. Above the middle (40%), because the pane is
+     drawn larger than life and grows downward: centred on the row it
+     sits low on the screen. */
   top: calc(40% - (var(--cw-row-h) + 2 * var(--cw-pane-pad)) / 2);
   z-index: 500;                 /* above every window, below the CRT glass */
   /* The keyed children remain cached in the DOM, but a fully closed pane
@@ -1989,11 +2044,11 @@ html:not(.hacker) .cw-screen::after {
   padding: var(--cw-pane-pad);
   border-radius: 16px;
   /* FROSTED GLASS, and not a window: three quarters paper over a strong
-     backdrop blur of its own (the bezel's wheel blurs the desktop behind;
-     this frost is the pane's material and does not depend on it), with
-     a hairline of light on its inner edge. The first cut was 92% paper
-     and read as one more window; plain glass at 60% read as nothing at
-     all. 2026-08-27. */
+     backdrop blur of its own (the bezel's wheel blurs the desktop
+     behind; this frost is the pane's material and does not depend on
+     it), with a hairline of light on its inner edge. At 92% paper it
+     reads as one more window; plain glass at 60% reads as nothing at
+     all. */
   background: color-mix(in srgb, var(--scr-paper) 74%, transparent);
   box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--scr-paper) 60%, transparent),
               0 24px 60px color-mix(in srgb, var(--scr-shade) 26%, transparent);
@@ -2049,11 +2104,10 @@ html:not(.hacker) .cw-screen::after {
 }
 .cw-app.is-sel::before { opacity: 1; }
 
-/* Only the SELECTED app is named. The app hides every other label
-   (AppIconView.swift:205 — alphaValue 0, raised to 1 only for the
-   selected/context style), and naming all five at once turned the row
-   into a menu. Faded rather than removed, so the row cannot change
-   height as the selection moves. */
+/* Only the SELECTED app is named. The app hides every other label,
+   raising it only for the selected one, and naming all five at once
+   turns the row into a menu. Faded rather than removed, so the row
+   cannot change height as the selection moves. */
 .cw-app-name {
   opacity: 0;
   position: absolute;
@@ -2112,10 +2166,10 @@ html:not(.hacker) .cw-screen::after {
   position: relative;
 }
 /* box-sizing is NOT inherited and `*` does not match a pseudo-element,
-   so these start at content-box however the page's own reset is written
-   (found 2026-09-03: the Finder smile's border pushed its ellipse a
-   border-width right and low, and the face read off centre). Every
-   glyph here is drawn to its border box. */
+   so these start at content-box however the page's own reset is written.
+   Left at content-box, the Finder smile's border pushes its ellipse a
+   border-width right and low and the face reads off centre. Every glyph
+   here is drawn to its border box. */
 .cw-appicon::before, .cw-appicon::after { content: ""; position: absolute; box-sizing: border-box; background: var(--app-glyph); }
 
 /* Six solid marks, one hue each, glyph knocked out in white. These are
@@ -2128,13 +2182,12 @@ html:not(.hacker) .cw-screen::after {
 .cw-glyph-note     { background: var(--app-note); }
 .cw-glyph-beam     { background: var(--app-beam); }
 .cw-glyph-reel     { background: var(--app-reel); }
-/* Finder: the two faces, as the real icon draws them (2026-09-03, the
-   user, with the icon itself: "make sure it's accurate and not creepy").
-   A blue face on the left, lighter toward the top, and a white face on
-   the right whose profile is the seam: its nose is the bump into the
-   blue at mid-height, drawn as a disc of the white centred on the seam,
-   so only the half over the blue shows. Everything is the background;
-   the pseudo-elements are the eyes and the smile. */
+/* Finder: the two faces, as the real icon draws them — accurate, and not
+   creepy. A blue face on the left, lighter toward the top, and a white
+   face on the right whose profile is the seam: its nose is the bump into
+   the blue at mid-height, drawn as a disc of the white centred on the
+   seam, so only the half over the blue shows. Everything is the
+   background; the pseudo-elements are the eyes and the smile. */
 .cw-glyph-face {
   background:
     radial-gradient(circle 0.11em at 50% 0.56em, var(--app-face-light) 99%, transparent 100%),
@@ -2181,23 +2234,23 @@ html:not(.hacker) .cw-screen::after {
    transition. max-height rather than the grid 0fr/1fr trick: an fr track
    in an auto-height grid sizes to its content's max-content
    contribution, and this content is a flex row of absolutely-positioned
-   miniatures inside container-query boxes, which contributed nothing —
-   so the strip opened to zero however many windows it held. max-height
+   miniatures inside container-query boxes, which contributes nothing —
+   so the strip opens to zero however many windows it holds. max-height
    needs no such measurement; the height stays auto and the cap simply
    has to clear the tallest strip.
 
    THE CAP IS THE CONTENT'S OWN HEIGHT, and that is a timing decision,
    not a layout one. What the visitor sees is min(max-height, content),
-   so the part of the ramp that runs above the content is invisible: at
-   a round 320px cap against a strip that is 60-100px tall and cannot
-   by construction exceed ~100px, five sixths of the animation happened
-   off the top. The whole opening was over in 2-3 frames of a 200ms
-   transition — measured 0 -> 23 -> 71 -> 100px, a 48px lurch and then a
-   dead stop at the curve's own peak speed — which is what "jittery"
-   was. Computed from the tokens the strip is built from, the same
-   200ms-odd carries the same distance over 15 frames, and the ease-out
-   actually decelerates into its stop. Keep --cw-fold-h in step with
-   anything that changes a tile's height or its caption. */
+   so the part of the ramp that runs above the content is invisible: at a
+   round 320px cap against a strip that is 60-100px tall and cannot by
+   construction exceed ~100px, five sixths of the animation happens off
+   the top. The whole opening is then over in 2-3 frames of a 200ms
+   transition — 0 -> 23 -> 71 -> 100px, a 48px lurch and then a dead stop
+   at the curve's own peak speed, which reads as jitter. Computed from
+   the tokens the strip is built from, the same 200ms-odd carries the
+   same distance over 15 frames, and the ease-out actually decelerates
+   into its stop. Keep --cw-fold-h in step with anything that changes a
+   tile's height or its caption. */
 .cw-strip-fold {
   max-height: 0;
   overflow: hidden;
@@ -2259,36 +2312,35 @@ html:not(.hacker) .cw-screen::after {
 .cw-tile-wrap.is-sel .cw-tile-title { color: var(--scr-ink); }
 
 /* The bloom and the fold are the app's own two animations, at the app's
-   own numbers: AnimationSpec.stripReveal (0.28s, ease-out) opening and
-   AnimationSpec.stripHide (0.20s, ease-out) closing. CSS's `ease-out`
-   keyword IS Core Animation's, cubic-bezier(0, 0, 0.58, 1), so this is
-   the same curve the product uses rather than a lookalike.
+   own numbers: 0.28s ease-out opening the strip and 0.20s ease-out
+   closing it. CSS's `ease-out` keyword IS Core Animation's,
+   cubic-bezier(0, 0, 0.58, 1), so this is the same curve the product
+   uses rather than a lookalike.
 
    Which rule carries which: a transition is read from the style the
    element is moving TO, so the dropped rule times the opening and the
-   base rule times the closing. `ease` on both was one duration doing
-   two jobs, and the wrong one for either.
+   base rule times the closing. `ease` on both is one duration doing two
+   jobs, and the wrong one for either.
 
    The opacity finishes AHEAD of the geometry in both directions, on
    purpose: opening, the tiles are legible while the pane settles its
-   last few pixels; closing, they are gone before the pane shuts. It
-   used to be the other way around, and the pane was full-size at 54%
-   opacity for 150ms on the way in and an invisible ghost still
-   collapsing on the way out. */
+   last few pixels; closing, they are gone before the pane shuts. The
+   other way round leaves the pane full-size at 54% opacity for 150ms on
+   the way in and an invisible ghost still collapsing on the way out. */
 @media (prefers-reduced-motion: no-preference) {
   .cw-strip-fold { transition: max-height 200ms ease-out, opacity 140ms ease-out; }
   .cw-strip-fold.is-dropped { transition: max-height 280ms ease-out, opacity 200ms ease-out; }
   /* Pending never changes the fold's geometry. Its content alone eases
      down and back, so an app advance cannot restart max-height or blur. */
   .cw-strip { transition: opacity 160ms ease-out; }
-  /* The row's own selection, at the app's AnimationSpec.cellHighlight
-     (0.12s, ease-out). The duration was already here and was doing
-     nothing: .cw-app's background is transparent in every state of
-     Crossway's own row, and the wash is the ::before below, which used
-     to be created and destroyed with the class — a pseudo-element that
-     appears cannot transition, so the ring and the label popped while
-     the strip animated. Now the wash is always there and only its
-     opacity moves, so a tab is continuous from the icon down. */
+  /* The row's own selection, at the app's own cell-highlight timing
+     (0.12s, ease-out). The duration on .cw-app alone does nothing: its
+     background is transparent in every state of Crossway's own row, and
+     the wash is the ::before below. A pseudo-element created and
+     destroyed with the class cannot transition, so the ring and the
+     label would pop while the strip animates; the wash is always there
+     and only its opacity moves, so a tab is continuous from the icon
+     down. */
   .cw-app { transition: background-color 120ms ease-out; }
   .cw-app::before { transition: opacity 120ms ease-out; }
   .cw-app-name { transition: opacity 120ms ease-out, color 120ms ease-out; }
@@ -2410,7 +2462,7 @@ html:not(.hacker) .cw-screen::after {
 /* A PANE, not a full-bleed wash: the exposé is its own window floating
    over the desktop, inset from the screen edges and rounded, the way
    Mission Control is. It carries no app-icon row — the grid is the whole
-   of the content (ExposeContentView.swift:4-9). */
+   of the content. */
 .cw-grid {
   position: absolute;
   left: 0;
@@ -2476,18 +2528,18 @@ html:not(.hacker) .cw-screen::after {
 }
 
 /* The app mark: BOTTOM-LEFT of the thumbnail, inset, floating on the
-   picture (WindowPreviewCell.swift:330, 430-444 — 28pt square, radius 6,
-   6pt in from the leading and bottom edges). It is the only thing on
-   this surface that says which app a window belongs to, which is what
-   makes "this app's windows" visibly one app and "all windows" visibly
-   several. Drawn a little larger than true scale, as all the chrome on
-   this screen is, or it would be four pixels wide. */
+   picture (28pt square, radius 6, 6pt in from the leading and bottom
+   edges in the app itself). It is the only thing on this surface that
+   says which app a window belongs to, which is what makes "this app's
+   windows" visibly one app and "all windows" visibly several. Drawn a
+   little larger than true scale, as all the chrome on this screen is, or
+   it would be four pixels wide. */
 .cw-gbadge {
   position: absolute;
   left: 4px;
   bottom: 4px;
   /* Above the miniature, which is z-index 1: the mark floats ON the
-     picture (WindowPreviewCell.swift:330 — added after the image view). */
+     picture, as it does in the app. */
   z-index: 2;
   width: clamp(12px, 2.6cqw, 22px);
   height: clamp(12px, 2.6cqw, 22px);
@@ -2706,11 +2758,11 @@ html:not(.hacker) .cw-screen::after {
 /* ---- the display ----------------------------------------------------
    A display, drawn as a manual would have drawn it: paper, the page's
    own ink line, form carried by a few solid blacks, and the page's own
-   hard offset shadow. No tone and no dot pattern anywhere: the QuickDraw
-   patterns the laptop wore read as perforation at this size, which is
-   what got it rejected. One fixed-viewBox SVG for the furniture and a
-   DOM overlay for the screen, registered in PERCENTAGES of the same box
-   so it tracks the drawing at every width with no measuring JavaScript.
+   hard offset shadow. No tone and no dot pattern anywhere: QuickDraw
+   patterns read as perforation at this size. One fixed-viewBox SVG for
+   the furniture and a DOM overlay for the screen, registered in
+   PERCENTAGES of the same box so it tracks the drawing at every width
+   with no measuring JavaScript.
 
    The well is x5 y5 w316 h197.5 of a 326x244 box: 8:5, and 96.93% of
    the drawing's width, which is the contract: the screen is the
@@ -2722,15 +2774,9 @@ html:not(.hacker) .cw-screen::after {
    The chin under it is deeper than the bezel around it, as a modern
    panel's is, and that is measured too: the drawing's aspect is what
    sets the display's height at a width-bound viewport, and the keys
-   window beside it is as tall as the display. A 238-tall first cut
-   left the ~490px window 4px short of its own rows (the rendered
-   suite, at 1200x1000); the chin carries those pixels rather than the
-   type, which is where the user had just put them.
-
-   It was a 1993 monitor until 2026-09-03 — a 14-unit bezel, a sunk CRT
-   recess, a neck-and-foot stand, 344x262 — and the user had the stand
-   and the bezels taken off so it reads as a modern panel, with the
-   space they gave back going to the screen. */
+   window beside it is as tall as the display. A 238-tall drawing leaves
+   the ~490px window 4px short of its own rows at 1200x1000; the chin
+   carries those pixels rather than the type. */
 
 .cw-machine {
   position: relative;
@@ -2741,12 +2787,10 @@ html:not(.hacker) .cw-screen::after {
      display costs the same --cw-fold-overhead whatever the height is
      (the site's sticky menu bar, the title over the screen, the gaps).
      Subtracting that first is what makes the display as large as fits,
-     bounded by the column the keys leave it, and floored at 640px, where
-     the screen is the size the laptop's was: the redraw's contract was
-     that it never gets smaller. The 1.3361 turns the height left into a
-     width: the drawing is 326 x 244 (it was 344 x 262, and 1.313, while
-     the case had a stand and a 14-unit bezel). Every constant here is
-     measured, and scripts/test-site-layout.mjs pins the result. */
+     bounded by the column the keys leave it, and floored at 640px, which
+     is the smallest the screen ever gets. The 1.3361 turns the height
+     left into a width: the drawing is 326 x 244. Every constant here is
+     measured. */
   max-width: min(100%, max(640px, calc((100vh - var(--cw-fold-overhead)) * 1.3361)));
   margin: 0 auto;
 }
@@ -2808,66 +2852,56 @@ html:not(.hacker) .cw-screen::after {
 /* The title over the screen, the display under it, and the keys BESIDE
    the display, in a paper box in the page's own chrome, so the whole
    demo stands in one laptop screen: nothing to scroll to find the keys.
-   The box's column is a FIXED width: sized to its content it changed
-   width when the switch was thrown (the Native sentences are not the
-   Crossway ones) and the whole stage shifted. Below 1110px of stage (640 + 28 + 440, since the pane went to 440 on 2026-09-03; 1190 before) —
-   where the display would drop under its 640px floor beside the box —
-   the box goes under the display instead, and its legend spreads to two
-   columns to use the width. */
+   The box's column is a FIXED width: sized to its content it changes
+   width when the switch is thrown (the Native sentences are not the
+   Crossway ones) and the whole stage shifts. Below 1110px of stage (640
+   + 28 + 440) — where the display would drop under its 640px floor
+   beside the box — the box goes under the display instead, and its
+   legend spreads to two columns to use the width. */
 /* The SECTION is the container the stage measures itself against: a
    container query cannot style the container itself, so the stage's own
    columns have to answer to the width of something above it. */
 /* NAMED, because the keys window beside the display is a size container
    of its own (440px wide), and an unnamed max-width query written for
-   the stage matched IT from anything inside it: the legend's stacked
-   rules, moved to where they could win (2026-09-03), promptly put each
-   box's two rows side by side beside the display too. The name pins
-   every stacked query to the stage's width. */
+   the stage matches IT from anything inside it: the legend's stacked
+   rules would then put each box's two rows side by side beside the
+   display too. The name pins every stacked query to the stage's width. */
 .cw-hero { container: hero / inline-size; }
-/* The demo's ONE window is the keys window on the right (2026-09-03,
-   the user, reverting a single window round the whole section: "have
-   it like the current live version -- on the right only, but use our
-   new layout"): "Interactive demo" in its title bar, which is the
-   section's heading, and the display stands bare on the left. */
+/* The demo's ONE window is the keys window on the right: "Interactive
+   demo" in its title bar, which is the section's heading, and the
+   display stands bare on the left. */
 .cw-controls .titlebar .title { margin: 0; font-weight: normal; }
 /* The top row of the keys window's body: the automatic-demo box, on a
-   line of its own at the LEFT (2026-09-03, the user: "align auto demo
-   left and make sure it's the same font size as hint"). The hint that
-   shared it went to the FOOT the same day ("move hint to bottom of
-   pane, above the divider of 'this is just a taste', below view
-   windows"), where it stands over the divider: "Hint:" and ONE thing to try
-   on the monitor at a time, fading out and in through a list of two
-   dozen, across the WHOLE row on both of its lines (2026-09-03, the
-   user: "hint should be full row, larger text. make sure that the text
-   length variations doesn't cause pane resizing/moving around", and
-   then, when the box shared the hint's first line, "you need to leave
-   more room for the hints... many are cutoff. don't do it sloppy").
-   The hint is a FIXED height of two lines and clips: a short tip leaves
-   the second line empty, a long one fills it, and nothing under the row
-   moves either way. The ideas are written to fit two such lines (at
-   most 80 characters, the suite holds them to it), and the rendered
-   suite sets every one of them into this box at every fold and fails
-   if any overflows. The full list is in the document for a screen
-   reader, once; the changing line is hidden from it. */
+   line of its own at the LEFT, at the same size as the hint. The hint
+   stands at the FOOT of the pane, above the divider and below the window
+   rows: "Hint:" and ONE thing to try on the monitor at a time, fading
+   out and in through a list of two dozen, across the WHOLE row on both
+   of its lines. The hint is a FIXED height of two lines and clips: a
+   short tip leaves the second line empty, a long one fills it, and
+   nothing under the row moves either way, so a change of tip can never
+   resize the pane. The ideas are written to fit two such lines, at most
+   80 characters, so none of them is cut off at any fold. The full list
+   is in the document for a screen reader, once; the changing line is
+   hidden from it. */
 .cw-keys-lead-row {
   display: block;
   /* Half the body's gap under the hint: that gap is the boxes' own, and
-     a whole one under a two-line hint put the rows 3px past the legend
-     at 1440x760 (the rendered suite). Written as the gap's negative
-     half rather than a gap of its own, so the two stay one number. */
+     a whole one under a two-line hint puts the rows 3px past the legend
+     at 1440x760. Written as the gap's negative half rather than a gap of
+     its own, so the two stay one number. */
   margin-bottom: calc(-0.5 * clamp(6px, calc(2.8 * var(--cw-dens) - 7.7px), 20px));
 }
-.cw-keys-lead-row .cw-demo-mode { width: max-content; margin: 0; }   /* at the left (2026-09-03, the user: "align auto demo left") */
+.cw-keys-lead-row .cw-demo-mode { width: max-content; margin: 0; }   /* at the left */
 /* The foot: the hint, then the divider and the small print. ONE block,
    because the body is a flex column whose gap is the boxes' own, and a
    fourth child there would have cost a whole gap at every fold. */
 .cw-keys-foot { display: flex; flex-direction: column; }
 .cw-hero-idea {
   margin: 0;
-  height: calc(2.4em + 3px);            /* two lines, always, plus the nudge below: the row never grows or shrinks with the tip. The page is border-box, so the padding has to be ADDED here or it eats a line and every long tip is cut (measured 2026-09-03). */
+  height: calc(2.4em + 3px);            /* two lines, always, plus the nudge below: the row never grows or shrinks with the tip. The page is border-box, so the padding has to be ADDED here or it eats a line and every long tip is cut. */
   overflow: hidden;
-  font-family: var(--font-panel);       /* the panel face: crisper than Geneva at this size (2026-09-03, the user: "improve fonts so they look crisp") */
-  font-size: 17px;                      /* the automatic-demo box's own size, traded with it (2026-09-03, the user: "hint font size should be auto demo's and vice versa"); "larger text" took it from the legend's 14 to 16 that afternoon */
+  font-family: var(--font-panel);       /* the panel face: crisper than Geneva at this size */
+  font-size: 17px;                      /* the automatic-demo box's own size */
   line-height: 1.2;
   padding-top: 3px;                     /* the hint a few pixels lower under the box, which the fixed height above absorbs, so nothing below it moves */
   color: var(--ink);
@@ -2876,21 +2910,19 @@ html:not(.hacker) .cw-screen::after {
 .cw-hero-hint { font-weight: bold; }
 /* The idea fades by COLOUR, not opacity: an opacity transition puts the
    text on a compositor layer of its own, where text at a fractional
-   position renders soft, which is what "sometimes it appears a bit
-   blurry" was. A colour transition stays in ordinary text rendering.
-   Only the changing span fades; the "Hint:" label stands. */
+   position renders soft, which is what reads as blurry type. A colour
+   transition stays in ordinary text rendering. Only the changing span
+   fades; the "Hint:" label stands. */
 .cw-hero-idea-text.is-out { color: transparent; }
 @media (prefers-reduced-motion: no-preference) {
   .cw-hero-idea-text { transition: color 400ms ease; }
 }
 .cw-stage {
   display: grid;
-  /* 440px (2026-09-03, the user: "make the keyboard pane narrower and
-     use the new space to increase size of monitor"): it was 520 while
-     the verbs stood beside the caps; over them, the caps row needs
-     about 380px, and the freed column goes to the display, which keeps
-     its proportions (its width is bound by the fold's height and the
-     column, and it grows into the column where the fold allows). */
+  /* 440px, which leaves the freed column to the display: over the caps,
+     the caps row needs about 380px, and the display keeps its
+     proportions (its width is bound by the fold's height and the column,
+     and it grows into the column where the fold allows). */
   grid-template-columns: minmax(0, 1fr) 440px;
   column-gap: 28px;
   row-gap: 14px;
@@ -2907,11 +2939,11 @@ html:not(.hacker) .cw-screen::after {
   align-items: center;
   gap: 7px;
   font-family: var(--font-panel);
-  /* A step up from the 15px of the line it shares (2026-08-30, the
-     user): this is the one control in the keys window that says whether
-     the demo is playing itself, and at the lead's own size it read as
-     part of the sentence beside it rather than as a switch. */
-  font-size: 17px;                      /* the hint's own size (2026-09-03, the user: "make sure it's the same font size as hint"); the two traded sizes earlier that day and then met at 17 */
+  /* A step up from the 15px of the line it shares: this is the one
+     control in the keys window that says whether the demo is playing
+     itself, and at the lead's own size it reads as part of the sentence
+     beside it rather than as a switch. */
+  font-size: 17px;                      /* the hint's own size */
   line-height: 1;
   color: var(--ink);
   cursor: pointer;
@@ -2929,17 +2961,17 @@ html:not(.hacker) .cw-screen::after {
   background: var(--paper);
   cursor: pointer;
 }
-/* A CHECK when on, not the X this wore until 2026-08-30 (the user):
-   System 7 checked its boxes with an X, and every visitor who did not
-   grow up with one read that X as "no", or as the close box two inches
-   above it, on the one control that says the demo is playing itself.
-   The tick is the mark that says yes now, so the box says yes.
+/* A CHECK when on, not an X: System 7 checked its boxes with an X, and
+   every visitor who did not grow up with one reads that X as "no", or as
+   the close box two inches above it, on the one control that says the
+   demo is playing itself. The tick is the mark that says yes, so the box
+   says yes.
 
    Two strokes of one rotated corner, in the page's ink, so it follows
    every appearance the way the X did. It hangs off the LABEL and is
-   shown by :has(), which keeps the input the single source of the
-   state — the box is still the browser's checkbox, still the thing that
-   is focused, toggled and read out; only the mark moved. */
+   shown by :has(), which keeps the input the single source of the state
+   — the box is still the browser's checkbox, still the thing that is
+   focused, toggled and read out; only the mark moved. */
 .cw-demo-mode::after {
   content: "";
   position: absolute;
@@ -2992,18 +3024,15 @@ html:not(.hacker) .cw-screen::after {
      layout begins at 1121px, where the display beside this window is
      ~490px tall, and runs up to a ~740px window; every one of these is
      a line from its floor at ~500px to its full size at ~710px. */
-  gap: clamp(6px, calc(2.8 * var(--cw-dens) - 7.7px), 20px);   /* more between the two sections (2026-09-03, the user, twice: "a LITTLE more, not a lot", then "still too on top of each other"): 5px more at the floor, 10 at the ceiling, over the 3 and 16 it had */
-  padding: 6px 22px 14px;                 /* 14 and 16 until 2026-09-03: the top went to the sections' titles and then to the hint row under the bar */
+  gap: clamp(6px, calc(2.8 * var(--cw-dens) - 7.7px), 20px);   /* more between the two sections: 5px more at the floor and 10 at the ceiling than the sections would otherwise get, so the two do not sit on top of each other */
+  padding: 6px 22px 14px;                 /* the top goes to the sections' titles and to the hint row under the bar */
 }
 /* What stands around the display in one screen, and gets back nowhere:
    the padding the page scrolls to under its sticky menu bar (52px), and
-   nothing else: since 2026-09-03 (evening) no heading stands over the
-   columns, so the display's height budget is the viewport minus the
-   scroll padding alone. The layout test measures the real page and
-   fails if this is more than 12px from what it finds, so a value inside
-   that band is a measurement written down, not a guarded one. It was
-   141 with the whole section as one window, 134 with a heading window
-   of its own over both columns, 109 as a bare heading. */
+   nothing else — no heading stands over the columns, so the display's
+   height budget is the viewport minus the scroll padding alone. This is
+   a measurement of the real page written down, not a guard: keep it
+   within about 12px of what the page actually spends. */
 :root { --cw-fold-overhead: 52px; }
 
 /* One exposé tile. Six of these plus their gutters is the pane's inner
@@ -3055,11 +3084,11 @@ html:not(.hacker) .cw-screen::after {
   --cw-sel-win: 35%;
   /* The app row, at the app's own proportions: the icon is 90% of its
      cell (108 in 120), not half of it. */
-  /* A share of the screen, not a fixed size. Pinned in px the app row
-     was 10% of a 422px screen and 14% of a 311px one, so the switcher's
-     share of the display changed with the browser window — which is what
-     "inconsistent" looked like. The app draws its icons at 108pt on a
-     1440pt display, about 7.5%. */
+  /* A share of the screen, not a fixed size. Pinned in px the app row is
+     10% of a 422px screen and 14% of a 311px one, so the switcher's
+     share of the display changes with the browser window, which reads as
+     inconsistent. The app draws its icons at 108pt on a 1440pt display,
+     about 7.5%. */
   --cw-icon: clamp(28px, 10.5cqw, 64px);
   --cw-wash: clamp(26.4px, 9.91cqw, 60.4px);          /* icon x 0.944 */
   /* Everything in the app row is a multiple of the icon, which is
@@ -3096,44 +3125,41 @@ html:not(.hacker) .cw-screen::after {
      plain legend rules, which is the only place they can win. */
 }
 
-/* Two groups, two boxes, one per command family (2026-09-02, the user:
-   "upper: control applications, lower: control windows"): the group box
-   of the era, a hairline frame with its name sitting on the line. Each
-   holds its modifier, its two tap keys and its two legend rows, so the
-   box IS the instruction. They share the window's height equally, and
-   inside each the legend spreads over what the keys leave, exactly as
-   the one legend did under the one keypad. */
+/* Two groups, two boxes, one per command family — the upper controls
+   applications, the lower controls windows: the group box of the era, a
+   hairline frame with its name sitting on the line. Each holds its
+   modifier, its two tap keys and its two legend rows, so the box IS the
+   instruction. They share the window's height equally, and inside each
+   the legend spreads over what the keys leave, exactly as one legend
+   would under one keypad. */
 .cw-group {
   margin: 0;
   /* 7px sides, not the 12 a box of this kind usually gets: the rows
-     inside are cut to the window's width, and 4px a side was the
-     difference between the "Switch apps" sentence on one line and on
-     two at 1440x760. Above and below, on the window's
-     line like everything else in it (2026-09-03): 4px and 5px at the
-     ~490px floor, 6px and 8px from ~620px up. A step to those floors
-     under 540px left the 544px window of 1440x760 (the heading a window
-     now, the display 20px shorter) 3px short per box. */
+     inside are cut to the window's width, and 4px a side is the
+     difference between the "Switch apps" sentence on one line and on two
+     at 1440x760. Above and below, on the window's line like everything
+     else in it: 4px and 5px at the ~490px floor, 6px and 8px from ~620px
+     up. Stepping to those floors under 540px instead leaves the 544px
+     window of 1440x760 3px short per box. */
   padding: clamp(9px, calc(1.5 * var(--cw-dens) + 1.7px), 12px) 7px clamp(1px, calc(1.5 * var(--cw-dens) - 6.3px), 7px);
-  /* The top is 7px more than the bottom at every size (2026-09-03, the
-     user, twice: the names were "too on top of 'click to release'",
-     then "need a bit more vertical padding between section title and
-     click now text"): the name sits on the frame, so the air under it
-     is what sets it apart as a section's title rather than a line of
-     the keys. Paid for by the bottom (3px at the floor, 1 at the
-     ceiling), the window's own padding, and the line the upper box no
-     longer reserves under "Switch windows" since its sentence got
-     shorter. */
+  /* The top is 7px more than the bottom at every size, so the names do
+     not sit on top of the verbs below them: the name sits on the frame,
+     so the air under it is what sets it apart as a section's title
+     rather than a line of the keys. Paid for by the bottom (3px at the
+     floor, 1 at the ceiling), the window's own padding, and the line the
+     upper box no longer reserves under "Switch windows" now that its
+     sentence is shorter. */
   border: var(--border) solid var(--ink);
   min-width: 0;
   min-height: 0;                          /* a flex item's floor is its content: without this a group overflows the window rather than fit it */
   /* Basis AUTO, so each box starts from what its rows need and the two
      grow or give equally from there: the upper box reserves two lines
      for one of its sentences and the lower does not, and an equal split
-     (a 0% basis) handed the lower box 12px it had no use for while the
-     upper's rows ran 15px into its frame at 1440x760. Not a 0px basis
+     (a 0% basis) hands the lower box 12px it has no use for while the
+     upper's rows run 15px into its frame at 1440x760. Not a 0px basis
      either: stacked under the display the window is as tall as its
-     content, and 0px sized both boxes to their padding (measured
-     2026-09-02: 32px groups, 171px of spill). */
+     content, and 0px sizes both boxes to their padding (32px groups,
+     171px of spill). */
   flex: 1 1 auto;
   display: flex;
   flex-direction: column;
@@ -3143,14 +3169,11 @@ html:not(.hacker) .cw-screen::after {
 }
 /* The box's name, on its frame line: the display face at the size the
    legend's biggest names reach, so "View applications" and "View
-   windows" are the first thing read in the window (2026-09-03, the
-   user: "font sizes need to be much larger so they stand out"; they
-   were "Control ..." until later that day: "change the word 'Control'
-   to 'View'"). */
+   windows" are the first thing read in the window. */
 .cw-group-label {
   padding: 0 6px;
   font-family: var(--font-display);
-  font-size: 20px;                        /* 17 until 2026-09-03 (the user: "larger text, so it's a clear section") */
+  font-size: 20px;                        /* large enough to read as a clear section heading */
   line-height: 1;
   color: var(--ink);
 }
@@ -3164,39 +3187,31 @@ html:not(.hacker) .cw-screen::after {
    and the two boxes' Tabs sat 12px apart. The line itself is described
    at .cw-keycap-btn, which reads it. */
 .cw-group-keys { --cw-u: clamp(48px, calc(17.5 * var(--cw-dens) - 45px), 60px); --cw-art-u: clamp(40px, calc(var(--cw-u) * 0.75), 45px); --cw-tap-panel: color-mix(in srgb, var(--ink) 7%, var(--paper)); position: relative; display: flex; justify-content: center; gap: 0px; align-items: flex-end; flex: none; min-width: 0; }
-/* A keyset is two lines: the verb, then its cap or caps (2026-09-03,
-   the user, after the verb sat beside the cap and then in a chip: "the
-   alignment of the text with the keyboard buttons are all off.. have
-   the text be one line above the button instead"). A wrapping row: the
-   verb takes the whole first line, the caps the second. */
-/* The row (2026-09-03, the user, last of the day: "have cmd/option be
-   aligned to the left of the pane and made 50% smaller/width of the two
-   icons in explainer below it as a pseudo title... tab/` should be
-   centered now in the pane since it's the interaction point"): the tap
-   keyset, its verb over it, is CENTRED in the row, and the modifier
-   art stands out of the flow at the row's left edge, half size, its
-   left edge on the legend's chips below it and its foot on the caps'
-   line, so it reads as the box's mark rather than a key to reach for.
-   Each keyset is exactly as wide as its caps; the verb line and the
-   caps line have 8px between them, the two caps 2px. */
+/* A keyset is two lines: the verb one line above its cap or caps, which
+   is what keeps the words aligned with the keyboard buttons. A wrapping
+   row: the verb takes the whole first line, the caps the second. */
+/* The row: the tap keyset, its verb over it, is CENTRED in the row,
+   since the tap keys are the interaction point, and the modifier art
+   stands out of the flow at the row's left edge, half size, its left
+   edge on the legend's chips below it and its foot on the caps' line, so
+   it reads as the box's mark rather than a key to reach for. Each keyset
+   is exactly as wide as its caps; the verb line and the caps line have
+   8px between them, the two caps 2px. */
 .cw-keyset { display: flex; flex: none; flex-wrap: wrap; justify-content: center; align-items: center; gap: 6px 2px; min-width: 0; }
 /* The modifier art: out of the flow at the row's left edge, 8px in,
    which is the legend rows' own inset, so its left edge sits over the
    two chips of the row below and it reads as that box's mark. It is
-   drawn at its OWN cap unit rather than transform-scaled (2026-09-03,
-   the user: "they need to be about the width of the two apps below and
-   right now it's barely 60% of it"): the cap's every dimension, its
-   printing included, comes from --cw-u, so a smaller unit redraws the
-   whole cap at that size instead of shrinking a picture of it, and the
-   unit is picked so the WIDER art (Command, 1.25u) lands on the chips'
-   own ~55px. --cw-art-u is declared on the parent and read here, which
-   is what keeps it out of a custom-property cycle. */
+   drawn at its OWN cap unit rather than transform-scaled: the cap's
+   every dimension, its printing included, comes from --cw-u, so a
+   smaller unit redraws the whole cap at that size instead of shrinking a
+   picture of it, and the unit is picked so the WIDER art (Command,
+   1.25u) lands on the chips' own ~55px, the width of the two app marks
+   below it. --cw-art-u is declared on the parent and read here, which is
+   what keeps it out of a custom-property cycle. */
 .cw-group-keys > .cw-keyset:first-child { position: absolute; left: 8px; bottom: 0; --cw-u: var(--cw-art-u); width: calc(var(--cw-u) * 1.25); justify-content: flex-start; }
 /* The tap slot is Tab, the 4px between, and backtick, plus a hair so a
    rounding never wraps backtick onto a third line. It carries a quiet
-   panel behind it (2026-09-03, the user: "click to tap should maybe
-   also have some shading behind it and the buttons to visually group it
-   together"), which is the verb and its two keys read as one thing.
+   panel behind it, which groups the verb and its two keys as one thing.
    Drawn with a SPREAD SHADOW rather than padding: the slot's width is
    the caps' own measure and the row is centred on it, so padding would
    have moved the keys to make room for their own backdrop. A spread
@@ -3205,22 +3220,18 @@ html:not(.hacker) .cw-screen::after {
 .cw-group-keys > .cw-keyset:last-child {
   width: calc(var(--cw-u) * 2.5 + 5px);
   /* Squarer than the caps it holds, and it reaches a little further
-     below them than above (2026-09-03, the user: "perhaps it should be
-     more squared off edges? a bit too round right now and should extend
-     a tiny bit lower"): the second shadow is the first, moved down, and
-     the two together are one panel 5px deeper at the foot. */
+     below them than above: the second shadow is the first, moved down,
+     and the two together are one panel 5px deeper at the foot. */
   border-radius: 4px;
   background: var(--cw-tap-panel);
   box-shadow: 0 0 0 6px var(--cw-tap-panel), 0 5px 0 6px var(--cw-tap-panel);
 }
 .cw-group.is-off .cw-group-keys > .cw-keyset:last-child { --cw-tap-panel: transparent; }   /* a box you cannot use is flat: nothing to group */
-/* The hold slot is ONE width in both boxes, the width Command needs
-   (its cap is a quarter wider than Option's), so Tab and backtick start
-   at the same x in the applications box and the windows box (2026-09-03,
-   the user: "make sure the tab and ` buttons are correctly aligned even
-   though cmd and option buttons are different sizes"). Option sits at
-   the left of its slot beside its verb, with the quarter unit of air
-   after it. */
+/* The hold slot is ONE width in both boxes, the width Command needs (its
+   cap is a quarter wider than Option's), so Tab and backtick start at
+   the same x in the applications box and the windows box even though the
+   two modifier caps are different sizes. Option sits at the left of its
+   slot beside its verb, with the quarter unit of air after it. */
 .cw-keyset .cw-keycap-btn + .cw-keycap-btn { margin-left: 2px; }
 .cw-keyset-verb {
   flex: 0 0 100%;                         /* the whole first line: one line above the caps */
@@ -3232,31 +3243,27 @@ html:not(.hacker) .cw-screen::after {
   justify-content: center;
   /* The PANEL face, not the body face: Geneva has no bold, so a browser
      asked for one smears the regular a little, and the step to take
-     never looked bold ("the green instructions are still not bold -- I
-     keep asking over and over", 2026-09-03). Helvetica Neue has a real
-     one, and it is the face the bezel's labels already wear. */
+     never reads as bold. Helvetica Neue has a real one, and it is the
+     face the bezel's labels already wear. */
   font-family: var(--font-panel);
-  font-size: 20px;                        /* 11, 13, 14 and 16 were each "still not larger" (2026-09-03, the user), 18 held for an afternoon, then "make the font size a little bigger" */
+  font-size: 20px;                        /* large enough that the step to take is the first thing read in the box */
   line-height: 1.05;                      /* one line, set tight: the line it adds over the caps is paid for in the box's height */
   color: var(--ink);
   white-space: nowrap;                    /* one line; the engine's break after "click to" collapses to a space here */
 }
-/* The verbs are the GUIDE (2026-09-03, the user, across five cuts, the
-   last: "'click to tap' etc. text is STILL NOT LARGER... and for the
-   colored one to be bold too!"). So: large, and the ONE step to take
-   per box is bold and in the guide colour, the go light's green, while
-   the rest stand regular in ink, fully legible. The colour eases over a
-   third of a second; the weight changes on a line above a slot of fixed
-   width, so nothing else moves. At rest "click to hold"; with
-   the box's modifier held, "click to tap", and it stays there through
-   the taps, while the hold verb reads "click to release". The engine
-   moves these (wireKeys.guide). */
+/* The verbs are the GUIDE: large, and the ONE step to take per box is
+   bold and in the guide colour, the go light's green, while the rest
+   stand regular in ink, fully legible. The colour eases over a third of
+   a second; the weight changes on a line above a slot of fixed width, so
+   nothing else moves. At rest "click to hold"; with the box's modifier
+   held, "click to tap", and it stays there through the taps, while the
+   hold verb reads "click to release". The engine moves these
+   (wireKeys.guide). */
 .cw-keyset.is-next .cw-keyset-verb { font-weight: bold; color: var(--guide); }
-/* The modifier caps are ART (2026-09-03, the user: "you don't interact
-   with them... they are art that activate as the user interacts with
-   tab and `"): no pointer, no click, no hover; the engine lights them
-   (is-held) while their box's chord is in hand. */
-.cw-keycap-btn.is-art { pointer-events: none; }   /* no cursor of its own: with no pointer events its value is never seen, and the rendered suite reads the cap family's hand */
+/* The modifier caps are ART: they are not interacted with, so no
+   pointer, no click, no hover; the engine lights them (is-held) while
+   their box's chord is in hand, as the visitor works Tab and backtick. */
+.cw-keycap-btn.is-art { pointer-events: none; }   /* no cursor of its own: with no pointer events its value is never seen, and the cap family's hand is what shows */
 /* Opt-in motion, as every transition in the hero is: the shift eases
    over a third of a second for a visitor who has not asked for less. */
 @media (prefers-reduced-motion: no-preference) {
@@ -3277,25 +3284,18 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
    you press, and the legend its real key carries: the symbol at the top
    right, the name at the bottom left.
 
-   The unit is cut to the window's height like the rows are (2026-09-02):
-   66px from a ~590px window up, 52px at the ~490px floor, a steep line
-   between, because the boxes have the room from a 540px window. It was a fixed 62 with one step to 52 under 540px, and with
-   TWO rows of caps in the window that step was a cliff: at 1440x760 the
-   window is 564px, the caps were their full 62, and the upper group ran
-   12px past its frame while a 504px window fitted. 48 is Apple's own
-   minimum for a thing you press, and the floor sits on it since the
-   verbs moved over the caps (2026-09-03): the line they add is paid for
-   at the shortest windows by the caps, at the tallest by the ceiling
-   holding. The ceiling is 66 since
-   2026-09-03: it had come down from 62 to 54 to make room for the verbs
-   beside the caps in a 440px window, until the user said, of the
-   interactive area, "you keep leaving it the same size, make it larger";
-   the window went to 520 and the caps and the verbs both grew into
-   it; it is 440 again since the verbs moved above the caps (later the
-   same day), and the caps kept the 66. The unit reaches its ceiling
-   from a ~660px window, not the tallest, because the instruction line
-   that used to stand over the boxes is gone and the boxes have the
-   room. */
+   The unit is cut to the window's height like the rows are: 66px from a
+   ~590px window up, 52px at the ~490px floor, a steep line between,
+   because the boxes have the room from a 540px window. A fixed 62 with
+   one step to 52 under 540px is a cliff once there are TWO rows of caps
+   in the window: at 1440x760 the window is 564px, the caps take their
+   full 62, and the upper group runs 12px past its frame while a 504px
+   window fits. 48 is Apple's own minimum for a thing you press, and the
+   floor sits on it, because the verbs stand over the caps: the line they
+   add is paid for at the shortest windows by the caps, at the tallest by
+   the ceiling holding. The unit reaches its ceiling from a ~660px
+   window, not the tallest, because no instruction line stands over the
+   boxes and they have the room. */
 .cw-keycap-btn {
   /* The pressed fill, derived so every appearance gets its own: dark
      enough to read as pressed, short of the flat ink that erased the
@@ -3315,9 +3315,9 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
 }
 .cw-key-cmd { width: calc(var(--cw-u) * 1.25); }
 .cw-key-tab { width: calc(var(--cw-u) * 1.5); }
-/* The printing scales with the cap (2026-09-03): fixed at 21px and 12px
-   it crowded a 48px face and, at 61px, "command" ran into the cap's
-   right edge (the user: "cmd is clipped from the right"). */
+/* The printing scales with the cap: fixed at 21px and 12px it crowds a
+   48px face and, at 61px, "command" is clipped by the cap's right edge.
+   */
 .cw-keycap-btn svg {
   position: absolute;
   top: calc(var(--cw-u) * 0.11); right: calc(var(--cw-u) * 0.13);
@@ -3331,25 +3331,23 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
 /* The backtick key has no name: its two symbols sit in the middle,
    larger, stacked the way a real cap is printed — the tilde ABOVE the
    grave accent, and set APART, one in the upper area and one in the
-   lower. Both of those were got wrong in turn (2026-08-27, the user
-   caught each): first the order, then the spacing. The spacing is not a
-   guess now. Measured off Wikimedia's Computer_keyboard_US.svg, whose
-   ~ key carries both legends at one x: the tilde's baseline sits 37%
-   down the keycap face and the grave's 90% down, so they stand about
-   HALF the cap's height apart. This drawing pushes them to the edges of
-   the box it has, which is as close to that as a 24-unit box inside a
-   62px cap gets, and a test pins the gap, because a sentence beside a
-   drawing guards nothing. */
+   lower. Both the order and the spacing are easy to get wrong, and the
+   spacing is not a guess. Measured off Wikimedia's
+   Computer_keyboard_US.svg, whose ~ key carries both legends at one x:
+   the tilde's baseline sits 37% down the keycap face and the grave's 90%
+   down, so they stand about HALF the cap's height apart. This drawing
+   pushes them to the edges of the box it has, which is as close to that
+   as a 24-unit box inside a 62px cap gets. */
 .cw-key-tick svg {
   top: 50%; left: 50%; right: auto;
-  /* A BIGGER BOX, not a bigger drawing (2026-08-27, the user asking for
-     more air a second time). The drawing was already filling 70% of a
-     30px box, so the gap could not grow inside it. The box grows to 40
-     and the glyphs shrink by the same 0.75 in viewBox units, stroke
-     included, so both legends render at exactly the size and weight they
-     did and every pixel the box gained goes into the space between them:
-     measured, the clear gap goes from 12px to 18px and the pair spans
-     46% of the cap, against the real keyboard's ~53%. */
+  /* A BIGGER BOX, not a bigger drawing, when the pair needs more air.
+     The drawing already fills 70% of a 30px box, so the gap cannot grow
+     inside it. The box grows to 40 and the glyphs shrink by the same
+     0.75 in viewBox units, stroke included, so both legends render at
+     exactly the size and weight they did and every pixel the box gained
+     goes into the space between them: measured, the clear gap goes from
+     12px to 18px and the pair spans 46% of the cap, against the real
+     keyboard's ~53%. */
   width: calc(var(--cw-u) * 0.65); height: calc(var(--cw-u) * 0.65); margin: calc(var(--cw-u) * -0.325) 0 0 calc(var(--cw-u) * -0.325);
   stroke-width: 1.275;
 }
@@ -3362,20 +3360,19 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
   letter-spacing: 0.01em;
 }
 .cw-keycap-btn:focus-visible { outline: 2px solid var(--link); outline-offset: 3px; }
-/* A PRESSED CAP GOES DARK AT THE BOTTOM OF ITS TRAVEL (2026-08-27, the
-   user, refining the pass that made a press black at all: "at the apex
-   of the animation, when the key bottoms out physically, it can flash
-   black", and dial the black back so it stops washing out the physical
-   look of the key).
+/* A PRESSED CAP GOES DARK AT THE BOTTOM OF ITS TRAVEL: at the apex of
+   the animation, where the key bottoms out physically, it can flash
+   black, with the black dialled back so it does not wash out the
+   physical look of the key.
 
    Two things make that read. The colour is DELAYED past the travel (see
    the transition on the pressed rule below), so the eye sees the cap
    move down and only then sees it darken, which is the order the
-   fingertip expects. And the fill is not the flat ink it was: a slab of
-   pure ink swallowed the cap's own ink border and its drop shadow, and
-   those two are the whole reason it looks like a key. At 80% the fill is
-   plainly dark, the border still draws a crisp edge against it, and the
-   shadow under it still reads as a lip.
+   fingertip expects. And the fill is not flat ink: a slab of pure ink
+   swallows the cap's own ink border and its drop shadow, and those two
+   are the whole reason it looks like a key. At 80% the fill is plainly
+   dark, the border still draws a crisp edge against it, and the shadow
+   under it still reads as a lip.
 
    What tells a hold from a tap is DURATION, not colour: a held modifier
    stays dark until it is let go, a tapped key is dark for one beat
@@ -3395,7 +3392,7 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
    reads from across the page. No wash and no dither, which would read as
    a surface where this needs to read as nothing to press. */
 .cw-keycap-btn[aria-disabled="true"],
-.cw-group.is-off .cw-keycap-btn.is-art {   /* the Option art greys with its box (2026-09-03, the user: "in macos native option needs to be greyed out too") */
+.cw-group.is-off .cw-keycap-btn.is-art {   /* the Option art greys with its box: in the native world there is no ⌥ command to reach */
   color: var(--dim);
   border-color: var(--dim);
   background: var(--paper);
@@ -3431,7 +3428,7 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
   min-height: 0;
   align-content: space-evenly;   /* the rows spread over the height the group gives */
   grid-template-columns: minmax(0, 1fr);
-  gap: 0 18px;                   /* no floor between rows: space-evenly is the spacing, and the shortest window needs every pixel (2026-09-03) */
+  gap: 0 18px;                   /* no floor between rows: space-evenly is the spacing, and the shortest window needs every pixel */
 }
 .cw-legend li {
   display: grid;
@@ -3441,44 +3438,38 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
   align-items: baseline;
   /* The rows are cut to the window's height: the smallest window the
      side-by-side layout produces (~490px, at 1121px wide) gets the 1px
-     floor, the 564px window of 1440x760 about 2.5px, and a ~740px
-     window (the tallest that layout produces) 6.8px, with the 7px
-     ceiling just above it, so the rows fill what they have and never
-     spill. The type below does the same. Half what they were before the
-     window was two groups (2026-09-02): a second row of caps and a
-     second frame took the height these paddings had, measured at every
-     fold viewport before the numbers were cut, and the layout suite now
-     holds every box to its rows at each of them. */
+     floor, the 564px window of 1440x760 about 2.5px, and a ~740px window
+     (the tallest that layout produces) 6.8px, with the 7px ceiling just
+     above it, so the rows fill what they have and never spill. The type
+     below does the same. Half what a one-group window could afford: a
+     second row of caps and a second frame take the height these paddings
+     had, and every box has to hold its rows at every fold viewport. */
   padding: clamp(1px, calc(2.4 * var(--cw-dens) - 11px), 7px) 8px clamp(1px, calc(2.4 * var(--cw-dens) - 11px), 7px);
   border: var(--border) solid transparent;
 }
 /* ONE mark on a row: the chord in effect wears an ink frame lifted on
    its hard shadow, the page's own word for the thing in hand, and that
-   is all (2026-09-03, the user: "remove the border around the all
-   windows/app windows etc. only show the border around the activated
-   command -- without buttons pressed animation anymore either. just the
-   border on the activated hotkey. simplifying the UX", and then, of
-   the shadow: "the selection should still have the old look -- with the
-   cool shadow effect that made it feel higher quality. don't lose
-   that"). Until then a held modifier framed both of its rows as
-   "ready", and the tapped row's chips sank and inverted as well. */
+   is all. No border around the other rows and no pressed-button
+   animation on the chips: only the activated command is marked, which is
+   the simpler read. The hard shadow is what keeps that mark feeling
+   raised rather than flat. */
 .cw-legend li.is-active { border-color: var(--ink); box-shadow: 3px 3px 0 0 var(--ink); background: var(--paper); }
 /* The chips are the tallest thing on a row's first line (a 2px ink frame
    round the glyph, over the name's own height), so they are what the
    short window pays with: 11px in a 2px-and-1px frame at the floor. */
 .cw-legend .key { min-width: 24px; font-size: clamp(11px, calc(1.8 * var(--cw-dens) + 0.5px), 14px); padding: 1px 5px 2px; }
-/* The backtick chip draws the cap's own key, tilde over grave (2026-09-03,
-   the user: "the ` key is only correct for the button, in the explainers,
-   it uses the wrong key"): a bare grave accent in the body face was a
-   stray tick. The same path as the cap, at the chip's type size. */
+/* The backtick chip draws the cap's own key, tilde over grave, so the
+   explainers show the same key the button does: a bare grave accent in
+   the body face is a stray tick. The same path as the cap, at the chip's
+   type size. */
 .cw-legend .key-tick svg { display: inline-block; width: 1.15em; height: 1.15em; vertical-align: -0.2em; fill: none; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
 .cw-legend-name { font-family: var(--font-display); font-size: clamp(13px, calc(1.9 * var(--cw-dens) + 3.5px), 17px); line-height: 1.2; }
 .cw-legend-what {
   grid-column: 2;
-  /* The panel face for the demo's prose (2026-09-03, the user: fonts
-     should "look crisp and readable consistently"): the verbs, the ideas
-     over the display and the bezel's labels are set in it, and Geneva
-     beside them read softer. The site's own prose keeps Geneva. */
+  /* The panel face for the demo's prose, which keeps it crisp and
+     readable at this size: the verbs, the ideas over the display and the
+     bezel's labels are set in it, and Geneva beside them reads softer.
+     The site's own prose keeps Geneva. */
   font-family: var(--font-panel);
   /* A line reserved: the ⌘ sentences rewrite themselves for the other
      world, and a shorter sentence must not shrink its row and move the
@@ -3490,43 +3481,34 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
   line-height: 1.2;
   color: var(--muted);
 }
-/* One row's Crossway sentence ("Go straight to the window you want. No
-   trackpad.") runs to two lines beside the display at the larger type
-   (2026-08-27), and its Native sentence to one: the row reserves two in
-   both worlds, or the rows under it jump when the switch is thrown. The
-   layout suite's rail check is what enforces this; the other three
-   rows' sentences stay one line in both worlds at every size. */
-/* One line (2026-09-03, last of three cuts that day): both of the
-   row's sentences are short enough for the 440px window in both faces,
-   so nothing moves when the switch is thrown; the layout suite's rail
-   check is what holds that. It reserved two lines while its Crossway
-   sentence was "Go straight to the window you want. No trackpad." */
+
+/* One line: both of the row's sentences are short enough for the 440px
+   window in both faces, so nothing moves when the switch is thrown. A
+   row whose sentence wraps in one world and not the other has to reserve
+   both lines, or the rows under it jump. */
 .cw-legend li[data-chord="cmd-tick"] .cw-legend-what { min-height: 1.3em; }
 /* Under the display the window is as wide as the stage, so each box's
    two rows sit side by side, and every sentence reserves two lines, as
    the one that wraps needs. These sit AFTER the plain rules they
    override, because a container at-rule adds no specificity and source
    order is the whole of what separates them: written up in the stacked
-   block beside the .cw-controls line, they were dead from the day they
-   were written (found 2026-09-03 in a review of the two-box window: at
-   1000px wide every legend computed one track and 1.3em). The phone's
-   single column, later in the sheet, still outranks this. */
+   block beside the .cw-controls line they are dead, and at 1000px wide
+   every legend computes one track and 1.3em. The phone's single column,
+   later in the sheet, still outranks this. */
 @container hero (max-width: 1110px) {
   .cw-legend { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .cw-legend-what { min-height: 2.8em; }
 }
-/* A SHORT window, and the one place the density lines cannot reach.
-   The legend's rows and type, the cap unit and the small print are all
-   cut to the window's height now (2026-09-02; the caps and the small
-   print used to be fixed and step here), but the printing on a cap is
-   fixed px and crowds a 48px face, the boxes' own padding and the
-   body's are whole pixels, and the lead row is whole lines that do not
-   scale. Below about 540px of window those fixed costs stop fitting,
-   and since the window takes the display's height rather than its
-   content's, the overflow paints outside it: measured 2026-08-27 at a
-   600px-tall viewport, 1px in the body face and 22px in the terminal's
-   wider one, at any width from 1200px up. (Before that round the window
-   simply grew instead, which put a gap inside the machine.)
+/* A SHORT window, and the one place the density lines cannot reach. The
+   legend's rows and type, the cap unit and the small print are all cut
+   to the window's height, but the printing on a cap is fixed px and
+   crowds a 48px face, the boxes' own padding and the body's are whole
+   pixels, and the lead row is whole lines that do not scale. Below about
+   540px of window those fixed costs stop fitting, and since the window
+   takes the display's height rather than its content's, the overflow
+   paints outside it: at a 600px-tall viewport, 1px in the body face and
+   22px in the terminal's wider one, at any width from 1200px up. (A
+   window left to grow instead puts a gap inside the machine.)
 
    So the fixed blocks give way, and only here. This is a query on the
    window's OWN height, which it can answer because it is a size
@@ -3536,34 +3518,32 @@ html.hacker .cw-keyset-verb { font-family: var(--font-mono); font-size: 19px; }
 @container (max-height: 540px) {
   /* The caps and their printing are on the unit's line now and need no
      step; what steps here is what is still whole pixels. */
-  .cw-group-label { font-size: 17px; }    /* 20 from ~540px up (2026-09-03): two boxes' names cost the ~490px window 4px a box it did not have */
+  .cw-group-label { font-size: 17px; }    /* 20 from ~540px up: two boxes' names cost the ~490px window 4px a box it does not have */
   /* 17 from ~540px up: two lines of it, whole, are what the shortest
      window can spare, and there it gives back the nudge as well, since
-     every pixel under it belongs to the rows (2026-09-03). */
+     every pixel under it belongs to the rows. */
   .cw-hero-idea { font-size: 15px; height: 2.4em; padding-top: 0; }
   /* The verb stands 6px off the caps from ~540px up; at the shortest
      window it gives 2px of that back to each box's rows, which is the
-     last of what the hint's own line cost them (2026-09-03). */
+     last of what the hint's own line cost them. */
   .cw-keyset { gap: 4px 2px; }
   .cw-keys-body { padding-top: 6px; padding-bottom: 6px; }
-  /* .cw-fine has no step-down at all any more: its three sizes are on
-     the window's line in the plain rule (2026-09-02). It once had one
-     HERE, which never applied: the plain rule sets the same properties
-     at the same specificity later in the sheet, so it won every time
-     (found 2026-08-28 by editing the dead line and measuring no change
-     whatsoever), and then one after the plain rule, which the line
-     replaced. The lesson stands for every rule in these blocks. */
+  /* .cw-fine has no step-down here: its three sizes are on the window's
+     line in the plain rule. A rule here setting the same properties
+     loses to that one — same specificity, later in the sheet — so it
+     would be dead however carefully it was written. The lesson stands
+     for every rule in these blocks. */
 }
 
 /* The terminal sets the whole page in its mono face, which is about a
-   fifth wider than the body face, so at THIS pass's larger type three of
-   the four sentences wrapped to two lines there where one does here, and
-   the window's content stopped fitting the display's height: measured
-   2026-08-27, 31px past the foot at 1512x850, where the smaller type it
-   replaced fit with room to spare. A face that sets wider gets its own
-   step down, and the day and night appearances keep theirs. Measured,
-   not guessed, and kept measured: the layout suite runs the terminal at
-   every fold viewport and fails if the window spills. */
+   fifth wider than the body face, so at this type size three of the four
+   sentences wrap to two lines there where one does here, and the
+   window's content stops fitting the display's height: 31px past the
+   foot at 1512x850, where smaller type fits with room to spare. A face
+   that sets wider gets its own step down, and the day and night
+   appearances keep theirs. Measured, not guessed, and kept measured: the
+   terminal has to hold at every fold viewport, and the window must never
+   spill. */
 html.hacker .cw-legend-what { font-size: clamp(11px, calc(1.2 * var(--cw-dens) + 4px), 13px); line-height: 1.3; }
 html.hacker .cw-legend li { padding-top: clamp(1px, calc(3 * var(--cw-dens) - 14px), 6px); padding-bottom: clamp(1px, calc(3 * var(--cw-dens) - 13px), 7px); }
 html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) + 3px), 15px); }
@@ -3587,17 +3567,17 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
 .cw-legend li.is-off .cw-legend-what { color: var(--dim); }
 /* The small print at the foot of the box, under a hairline: this is a
    sketch of the app, not the app. */
-/* The one link in the fine print takes the fine print's own colour
-   (2026-08-28, user directive). Left to itself it inherited --link, the
-   period hyperlink blue, which is right for Download and the mail link
-   in body copy but wrong here: at fine-print size, inside a --muted
-   sentence, a saturated blue is the loudest thing under the keys. It is
-   NOT given the footer's treatment either (.footer .links a is flat
-   --ink with no rule under it), because that reads as chrome and a link
-   inside a sentence should still look like a link. So: the sentence's
-   own colour, the underline kept, and the site's usual hover thickening.
-   color: inherit rather than var(--muted) so it cannot drift if the
-   fine print is ever recoloured, and it follows dark mode for free. */
+/* The one link in the fine print takes the fine print's own colour. Left
+   to itself it inherits --link, the period hyperlink blue, which is
+   right for Download and the mail link in body copy but wrong here: at
+   fine-print size, inside a --muted sentence, a saturated blue is the
+   loudest thing under the keys. It is NOT given the footer's treatment
+   either (.footer .links a is flat --ink with no rule under it), because
+   that reads as chrome and a link inside a sentence should still look
+   like a link. So: the sentence's own colour, the underline kept, and
+   the site's usual hover thickening. color: inherit rather than
+   var(--muted) so it cannot drift if the fine print is ever recoloured,
+   and it follows dark mode for free. */
 .cw-fine a {
   color: inherit;
   text-underline-offset: 2px;
@@ -3608,14 +3588,12 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
 .cw-fine {
   grid-column: 1 / -1;
   margin: 0;
-  /* All three on the window's line (2026-09-02), where they used to be
-     fixed with one step down under 540px: with two groups of keys above
-     it, that step was a 13px cliff at the 564px window of 1440x760,
-     which is exactly where the upper group ran out of room. From the
-     ~490px floor (5px, 10.5px type on 13px lines, the step's old values)
-     to a ~710px window (12px, 12.5px on 17.5px lines, the old full
-     size). The line height is a LENGTH here so it can be cut to the
-     window too: a unitless one cannot be. */
+  /* All three on the window's line. Fixed sizes with one step down under
+     540px make a 13px cliff at the 564px window of 1440x760, which is
+     exactly where the upper group runs out of room. From the ~490px
+     floor (5px, 10.5px type on 13px lines) to a ~710px window (12px,
+     12.5px on 17.5px lines). The line height is a LENGTH here so it can
+     be cut to the window too: a unitless one cannot be. */
   padding-top: clamp(5px, calc(3.1 * var(--cw-dens) - 10px), 12px);
   border-top: var(--border) solid color-mix(in srgb, var(--ink) 30%, transparent);
   font-family: var(--font-panel);
@@ -3636,12 +3614,11 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
      width 316/344 = 91.8605%     height 26/262 = 9.9237% */
 .cw-bezel {
   position: absolute;
-  /* THE SCREEN'S OWN WIDTH. The tray used to start well inside it, at
-     x56 of the 344-unit drawing, leaving the bare bezel to the left of
-     it carrying the mark and the power light. It runs the full width of
-     the well now — x5, w316, the same numbers .cw-screen-mount uses —
-     so the panel and the screen are one column and the machine reads as
-     two stacked rectangles rather than three. */
+  /* THE SCREEN'S OWN WIDTH. The tray runs the full width of the well —
+     x5, w316, the same numbers .cw-screen-mount uses — so the panel and
+     the screen are one column and the machine reads as two stacked
+     rectangles rather than three. A tray inset from the well leaves bare
+     bezel beside it, and the machine reads as three. */
   left: 1.5337%;
   top: 85.0410%;
   width: 96.9325%;
@@ -3656,13 +3633,13 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
      its floor is the track's min-content, so a side whose content
      outgrows its share steals width from the other and the auto middle
      track — the badge — slides off the panel's centre. That is not
-     hypothetical: at the round-20 spacing an adversarial review measured
-     the badge 37.7px left of centre between about 1165 and 1265px wide,
-     where the panel is at its narrowest, and zero everywhere else, which
-     is exactly the shape of a bug that a fixed set of test widths walks
-     straight past. A zero floor makes the two columns equal
-     unconditionally, so the centring is arithmetic rather than a
-     property of the current content. */
+     hypothetical: at the round-20 spacing the badge measures 37.7px left
+     of centre between about 1165 and 1265px wide, where the panel is at
+     its narrowest, and zero everywhere else, which is exactly the shape
+     of a defect that a fixed set of sample widths walks straight past. A
+     zero floor makes the two columns equal unconditionally, so the
+     centring is arithmetic rather than a property of the current
+     content. */
   grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
   box-sizing: border-box;
@@ -3701,17 +3678,16 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
      the two settings visibly paired at the smallest rendered monitor;
      the previous 16.5% inset compressed their gap below 10px there.
      Re-solve it if either side's content changes width. */
-  /* BOUNDED by the content (2026-09-03): the settings side holds 251px
-     of controls that do not scale with the display, so at a narrow
-     display 16.4% of the column left less than that between the badge
-     and the edge, and the switch sat 25px over the badge with the wheel
-     25px past the panel at the 640px floor (a 13-inch laptop with a
-     browser's chrome), measured 2026-09-01. The inset is now the smaller
-     of the solved share and what leaves the two settings their 11px
-     pair, never under 4px, on BOTH sides (the switch has room to spare,
-     but the same number on both sides is what keeps the badge's gaps
-     and margins equal by construction). Above ~900px of display the
-     share wins and nothing changes. */
+  /* BOUNDED by the content: the settings side holds 251px of controls
+     that do not scale with the display, so at a narrow display 16.4% of
+     the column leaves less than that between the badge and the edge, and
+     the switch sits 25px over the badge with the wheel 25px past the
+     panel at the 640px floor (a 13-inch laptop with a browser's chrome).
+     The inset is the smaller of the solved share and what leaves the two
+     settings their 11px pair, never under 4px, on BOTH sides (the switch
+     has room to spare, but the same number on both sides is what keeps
+     the badge's gaps and margins equal by construction). Above ~900px of
+     display the share wins and nothing changes. */
   padding-inline: clamp(4px, calc((100% - 262px) / 2), 16.4%);
   box-sizing: border-box;
 }
@@ -3725,12 +3701,10 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
 .cw-bezel-mode .cw-toggle { width: 100%; justify-content: space-between; }
 .cw-toggle-side { display: flex; align-items: center; gap: 7px; }
 /* The switch's two SIDES are named larger than the rest of the panel's
-   silkscreen (2026-08-28, the user: "the text for crossway and macos
-   native on the left should be larger — 70% or so. rest of the text
-   should remain same size"). 1.7x the engrave size, and only the two
-   labels that carry a data-side: the "App Switcher" caption under them,
-   "Include Minimized Windows" and "Blur" are all .cw-engrave too and
-   stay where they were. */
+   silkscreen: 1.7x the engrave size, and only the two labels that carry
+   a data-side. The "App Switcher" caption under them, "Include Minimized
+   Windows" and "Blur" are all .cw-engrave too and stay at the panel's
+   own size. */
 .cw-toggle .cw-engrave[data-side] { font-size: calc(11px * 1.4); }
 /* Each control is two ROWS of fixed height: the control, then its
    engraved label. Fixed, so the three controls share one centre line
@@ -3754,24 +3728,23 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
   align-items: center;
   justify-content: center;
   /* A FIXED width, because this is the grid's auto middle track and the
-     two badges are not the same shape: Crossway's mark is 47.3px wide at
+     two badges are not the same shape: Crossway's mark is 52.0px wide at
      this height and Apple's is 36.9px. Left to size itself, the track
-     narrowed by 10.4px when the switch was thrown and every control on
-     the panel slid 4.4px sideways — the badge stayed centred, but the
-     furniture moved under it. Wide enough for the wider of the two, and
-     the narrower one centres in it: 53px since the mark grew a tenth on
-     2026-09-03 (47.3 becomes 52.0, and the box has to clear it). */
+     narrows by the difference when the switch is thrown and every
+     control on the panel slides sideways by half of it — the badge stays
+     centred, but the furniture moves under it. Wide enough for the wider
+     of the two, and the narrower one centres in it: 53px, which clears
+     the 52.0. */
   width: 53px;
 }
 /* No `display` on this shared rule: it would out-specify the two rules
    below that show one badge and hide the other, and both would paint —
    which is exactly what happened first time round. Size and paint only. */
 .cw-bezel-logo svg {
-  /* Twice the size it shipped at (2026-08-28, the user), and a tenth
-     bigger again on 2026-09-03 ("10% bigger than they are now"). It is
-     the one thing on the panel with no label under it, so it does not
-     belong on the controls' row: it centres on the PANEL, across both
-     rows, which is where a maker's mark sits. */
+  /* Sized to read as a maker's mark rather than as a control. It is the
+     one thing on the panel with no label under it, so it does not belong
+     on the controls' row: it centres on the PANEL, across both rows,
+     which is where a maker's mark sits. */
   height: 44px;
   width: auto;
   overflow: visible;
@@ -3787,8 +3760,8 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
 .cw-stage.is-native .cw-logo-apple { display: block; }
 
 /* Silkscreen: the body face in title case, in ink, as a label printed on
-   a case is. Small caps were tried and read as a web eyebrow; so did
-   tracked grey Chicago. */
+   a case is. Small caps read as a web eyebrow here, and so does tracked
+   grey Chicago. */
 .cw-engrave {
   font-family: var(--font-panel);
   font-size: 11px;
@@ -3925,11 +3898,9 @@ html.hacker .cw-legend-name { font-size: clamp(12px, calc(1.6 * var(--cw-dens) +
    selector to reach the rule that inks it: `.cw-slider[data-blur="N"]
    .cw-scale i:nth-child(N+1)` counts four class-likes and a type, and a
    plainer `.cw-settings.is-disabled .cw-scale i` counts three, so it
-   loses and the one word stayed black and bold inside a panel that is
-   otherwise entirely grey (measured, 2026-08-27; the `<output>` this
-   scale replaced greyed correctly, so it was a regression, not an
-   omission). This selector ties on specificity and sits after, which is
-   what makes it win. */
+   loses and the one word stays black and bold inside a panel that is
+   otherwise entirely grey. This selector ties on specificity and sits
+   after, which is what makes it win. */
 .cw-settings.is-disabled .cw-slider .cw-scale i { color: var(--dim); font-weight: 400; }
 .cw-settings.is-disabled .cw-set { cursor: default; }
 .cw-settings.is-disabled .cw-led { border-color: var(--dim); }
@@ -4058,11 +4029,10 @@ html.retro #demo { display: none; }
   /* The desktop's stretch machinery is grid machinery, and there is no
      grid here: the inset that makes the monitor's panel symmetric, and
      the switch stretched to fill it, only mean something between two
-     equal columns either side of a badge. Left on, they made the switch
-     361px wide inside a 351px panel — measured at a true 375px viewport,
-     which is a width the test harness cannot even produce (it clamps to
-     500), so nothing caught it. Off, the switch is its own width again
-     and the row wraps around it. */
+     equal columns either side of a badge. Left on, they make the switch
+     361px wide inside a 351px panel at a true 375px viewport, a width
+     narrow enough that wider sample viewports never reach it. Off, the
+     switch is its own width again and the row wraps around it. */
   .cw-bezel-mode,
   .cw-settings { padding-inline: 0; justify-self: auto; }
   .cw-bezel-mode .cw-toggle { width: auto; justify-content: center; }
