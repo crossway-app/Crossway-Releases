@@ -90,9 +90,11 @@
     <p class="tagline">A fast and powerful window switcher for macOS</p>
   </section>
 
-  <!-- THE LIVE HERO. A 1993 PowerBook in the page's own 1-bit line art,
-       with a real modern macOS on its screen. The clash is deliberate and
-       it is the joke the rest of the page already tells.
+  <!-- THE LIVE HERO. A display in the page's own 1-bit line art, with a
+       real modern macOS on its screen: the drawing is of this decade
+       since 2026-09-03 (thin bezel, no stand), the line it is drawn in
+       is of the other one, and that clash is the joke the rest of the
+       page already tells.
 
        The chassis is one fixed-viewBox SVG: static furniture, nothing
        that moves. The screen is a DOM overlay positioned in percentages
@@ -146,15 +148,25 @@
            cost against that constant. -->
       <div class="cw-stage">
       <div class="cw-machine cw-display">
-        <!-- A 1993 Apple display, drawn as its manual would have drawn
-             it: paper, the page's own ink line, and form carried by a few
-             solid blacks. No tone and no dot pattern anywhere: the
-             QuickDraw patterns the laptop wore read as perforation at
-             this size, which is what got it rejected. The screen is the
-             product and the drawing is its frame, so the well takes
-             91.9% of the width (x14 y14 w316 h197.5 of 344x262, at 8:5
-             like every display of the era) and the case around it is
-             boxy, with the small radii of the page's own buttons.
+        <!-- A display, drawn as a manual would have drawn it: paper, the
+             page's own ink line, and form carried by a few solid blacks.
+             No tone and no dot pattern anywhere: the QuickDraw patterns
+             the laptop wore read as perforation at this size, which is
+             what got it rejected. The screen is the product and the
+             drawing is its frame, so the well takes 96.9% of the width
+             (x5 y5 w316 h197.5 of 326x244, at 8:5) inside a 5-unit
+             bezel, with a deeper chin under it for the controls, as a
+             modern panel has.
+
+             A 1993 monitor until 2026-09-03, with a 14-unit bezel, a
+             sunk CRT recess and a neck-and-foot stand, which the user
+             had removed: "remove the base of the monitor, so we're only
+             left with what is the display + the bottom pane of
+             controls... shrink the bezels dramatically so that it looks
+             like a modern display (but without the cutout at the top)...
+             increase the size of the new monitor+settings pane to fill
+             the space we gain". The screen inside it was always today's
+             macOS; the case is now of the same year.
 
              The live desktop is a DOM overlay registered to the well in
              percentages of the same box, so it tracks the drawing at
@@ -165,31 +177,26 @@
              must not grow the box the mount's percentages resolve
              against. -->
         <div class="cw-display-frame">
-          <svg class="cw-chassis" viewBox="0 0 344 262" role="img" aria-label="A 1993 Apple display with Crossway running on its screen.">
-            <!-- The base, drawn first so the case's own line overlaps the
-                 neck. A monitor without one reads as a picture frame. -->
-            <rect class="cw-case" x="122" y="247" width="100" height="5.5"/>
-            <rect class="cw-case" x="82" y="252" width="180" height="8.5" rx="2.5"/>
-            <rect class="cw-case" x="0.75" y="0.75" width="342.5" height="246.5" rx="3"/>
-            <!-- The recess. A hairline frame, and a solid band on the two
-                 walls away from the light, which is how a manual drawing
-                 says "sunk into the case". The band is the page's own 3px
-                 shadow weight, not a scaled bar. -->
-            <rect class="cw-bezel-inner" x="11.5" y="11.5" width="321" height="202.5" rx="1"/>
-            <line class="cw-recess" x1="11.5" y1="12.75" x2="332.5" y2="12.75"/><line class="cw-recess" x1="12.75" y1="11.5" x2="12.75" y2="214"/>
+          <svg class="cw-chassis" viewBox="0 0 326 244" role="img" aria-label="A display with Crossway running on its screen.">
+            <!-- The case: ONE panel, a 5-unit bezel round the screen and
+                 a chin under it for the controls. No stand, and no
+                 recess: a modern display is a flat front, not a CRT sunk
+                 into a case, and the two walls of shadow that said so
+                 have nowhere to sit in a bezel this thin. -->
+            <rect class="cw-case" x="0.75" y="0.75" width="324.5" height="242.5" rx="5"/>
             <!-- The well. Its fill is under the overlay and never seen;
-                 its corners are the CRT face's, and the overlay clips to
+                 its corners are the screen's, and the overlay clips to
                  the same ones. -->
-            <rect class="cw-well" x="14" y="14" width="316" height="197.5" rx="3" fill="var(--desktop-b)" stroke="currentColor"/>
+            <rect class="cw-well" x="5" y="5" width="316" height="197.5" rx="3" fill="var(--desktop-b)" stroke="currentColor"/>
             <!-- The tray along the bottom bezel holds the demo's settings
                  as hardware (the .cw-bezel overlay registers to it:
-                 x14..330, y216..242, the screen's own width). The mark is
+                 x5..321, y207.5..237.5, the screen's own width). The mark is
                  centred in it and the power light belongs to the switch,
                  both of which used to sit on the bare bezel to its left,
                  as the displays of the era wore them. The light is lit
                  while Crossway is the switcher on the screen and goes
                  dark when the switch says Native. -->
-            <rect class="cw-strip" x="14" y="216" width="316" height="26" rx="3"/>
+            <rect class="cw-strip" x="5" y="207.5" width="316" height="30" rx="3"/>
             <!-- The mark: Crossway's own, the switcher as an icon, an ink
                  frame with the app row as one pane above the three window
                  panes. Drawn, so it inverts with the rest of the case. -->
