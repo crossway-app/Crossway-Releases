@@ -10,9 +10,9 @@
   var root = document.getElementById("cw-screen");
   if (!root) { return; }
 
-  /* The mounted hero, reachable for the rendered suite's probes (which
-     let a held modifier go through keys.clear(), since the modifier
-     caps are art and take no click). */
+  /* The mounted hero, published on window so page scripts can drive it
+     (a held modifier is released through keys.clear(), since the
+     modifier caps are art and take no click). */
   window.CrosswayHero = CrosswayStage.mountHero({
     root: root,
     status: document.getElementById("cw-status"),
