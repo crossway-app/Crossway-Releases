@@ -20,7 +20,7 @@ Crossway replaces the built-in app switcher with one that understands *windows*,
 
 ## Requirements
 
-- macOS 14 (Sonoma) or later — Sequoia and Tahoe included.
+- macOS 14 to 26.
 - Apple Silicon or Intel (the app is universal).
 
 ## Download
