@@ -276,34 +276,33 @@
 .settings-table tbody tr + tr td { border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent); }
 
 /* ---- Landing on a fragment, under a bar that wraps -------------------- */
-/* MEASURED, not assumed (headless Chrome, this page and the homepage
-   alike): the sticky menu bar is 35px on one row, 69px on two (701 to
-   799px, where the links wrap under the title), 71px at 501 to 700, and
-   101px on three rows below 500. The shared sheet reserves 52px, and 84px
-   below its own 700px breakpoint, so between 701 and 799 a fragment lands
-   17px UNDER the bar and below 500 it lands against it. With 84 anchors on
-   this page that is the difference between a link that works and one that
-   hides its own heading, so the page reserves what the bar actually takes.
-   Page-scoped on purpose: the same shortfall exists on the other pages and
-   belongs to the shared sheet. Generous is harmless here (a little more
-   room above the heading); short is not. */
+/* MEASURED, not assumed, on this page and the homepage alike: the
+   sticky menu bar is 35px on one row, 63 to 69px on two (701
+   to 809px, where the links wrap under the title), 71px at 620 to 700,
+   and 97 to 101px on three rows below 620. The shared sheet steps its own
+   padding with the bar too; this page keeps steps of its own
+   that are more generous at every width (4px over the shared sheet's
+   largest in each band), because with 84 anchors on it that is the
+   difference between a link that works and one that hides its own
+   heading. Generous is harmless here (a little more room above the
+   heading); short is not. */
 @media (max-width: 700px) {
-  html { scroll-padding-top: 110px; }
+  html { scroll-padding-top: 118px; }
 }
 /* And one step narrower still: at 320px the links wrap onto a FOURTH row and
-   the bar is 132px, so the 110px above leaves a heading 22px under it.
+   the bar is 132px, so the 118px above leaves a heading 14px under it.
    Measured across 280/300/320/340/360/375/420/500: 132px at and below 320,
    101px from 340 up. The boundary sits between those two, and being generous
    here costs a little headroom on a narrow phone while being short costs a
    heading. */
 @media (max-width: 350px) {
-  html { scroll-padding-top: 142px; }
+  html { scroll-padding-top: 150px; }
 }
-@media (min-width: 701px) and (max-width: 799px) {
-  html { scroll-padding-top: 78px; }
+@media (700px < width < 810px) {   /* the bar is on two rows up to 809px (63px at 800), not 799; range syntax, so a zoomed 700.5px is covered */
+  html { scroll-padding-top: 84px; }
   /* The sticky list rides the same measurement: parked at the one-row
      offset, its first 17px sit behind a two-row bar. */
-  .features-toc { top: 78px; }
+  .features-toc { top: 84px; }
 }
 
 /* ---- Narrow screens -------------------------------------------------- */
