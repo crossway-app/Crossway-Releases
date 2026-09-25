@@ -540,8 +540,8 @@
      Poses are SEATED as they are built: a body whose lowest pixels sit
      above the last row would float, and since the page plants the
      sprite's bottom edge on the stage floor, every cut into or out of
-     that pose makes the character jump (drawn 2 rows shy, he dropped
-     24 px the instant his charge ended). Seating here means redrawing
+     that pose makes the character jump (drawn 2 rows shy, he drops
+     24 px the instant his charge ends). Seating here means redrawing
      a frame can never bring that back — draw a pose anywhere in its
      32 rows and it still stands on the floor. The starburst is not a
      body and keeps the height it was drawn at. */
@@ -609,8 +609,8 @@
   /* How wide the sprite actually renders, in vw. The size comes from
      --cameo-size, which is a min() of a vh and a vw term, so how much
      of the stage one body covers depends on the window's shape: the
-     same 12vw that read as a rifle-length on a laptop was empty air
-     on an ultrawide (the partner swung at nothing and the chief died
+     same 12vw that reads as a rifle-length on a laptop is empty air
+     on an ultrawide (the partner swings at nothing and the chief dies
      anyway) and an overlap on a phone. So anything that has to MEET
      something else — the melee, and every exit — is measured in
      bodies, not in vw. Read from the DOM so the stylesheet stays the
