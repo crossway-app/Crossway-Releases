@@ -79,9 +79,9 @@
     var t = e.target;
     var lamp = t && t.closest ? t.closest(".lamp") : null;
     if (!lamp) { return; }
-    /* The terminal is no longer inert here: it has a light palette now, so
-       the flip changes what the visitor sees in the terminal exactly as it
-       does outside it. Still not under a dissolve. */
+    /* The terminal is not inert here: it has a light palette as well as a
+       dark one, so the flip changes what the visitor sees in the terminal
+       exactly as it does outside it. Still not under a dissolve. */
     if (busy) { return; }
     toggle();
   }
@@ -147,12 +147,11 @@
   }
 
   function trigger() {
-    /* The terminal used to own the appearance outright and this returned
-       early, because one dark palette meant a flip changed nothing. It has
-       a daylight palette now, so the flip is worth playing: .day and .night
-       select the terminal's two faces the same way they select the site's,
-       and leaving the terminal drops the visitor back into the appearance
-       they were already in. */
+    /* No early return for the terminal: it has a daylight palette as well
+       as a dark one, so a flip changes what it shows and is worth playing.
+       .day and .night select the terminal's two faces the same way they
+       select the site's, and leaving the terminal drops the visitor back
+       into the appearance they were already in. */
     if (busy) {
       return;
     }
