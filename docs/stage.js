@@ -20,8 +20,8 @@
    ---------------------------------------------------------------------
    FIDELITY CONTRACT
 
-   This file is a few hundred lines standing in for a six-thousand-line
-   controller, so it should say plainly what it does and does not claim.
+   This file is a small model standing in for the whole of the app's
+   switcher, so it should say plainly what it does and does not claim.
    The risk it guards against is drift: the app moves, this does not, and
    the hero quietly starts lying.
 
@@ -38,9 +38,9 @@
        repeated taps ping-pong between the two most recent
      · the native ruleset: an app-only switcher, a chrome-less window
        walk through a frozen order, and no exposé at all
-     · the preview pane's delayed first drop, followed on every advance
-       by a geometry-stable pending view that refreshes only after
-       PREVIEW_DELAY of rest
+     · the preview pane's delayed first drop, and on every advance the
+       strip's fold, dropping again with the new app's windows only
+       after PREVIEW_DELAY of rest
      · minimized windows: off the desktop and in the Dock, offered by
        the switcher only when the Include minimized option says so, and
        restored by activating them
@@ -149,10 +149,10 @@
     /* A big Terminal window sits over the film: about a fifth of the
        film shows (its bottom band, where the skyline plays), so choosing
        it in the switcher visibly brings it forward. */
-    { id: "tm1", app: "terminal", title: "~/Projects/Crossway — zsh",              sketch: SKETCH.CODE,  x: 34, y: 28, w: 46, h: 46 },
+    { id: "tm1", app: "terminal", title: "~/Documents — zsh",                      sketch: SKETCH.CODE,  x: 34, y: 28, w: 46, h: 46 },
     { id: "fd1", app: "finder",   title: "Crossway",                               sketch: SKETCH.FILES, x: 46, y: 4,  w: 52, h: 26 },
     { id: "sa2", app: "safari",   title: "Crossway in two minutes",                sketch: SKETCH.VIDEO, x: 37, y: 33, w: 46, h: 48 },
-    { id: "tm2", app: "terminal", title: "run-tests.sh — 1815 passing",            sketch: SKETCH.CODE,  x: 2,  y: 60, w: 26, h: 30 },
+    { id: "tm2", app: "terminal", title: "~/Downloads — zsh",                      sketch: SKETCH.CODE,  x: 2,  y: 60, w: 26, h: 30 },
     { id: "tm3", app: "terminal", title: "~ — top",                                sketch: SKETCH.CODE,  x: 30, y: 20, w: 46, h: 46, minimized: true },
     { id: "sa3", app: "safari",   title: "Apple Developer Documentation",          sketch: SKETCH.PAGE,  x: 10, y: 16, w: 44, h: 50, minimized: true },
     /* Finder's second window. Least recent, so every index above it is
@@ -243,17 +243,16 @@
     CLOSED: "closed",
     WAITING: "waiting",
     CURRENT: "current",
-    PENDING: "pending",
   };
 
-  /* Which modifier owns a chord. The real app enforces ⌘/⌥ mutual
-     exclusion through sessionOwner; here a chord belonging to the other
+  /* Which modifier owns a chord. The real app keeps ⌘ and ⌥ sessions
+     mutually exclusive; here a chord belonging to the other
      modifier ends the open session and starts its own, which is the only
      reading that makes sense when the input is buttons. */
   var OWNER = { "cmd-tab": "cmd", "cmd-tick": "cmd", "opt-tab": "opt", "opt-tick": "opt" };
 
   /* Advance wraps in both directions and never clamps. One helper for
-     apps, windows, and the grid — the real controller uses one too. */
+     apps, windows, and the grid — the real app uses one too. */
   function nextIndex(current, count, reverse) {
     if (count <= 0) { return 0; }
     return reverse ? (current - 1 + count) % count : (current + 1) % count;
@@ -481,12 +480,24 @@
     }
 
     if (chord === "opt-tab" || chord === "opt-tick") {
-      if (state.mode === MODE.GRID) {
+      var scope = chord === "opt-tick" ? "app" : "all";
+      /* The OTHER grid's chord inside an open grid switches to that grid
+         (⌥` in the all-windows grid shows the front app's windows, ⌥Tab
+         in the app's grid shows every window), and the same chord walks
+         the grid that is open. The app walks the open grid on either
+         chord; the demo parts from it on purpose so a visitor clicking
+         "All windows" then "App windows" sees the two features, not the
+         same grid stepping on. */
+      if (state.mode === MODE.GRID && state.gridScope === scope) {
         var e = Object.assign({}, state);
         e.gridIndex = nextIndex(state.gridIndex, state.gridWindows.length, reverse);
         return e;
       }
-      return openGrid(state, chord === "opt-tick" ? "app" : "all", reverse);
+      if (state.mode === MODE.GRID) {
+        var other = openGrid(state, scope, reverse);
+        return other.mode === MODE.GRID && other.gridScope === scope ? other : state;
+      }
+      return openGrid(state, scope, reverse);
     }
 
     return state;
@@ -657,7 +668,10 @@
 
   /* The smallest a window can be dragged to, in percent of the desktop:
      a title bar with a little body under it, still a window and still
-     catchable. The largest is the screen, which the zoom already knows. */
+     catchable. The largest is the screen, which the zoom already knows.
+     A pull may bring a floor of its own in the same percent (`from.min`,
+     the wiring's floorFor), and the larger of the two holds: on a phone's
+     small desktop this share leaves a window no taller than its bar. */
   var MIN_WIN = { w: 18, h: 16 };
 
   /* Resize by an edge or a corner. `frame` is where the pointer would
@@ -667,6 +681,8 @@
      do not resize; the zoom is the size. */
   function resizeWindow(state, id, frame, from) {
     from = from || {};
+    var minW = Math.max(MIN_WIN.w, (from.min && from.min.w) || 0);
+    var minH = Math.max(MIN_WIN.h, (from.min && from.min.h) || 0);
     return mapWindow(state, id, function (w) {
       if (w.zoomed) { return w; }
       var x = frame.x, y = frame.y;
@@ -676,13 +692,13 @@
       if (right > 100) { right = 100; }
       if (bottom > 100) { bottom = 100; }
       var width = right - x, height = bottom - y;
-      if (width < MIN_WIN.w) {
-        if (from.l) { x = right - MIN_WIN.w; }
-        width = MIN_WIN.w;
+      if (width < minW) {
+        if (from.l) { x = right - minW; }
+        width = minW;
       }
-      if (height < MIN_WIN.h) {
-        if (from.t) { y = bottom - MIN_WIN.h; }
-        height = MIN_WIN.h;
+      if (height < minH) {
+        if (from.t) { y = bottom - minH; }
+        height = minH;
       }
       if (x + width > 100) { x = 100 - width; }
       if (y + height > 100) { y = 100 - height; }
@@ -800,7 +816,7 @@
       selectWindow: function (i) { state = selectWindow(state, i); return state; },
       selectGrid: function (i) { state = selectGrid(state, i); return state; },
       /* Changing what the switcher may reach mid-session would move the
-         selection under the user, so this abandons the session first —
+         selection under the visitor, so this abandons the session first —
          the same reasoning as the mode switch below. */
       raiseWindow: function (id) { state = raiseWindow(state, id); return state; },
       closeWindow: function (id) { state = closeWindow(state, id); return state; },
@@ -1050,11 +1066,16 @@
       lights.appendChild(el("i", "cw-light cw-light-" + k));
     });
     bar.appendChild(lights);
-    bar.appendChild(el("span", "cw-win-title", win.title));
+    var title = el("span", "cw-win-title", win.title);
+    bar.appendChild(title);
     var body = el("div", "cw-win-body cw-body-" + win.sketch);
     body.appendChild(buildSketch(win.sketch, projector));
     w.appendChild(bar);
     w.appendChild(body);
+    /* Kept for the desktop's wiring, which asks where the lights' corner
+       of the bar ends on every move of the pointer (edgeFor). */
+    w._cwBar = bar;
+    w._cwTitle = title;
     return w;
   }
 
@@ -1404,9 +1425,14 @@
     dock.appendChild(dockApps);
     dock.appendChild(dockSep);
     dock.appendChild(dockMins);
+    /* The blur behind an open switcher: one layer over the whole screen,
+       under the grid and the pane (see .cw-backdrop). */
+    var backdrop = el("div", "cw-backdrop");
+    backdrop.setAttribute("aria-hidden", "true");
     root.appendChild(menubar);
     root.appendChild(desktop);
     root.appendChild(dock);
+    root.appendChild(backdrop);
     root.appendChild(grid);
     root.appendChild(panel);
 
@@ -1627,9 +1653,9 @@
 
          the ROW appears the instant a session opens, and
          the STRIP first drops once the selection has rested for
-         PREVIEW_DELAY. After it has appeared, an advance keeps that
-         same strip mounted and open as an inert pending view, then
-         refreshes its contents after the next PREVIEW_DELAY of rest.
+         PREVIEW_DELAY. After it has appeared, an advance folds it,
+         and it drops again with the new app's windows after the next
+         PREVIEW_DELAY of rest, as the app's own pane does.
 
        Window mode is the exception the app itself makes: cmd-backtick
        shows its strip in one frame, because the strip IS the point of
@@ -1642,8 +1668,6 @@
       if (panel.inert !== !open) { panel.inert = !open; }
       if (!open) {
         fold.classList.remove("is-dropped");
-        fold.classList.remove("is-pending");
-        setAttr(fold, "aria-busy", "false");
         setAttr(strip, "aria-hidden", "true");
         if (!strip.inert) { strip.inert = true; }
         setCachedProjectorsActive(stripCache, false);
@@ -1700,28 +1724,24 @@
           (widest - 1) + " * var(--cw-strip-gap))"
         : "");
 
-      /* Four phases keep content, geometry and readiness independent.
-         `paneOpen` remains a renderer-only compatibility seam for tests
-         and embedders that predate the explicit phase contract. */
+      /* Three phases keep content, geometry and readiness independent.
+         `paneOpen` is kept as a renderer-only compatibility seam for
+         tests and embedders that read one flag rather than the phases. */
       var phase = view.panePhase ||
         (view.paneOpen ? PANE_PHASE.CURRENT : PANE_PHASE.CLOSED);
       if (state.mode === MODE.WINDOW) { phase = PANE_PHASE.CURRENT; }
-      var pending = state.mode === MODE.APP && phase === PANE_PHASE.PENDING;
       var current = phase === PANE_PHASE.CURRENT;
-      var dropped = pending
-        ? strip.children.length > 0
-        : wins.length > 0 && current;
+      var dropped = wins.length > 0 && current;
 
-      /* Reconcile only when the pane reaches CURRENT. During PENDING the
-         already-visible keyed children remain mounted and the pane keeps
-         its geometry; only its emphasis changes, and it is inert and
-         hidden from assistive technology. Rebuilding the NEXT app
-         inside a collapsing pane briefly shows those windows, removes
-         them with the fold, and rebuilds them once more at the delayed
-         drop, which flashes. A settled draw performs one keyed refresh
-         to the final app, so no intermediate selection creates or
-         destroys preview nodes. */
-      if (dropped && !pending) {
+      /* Reconcile only while the strip is dropped. On an app advance it
+         FOLDS (the scheduler below), and the tiles already there stay
+         mounted and fold away with it: rebuilding the NEXT app inside a
+         collapsing pane would show those windows, take them away with
+         the fold, and build them once more at the drop, which flashes.
+         The drop after the rest performs one keyed refresh to the app
+         then selected, so no intermediate selection creates or destroys
+         preview nodes. */
+      if (dropped) {
         reconcile(strip, wins, stripCache,
           function (w) { return w.id; },
           function (w) {
@@ -1743,10 +1763,8 @@
       }
 
       fold.classList.toggle("is-dropped", dropped);
-      fold.classList.toggle("is-pending", pending);
-      setAttr(fold, "aria-busy", pending ? "true" : "false");
-      setAttr(strip, "aria-hidden", dropped && !pending ? "false" : "true");
-      var stripInert = !dropped || pending;
+      setAttr(strip, "aria-hidden", dropped ? "false" : "true");
+      var stripInert = !dropped;
       if (strip.inert !== stripInert) { strip.inert = stripInert; }
       setCachedProjectorsActive(stripCache, dropped);
     }
@@ -1783,6 +1801,10 @@
   /* How long a tapped cap stays struck. Long enough to see, short enough
      to keep up with a burst. */
   var STRIKE_MS = 240;
+  /* How long a key that is still down from the last tap stays UP before
+     the next tap presses it again: the up-stroke's own 70ms, so every
+     tap in a quick burst shows as a lift and a press. */
+  var RESTRIKE_MS = 70;
   /* How long after the last tap a held modifier lets itself go, which
      is what commits. The modifier caps are art and take no click, so a
      visitor taps, looks, and the switch lands, the way it does when a
@@ -1801,12 +1823,14 @@
        gestures; and
 
        the preview strip first drops after PREVIEW_DELAY; once visible,
-       every advance leaves its current nodes and geometry mounted as a
-       pending view, then refreshes it after PREVIEW_DELAY of rest.
+       every advance FOLDS it, as the app's does, and it drops again with
+       the newly selected app's windows after PREVIEW_DELAY of rest.
 
      Advancing therefore restarts the clock, which is what makes a fast
      walk through the row stay calm instead of rebuilding intermediate
-     panes. Window mode is exempt: cmd-backtick shows its strip at once,
+     panes, and the previous app's windows never stand under the next
+     app's name, as they would if the strip stayed open and dimmed
+     through the whole delay. Window mode is exempt: cmd-backtick shows its strip at once,
      because there the strip is the command rather than a bloom on it.
      ==================================================================== */
   function createController(opts) {
@@ -1816,6 +1840,9 @@
     var menuOpen = false;
     var timer = null;
     var status = opts.status || null;
+    /* Whether to keep the sentence to itself: the page says so while the
+       automatic demo drives (mountHero). */
+    var quiet = opts.quiet || function () { return false; };
     var spoken = "";
     var lastCommit = null;
 
@@ -1832,11 +1859,10 @@
 
     function armDrop() {
       clearDrop();
-      /* Once the strip has been seen, keep its shell and current tiles
-         mounted while the new app settles. Before the first bloom there
-         is no content to preserve, so the phase stays purely waiting. */
-      panePhase = panePhase === PANE_PHASE.CURRENT || panePhase === PANE_PHASE.PENDING
-        ? PANE_PHASE.PENDING : PANE_PHASE.WAITING;
+      /* Waiting, whether or not the strip was open: an open strip folds
+         now, and the drop below brings it back with the app that is
+         selected when the visitor rests. */
+      panePhase = PANE_PHASE.WAITING;
       timer = setTimeout(function () {
         timer = null;
         panePhase = PANE_PHASE.CURRENT;
@@ -1869,6 +1895,7 @@
       var line = describeState(stage.state, lastCommit);
       if (line === spoken) { return; }
       spoken = line;
+      if (quiet()) { return; }
       if (status) { status.textContent = line; }
     }
 
@@ -1895,7 +1922,10 @@
     return {
       get state() { return stage.state; },
       _spoken: function () { return spoken; },
-      press: function (chord, o) { stage.press(chord, o); return settle(); },
+      /* A chord closes the app menu, as Command-Tab does on a Mac: the
+         demo's own taps included, which would otherwise run on under a
+         menu the visitor left open. */
+      press: function (chord, o) { menuOpen = false; stage.press(chord, o); return settle(); },
       advance: function (o) { stage.advance(o); return settle(); },
       escape: function () { lastCommit = null; stage.escape(); return settle(); },
       release: release,
@@ -1933,7 +1963,7 @@
       /* Test seam: the pane's visibility is timing, not switcher state,
          so it is not on `state` and needs its own window. */
       _paneOpen: function () {
-        return panePhase === PANE_PHASE.CURRENT || panePhase === PANE_PHASE.PENDING;
+        return panePhase === PANE_PHASE.CURRENT;
       },
       _panePhase: function () { return panePhase; },
       _pending: function () { return timer !== null; },
@@ -1948,25 +1978,25 @@
 
      macOS reserves these chords at the OS level, so pressing them for
      real would switch the visitor's own apps rather than the demo's. So
-     the keys the visitor presses ARE the keyboard: four caps beside the
-     screen. The two modifiers LATCH — a click holds ⌘ or ⌥ down, a
-     second click lets it go, and letting go is what commits, exactly as
-     releasing the real key does. The two keys TAP: every click is one
-     more tap of Tab or backtick, because that is the part of the gesture
-     that moves the selection, and a visitor needs to do it repeatedly to
-     see the switcher walk. A held modifier plus a tapped key is one
-     press of that chord, and the reducer already knows whether that
-     opens, advances or descends, so this hands the chord straight over
-     rather than deciding for it.
+     the visitor clicks the CHORDS: four panes beside the screen, one per
+     chord, each drawing its two keys. A click on a pane is one more tap
+     of its key (Tab or backtick) with its modifier held: the modifier
+     goes down first if it is not already, and stays down, and a pause
+     after the last tap lets it go, which is what commits, exactly as
+     releasing the real key does. Tapping repeatedly is what walks the
+     switcher, so every click is one more tap. A held modifier plus a
+     tapped key is one press of that chord, and the reducer already
+     knows whether that opens, advances or descends, so this hands the
+     chord straight over rather than deciding for it.
 
      Only one modifier is ever held. Holding the other lets the first go
      first, so the new chord starts from rest.
 
-     Without Crossway the ⌥ cap is unavailable: aria-disabled rather than
-     the disabled attribute, deliberately, so it stays focusable; greyed
-     rather than hidden, because a key you cannot have is the pitch. The
-     legend's rows follow the same rule, light the chord in effect, and
-     say what the chord does in whichever world is on the screen.
+     Without Crossway the ⌥ panes are unavailable: aria-disabled rather
+     than the disabled attribute, deliberately, so they stay focusable;
+     greyed rather than hidden, because a key you cannot have is the
+     pitch. The panes light the chord in effect, and say what the chord
+     does in whichever world is on the screen.
      ==================================================================== */
   function wireKeys(rail, controller, o) {
     o = o || {};
@@ -1977,13 +2007,13 @@
       return { hold: noop, tap: noop, clear: noop, sync: noop, _held: function () { return null; } };
     }
     function attr(el, name) { return el && el.getAttribute ? el.getAttribute(name) : null; }
-    /* The caps, by key. The two modifiers are one cap each. Tab and
-       backtick are drawn once PER GROUP (the keys window is two boxes,
-       "View applications" over "View windows", each complete with its
-       own tap keys), so those are a LIST, each cap carrying the group
-       it belongs to in data-group. A rail without groups, the tests'
-       four-key rail, has one ungrouped cap per key, which serves
-       whichever modifier is held. */
+    /* The keys, by what they tap. In the page these are the four PANES
+       (each a button carrying data-key, the key it taps, and data-group,
+       the modifier it holds), so Tab and backtick each come once PER
+       GROUP and are a LIST, each entry carrying its group. A rail
+       without groups, the tests' four-key rail, has one ungrouped cap
+       per key, which serves whichever modifier is held, and a cap each
+       for the two modifiers. */
     var keys = {};
     var caps = { tab: [], tick: [] };
     Array.prototype.forEach.call(rail.querySelectorAll("[data-key]"), function (b) {
@@ -2000,14 +2030,19 @@
     var held = null;      /* "cmd", "opt", or null: the modifier being held */
     var last = null;      /* the chord the last tap made; see inEffect() */
     var letGoHandle = null; /* the pause that lets a held modifier go */
+    /* The pane whose chord the held modifier is making: the one tapped
+       last. Only its modifier cap is drawn held; the box's other pane
+       shares the modifier but was not pressed. */
+    var holding = null;
 
     function native() { return !controller.state.crosswayEnabled; }
     /* WHICH ROW LIGHTS: the chord in effect, read from the reducer's own
-       state rather than from the last cap tapped. A tap inside an open
-       session often advances it without changing what is running: ⌥`
-       inside an ⌥Tab grid walks that grid rather than re-scoping it,
-       and ⌥Tab inside an ⌥` grid does the same, so lighting the tapped
-       row would claim a command the demo has not run.
+       state rather than from the last pane tapped. A tap inside an open
+       session can change what is running or only advance it (⌥` in the
+       all-windows grid switches to the app's grid, the same chord again
+       walks it; the grid can also refuse to switch when the front app
+       has no windows), so the reducer's mode and scope, not the tap,
+       say which pane is in effect.
        Reading the state also gets the ⌘ side right for free, since there
        backtick genuinely descends into window mode and Tab genuinely
        returns to the app row, and the mode says so.
@@ -2023,8 +2058,8 @@
       return native() ? last : null;
     }
     function cls(el, name, on) { if (el && el.classList) { el.classList.toggle(name, on); } }
-    /* The cap a tap of `k` moves: the held group's own, else an
-       ungrouped one, else whichever is first. */
+    /* The key a tap of `k` strikes: the held group's own pane, else an
+       ungrouped cap, else whichever is first. */
     function capFor(k, m) {
       var list = caps[k] || [];
       var i;
@@ -2033,91 +2068,95 @@
       return list[0] || null;
     }
 
+    /* Runs on every hold, tap and let-go, so every write goes through
+       setAttr, setText or a class toggle, which leave an element alone
+       when it already says what it should. */
     function sync() {
       var off = native();
       ["cmd", "opt"].forEach(function (m) {
         var k = keys[m];
         if (!k) { return; }
         var on = held === m;
-        /* The modifier caps are art: lit while held, and that is all
-           they do. data-held is for the rendered suite's probes. */
-        k.setAttribute("data-held", on ? "true" : "false");
+        /* A rail with modifier caps of its own (the tests' four-key
+           rail; the page draws its modifiers inside the panes and marks
+           the pane that holds one instead, below): lit while held, and
+           that is all they do. data-held is for the rendered suite's
+           probes. */
+        setAttr(k, "data-held", on ? "true" : "false");
         cls(k, "is-held", on);
       });
-      /* The ⌥ group's Tab and backtick go with the ⌥ key: a tap key you
-         can press in a box whose modifier you cannot have would be a
-         key that does nothing. */
       ["tab", "tick"].forEach(function (k) {
         caps[k].forEach(function (b) {
-          if (attr(b, "data-group") === "opt") { b.setAttribute("aria-disabled", off ? "true" : "false"); }
+          /* The ⌥ group's panes go with the ⌥ key: a pane you can press
+             in a box whose modifier you cannot have would be a key that
+             does nothing. */
+          if (attr(b, "data-group") === "opt") { setAttr(b, "aria-disabled", off ? "true" : "false"); }
+          /* The pane that made the chord draws its modifier held: the
+             key stays down for as long as the chord does, moves with the
+             next tap to the pane that makes it, and comes up when the
+             pause lets it go. */
+          cls(b, "is-holding", held !== null && b === holding);
         });
       });
       groups.forEach(function (g) {
         cls(g, "is-off", off && attr(g, "data-crossway-only") === "1");
       });
-      guide();
       var lit = inEffect();
       rows.forEach(function (r) {
-        var chord = attr(r, "data-chord");
-        var off = native() && attr(r, "data-crossway-only") === "1";
-        cls(r, "is-active", chord === lit);
+        cls(r, "is-active", attr(r, "data-chord") === lit);
         /* That frame is the row's one mark: a held modifier does not
            mark its rows "ready", so the frame says only which command
            is in effect. */
-        cls(r, "is-off", off);
+        cls(r, "is-off", off && attr(r, "data-crossway-only") === "1");
+        /* The ⌘ sentences say what the chord does in the world on the
+           screen. */
         var what = r.querySelector ? r.querySelector(".cw-legend-what") : null;
         var alt = attr(r, "data-what-native");
-        if (what && alt) { what.textContent = native() ? alt : attr(r, "data-what"); }
+        if (what && alt) { setText(what, off ? alt : attr(r, "data-what")); }
       });
     }
 
-    /* The verbs beside the caps are the GUIDE: bold and in a shifting
-       colour, so what to interact with, and in what order, is legible
-       at a glance. The verb stays on "click to tap", and every verb
-       stays fully readable — the colour only points. Per box: at rest
-       "click to hold" is the step to take (is-next); with the box's
-       modifier held, "click to tap" is, and stays so through the taps,
-       while the hold verb reads "click to release", one word under
-       "click to" like the others, so the change is a word and not a
-       shape and the number of words stays constant. The other box waits.
-       A keyset is a cap's parent; a rail without them (the tests' bare
-       caps) has nothing to guide. */
-    function keyset(b) { return b && b.parentNode && b.parentNode.classList ? b.parentNode : null; }
-    function verbOf(set) { return set && set.querySelector ? set.querySelector(".cw-keyset-verb") : null; }
-    function guide() {
-      ["cmd", "opt"].forEach(function (g) {
-        var tapSet = keyset(capFor("tab", g));
-        if (!tapSet) { return; }
-        /* One verb per box, over its tap keys: "Click to tap", the step
-           to take, bold in the guide colour unless the box is off. The
-           modifier carries none: the modifier caps are art, with no
-           hold verb of their own. */
-        cls(tapSet, "is-next", !(g === "opt" && native()));
-      });
-    }
+    /* A tapped key goes down for a beat and comes back up, which is the
+       only feedback that a second tap of the same chord did anything.
+       The class goes on the pane, whose key cap it presses. The timer
+       lives on the element: with a Tab in each group, a timer keyed by
+       name would let one strike lift the other.
 
-    /* A tapped cap goes down for a beat and comes back up, which is the
-       only feedback that a second tap of the same key did anything. The
-       timer lives on the cap: with two Tabs on the rail, one per group,
-       a timer keyed by name would let one cap's strike lift the other. */
+       A tap that lands while the key is still down from the last one
+       LIFTS it first and presses it again RESTRIKE_MS later, so a burst
+       of taps is a burst of presses: re-arming the timer alone would
+       keep the key down through the whole burst, and the feedback the
+       strike exists for would disappear exactly when the visitor is
+       tapping. */
     function strike(b) {
       if (!b || !b.classList) { return; }
-      if (b._cwStrike) { clearTimeout(b._cwStrike); }
-      b.classList.add("is-struck");
-      b._cwStrike = setTimeout(function () {
-        b._cwStrike = null;
+      if (b._cwStrike) { clearTimeout(b._cwStrike); b._cwStrike = null; }
+      if (b._cwRestrike) { clearTimeout(b._cwRestrike); b._cwRestrike = null; }
+      function press() {
+        b.classList.add("is-struck");
+        b._cwStrike = setTimeout(function () {
+          b._cwStrike = null;
+          b.classList.remove("is-struck");
+        }, STRIKE_MS);
+      }
+      if (b.classList.contains("is-struck")) {
         b.classList.remove("is-struck");
-      }, STRIKE_MS);
+        b._cwRestrike = setTimeout(function () { b._cwRestrike = null; press(); }, RESTRIKE_MS);
+        return;
+      }
+      press();
     }
 
-    /* Click a modifier to hold it; click it again to let go, which is
-       what commits. Holding the other modifier lets this one go first. */
+    /* hold(m) puts a modifier down, or lets it go if it is already down,
+       which is what commits. Holding the other modifier lets this one go
+       first. A pane reaches it through tap(); the autopilot and the
+       tests call it directly. */
     function disarmLetGo() {
       if (letGoHandle !== null) { cancel(letGoHandle); letGoHandle = null; }
     }
     /* A visitor's tap starts the pause; the next tap restarts it; when
        it runs out the held modifier lets go, which commits. Only a
-       CLICK on a cap arms it: the autopilot and the tests tap through
+       CLICK on a pane arms it: the autopilot and the tests tap through
        the API and pace themselves. */
     function armLetGo() {
       disarmLetGo();
@@ -2130,11 +2169,11 @@
       if (m === "opt" && native()) { return; }
       if (held === m) {
         disarmLetGo();
-        held = null; last = null;
+        held = null; last = null; holding = null;
         controller.release();
       } else {
         if (held !== null) { controller.release(); }
-        held = m; last = null;
+        held = m; last = null; holding = null;
       }
       sync();
     }
@@ -2144,18 +2183,20 @@
 
        A GROUP's key is a tap of that group's chord: if its
        modifier is not the one held, it goes down first, letting the
-       other go as holding it by hand would, so the first click on
-       either box does something on the screen. A group whose modifier
-       is unavailable (⌥ without Crossway) has inert caps, and no click
-       reaches here; the guard is for the API. The autopilot and the
-       social card tap without a group and get the plain rule. */
+       other go as holding it by hand would, so the first click on any
+       pane does something on the screen. A group whose modifier is
+       unavailable (⌥ without Crossway) does nothing at all: its panes
+       turn their clicks away before they get here (below), and the
+       guard here is for the API. The autopilot and the social card tap
+       without a group and get the plain rule. */
     function tap(k, e, group) {
       if (group && held !== group) {
-        if (group === "opt" && native()) { strike(capFor(k, group)); return; }
+        if (group === "opt" && native()) { return; }
         hold(group);
       }
       strike(capFor(k, held));
       if (held === null) { return; }
+      holding = capFor(k, held);
       var chord = held + "-" + k;
       controller.press(chord, { shift: !!(e && e.shiftKey) });
       last = chord;
@@ -2164,11 +2205,18 @@
 
     /* click, not pointerdown: it carries Enter and Space for free, so the
        keyboard path needs no second implementation. */
-    /* The modifier caps take no click: a tap on a box's key holds its
-       modifier, and the pause after the last tap lets it go. */
+    /* Only the panes take a click: a click on one holds its modifier and
+       taps its key, and the pause after the last tap lets the modifier
+       go. The modifiers have no control of their own.
+
+       An unavailable pane (aria-disabled, the ⌥ ones without Crossway)
+       stays focusable, so Enter and Space still reach its click: it
+       turns them away here, before anything is struck or the pause of a
+       held ⌘ is restarted. */
     ["tab", "tick"].forEach(function (k) {
       caps[k].forEach(function (b) {
         b.addEventListener("click", function (e) {
+          if (attr(b, "aria-disabled") === "true") { return; }
           tap(k, e, attr(b, "data-group"));
           if (held !== null) { armLetGo(); }
         });
@@ -2188,7 +2236,7 @@
            the mouse — this just drops the latch. */
         disarmLetGo();
         if (held !== null && controller.state.mode !== MODE.IDLE) { controller.release(); }
-        held = null; last = null;
+        held = null; last = null; holding = null;
         sync();
       },
       sync: sync,
@@ -2216,6 +2264,52 @@
     var v = y - rect.top <= GRIP ? "t" : rect.bottom - y <= GRIP ? "b" : "";
     var h = x - rect.left <= GRIP ? "l" : rect.right - x <= GRIP ? "r" : "";
     return v + h;
+  }
+
+  /* Which edge of THIS window a press would pull, if any. Two things
+     edgeAt, which knows only a rectangle, cannot see.
+
+     The corner the traffic lights sit in belongs to them: from the
+     window's own corner out to where the title begins, and down to the
+     foot of the title bar, no point is an edge. Were the grips to reach
+     into it, a band over the lights and another beside the close light,
+     the pointer would turn to a resize arrow on its way onto a light and
+     a press a pixel off one would resize the window. What that corner holds
+     outside the lights' slots is title bar, as it is on a Mac. It stops
+     short of the right-hand grip, and no window is pulled smaller than
+     floorFor allows, which keeps a grip of left edge under the bar and
+     of top edge past the title's start: so every window resizes from
+     every side and every corner but that one.
+
+     A zoomed window has no edges at all: the zoom is the size, so a
+     press never resizes it and the pointer shows no arrows over it. */
+  function edgeFor(win, model, x, y) {
+    if (!win || !win.getBoundingClientRect || !model || model.zoomed) { return ""; }
+    var rect = win.getBoundingClientRect();
+    var bar = win._cwBar, title = win._cwTitle;
+    if (bar && title && bar.getBoundingClientRect && title.getBoundingClientRect) {
+      var corner = Math.min(title.getBoundingClientRect().left, rect.right - GRIP);
+      if (x < corner && y < bar.getBoundingClientRect().bottom) { return ""; }
+    }
+    return edgeAt(rect, x, y);
+  }
+
+  /* The least a window can be pulled to, in PIXELS, turned into the
+     desktop's percent for the reducer: its title bar with two grips of
+     body under it, so its left edge shows a grip under the bar and its
+     foot another, and as wide as where its title begins plus two grips,
+     so its top edge shows a grip past the lights' corner before the
+     right-hand one. The reducer's floor is a share of the desktop, and on
+     a phone's desktop a share alone would leave a window no taller than
+     its bar, whose corner (edgeFor) would then take the whole of its left
+     and top edges. */
+  function floorFor(win, box) {
+    var bar = win && win._cwBar, title = win && win._cwTitle;
+    if (!bar || !title || !win.getBoundingClientRect || !bar.getBoundingClientRect || !title.getBoundingClientRect ||
+        !box || !box.width || !box.height) { return null; }
+    var rect = win.getBoundingClientRect();
+    return { w: 100 * (title.getBoundingClientRect().left - rect.left + 2 * GRIP) / box.width,
+             h: 100 * (bar.getBoundingClientRect().bottom - rect.top + 2 * GRIP) / box.height };
   }
 
   function wireDesktop(desktop, controller, onAct) {
@@ -2268,9 +2362,9 @@
 
       /* On an edge or a corner: a resize. The pointer pulls that edge;
          the reducer keeps the window a window and on the screen. */
-      var edge = win.getBoundingClientRect ? edgeAt(win.getBoundingClientRect(), e.clientX, e.clientY) : "";
+      var edge = edgeFor(win, w, e.clientX, e.clientY);
       if (edge) {
-        drag = { id: id, w: box.width, h: box.height, edge: edge,
+        drag = { id: id, w: box.width, h: box.height, edge: edge, min: floorFor(win, box),
                  px: e.clientX, py: e.clientY, ox: w.x, oy: w.y, ow: w.w, oh: w.h };
       } else {
         if (!within(e.target, "cw-win-bar")) { return; }
@@ -2286,8 +2380,9 @@
         /* At rest, the cursor says what a press here would do: the
            window under the pointer wears the edge it is on. */
         var over = within(e.target, "cw-win");
-        if (over && over.getBoundingClientRect && over.dataset) {
-          over.dataset.edge = edgeAt(over.getBoundingClientRect(), e.clientX, e.clientY);
+        if (over && over.dataset) {
+          var model = controller.state.windows.filter(function (x) { return x.id === over.dataset.win; })[0];
+          over.dataset.edge = edgeFor(over, model, e.clientX, e.clientY);
         }
         return;
       }
@@ -2298,7 +2393,7 @@
         return;
       }
       var frame = { x: drag.ox, y: drag.oy, w: drag.ow, h: drag.oh };
-      var from = {};
+      var from = drag.min ? { min: drag.min } : {};
       if (drag.edge.indexOf("l") >= 0) { frame.x += dx; frame.w -= dx; from.l = true; }
       if (drag.edge.indexOf("r") >= 0) { frame.w += dx; }
       if (drag.edge.indexOf("t") >= 0) { frame.y += dy; frame.h -= dy; from.t = true; }
@@ -2331,21 +2426,23 @@
      the pointer's position actually changed since it was last seen
      anywhere on the screen. Clicks are always deliberate and always
      win, and a pick tells whoever holds the keys to let go. */
+  /* The switcher cell a node is in, if any: an app in the row, a tile in
+     the strip, or a tile in the exposé. */
+  function cellOf(node, root) {
+    while (node && node !== root) {
+      var c = node.classList, d = node.dataset || {};
+      if (c && c.contains("cw-app") && d.app) { return { kind: "app", id: d.app }; }
+      if (c && c.contains("cw-tile-wrap") && d.win) { return { kind: "strip", id: d.win }; }
+      if (c && c.contains("cw-gcell") && d.win) { return { kind: "grid", id: d.win }; }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
   function wirePane(parts, controller, onAct) {
     var screen = parts && parts.screen, panel = parts && parts.panel, grid = parts && parts.grid;
     if (!panel && !grid) { return { _wired: false }; }
     var lastX = null, lastY = null;
-
-    function cellOf(node, root) {
-      while (node && node !== root) {
-        var c = node.classList, d = node.dataset || {};
-        if (c && c.contains("cw-app") && d.app) { return { kind: "app", id: d.app }; }
-        if (c && c.contains("cw-tile-wrap") && d.win) { return { kind: "strip", id: d.win }; }
-        if (c && c.contains("cw-gcell") && d.win) { return { kind: "grid", id: d.win }; }
-        node = node.parentNode;
-      }
-      return null;
-    }
     function indexOf(cell) {
       var st = controller.state;
       if (cell.kind === "app") {
@@ -2359,8 +2456,6 @@
       return st.gridWindows.findIndex(function (w) { return w.id === cell.id; });
     }
     function hover(cell) {
-      if (cell.kind === "strip" && controller._panePhase &&
-          controller._panePhase() === PANE_PHASE.PENDING) { return; }
       var i = indexOf(cell);
       if (i < 0) { return; }
       if (cell.kind === "app") { controller.hoverApp(i); }
@@ -2368,8 +2463,6 @@
       else { controller.hoverGrid(i); }
     }
     function pick(cell) {
-      if (cell.kind === "strip" && controller._panePhase &&
-          controller._panePhase() === PANE_PHASE.PENDING) { return; }
       var i = indexOf(cell);
       if (i < 0) { return; }
       if (cell.kind === "app") { controller.pickApp(i); }
@@ -2454,8 +2547,9 @@
   }
 
   /* Blur behind the switcher, as the app has it. Four steps, because a
-     continuous slider on a demo is a fiddle rather than a setting. */
-  var BLUR_STEPS = ["0px", "8px", "18px", "30px"];
+     continuous slider on a demo is a fiddle rather than a setting. Here
+     each step has only its name: its radius is the stylesheet's (the
+     .cw-screen[data-blur] rules), the one place the radii are written. */
   var BLUR_NAMES = ["None", "Light", "Medium", "Heavy"];
 
   /* Options are not chords: they change what the switcher may REACH, or
@@ -2465,26 +2559,21 @@
     if (!root) { return { sync: function () {} }; }
     var boxes = Array.prototype.slice.call(root.querySelectorAll("[data-option]"));
     var box = root.querySelector ? root.querySelector(".cw-settings") : null;
+    /* The wheel, whose printed scale marks the word its cap is under, and
+       the readout that names the step. Both live in the bezel, which the
+       engine's rebuild at the breakpoint leaves alone. */
+    var wheel = root.querySelector ? root.querySelector(".cw-slider") : null;
+    var out = root.querySelector ? root.querySelector("#cw-blur-now") : null;
 
+    /* The step is marked as data-blur on the screen, where the
+       stylesheet turns it into the blur layer (and at None into no layer
+       at all), and on the wheel; each write happens only when the step
+       changes, so a thumb moved within one touches nothing. */
     function applyBlur(value) {
-      var i = Math.max(0, Math.min(BLUR_STEPS.length - 1, Number(value) || 0));
-      if (screen && screen.style) {
-        var current = screen.style.getPropertyValue
-          ? screen.style.getPropertyValue("--cw-blur") : null;
-        if (current !== BLUR_STEPS[i]) { screen.style.setProperty("--cw-blur", BLUR_STEPS[i]); }
-      }
-      /* At None, opening a session must not change `filter: none` into
-         the composited-but-visually-identical `blur(0px)`. That redundant
-         layer promotion was one source of whole-screen flashing. */
-      if (screen && screen.classList) { screen.classList.toggle("has-blur", i > 0); }
-      var out = root.querySelector ? root.querySelector("#cw-blur-now") : null;
+      var i = Math.max(0, Math.min(BLUR_NAMES.length - 1, Number(value) || 0));
+      if (screen) { setAttr(screen, "data-blur", i); }
+      if (wheel) { setAttr(wheel, "data-blur", i); }
       if (out) { setText(out, BLUR_NAMES[i]); }
-      /* The scale printed over the wheel marks the word the cap is under. */
-      var wheel = root.querySelector ? root.querySelector(".cw-slider") : null;
-      if (wheel && wheel.setAttribute &&
-          (!wheel.getAttribute || wheel.getAttribute("data-blur") !== String(i))) {
-        wheel.setAttribute("data-blur", String(i));
-      }
       return i;
     }
 
@@ -2587,8 +2676,8 @@
   /* ====================================================================
      THE AUTOMATIC DEMO
 
-     Left alone, the demo demonstrates itself: an autopilot drives the
-     same keypad a visitor clicks, at a visitor's pace (a little uneven,
+     Left alone, the demo demonstrates itself: an autopilot taps the
+     same chords a visitor clicks, at a visitor's pace (a little uneven,
      as a hand is), through eleven scenes that use all four chords. It
      opens on the film: ⌘Tab along the row to QuickTime, its tile seen
      playing, and letting go brings the mostly hidden window forward.
@@ -2710,6 +2799,11 @@
   /* No scene needs more taps than this; a target that never comes
      (a rearranged desktop) is given up on rather than tapped forever. */
   var DEMO_MAX_TAPS = 16;
+  /* How long the demo waits after the visitor's last click on the
+     screen before it carries on: long enough to try a thing with the
+     mouse, short enough that a visitor who wanders off comes back to the
+     demo playing. */
+  var DEMO_REST = 6000;
 
   function createAutopilot(o) {
     o = o || {};
@@ -2724,6 +2818,8 @@
     var started = false; /* a tap of this scene has landed, so its modifier is down */
     var world = null;   /* which switcher the last scene ran under */
     var waiting = false; /* the pending timer is a look-again while nobody can see the demo */
+    var resting = false; /* waiting out the visitor's clicks on the screen (pauseFor) */
+    function rest(on) { resting = on; }
 
     /* The scenes of the world the switch is set to. */
     function current() { return controller.state.crosswayEnabled ? scenes : nativeScenes; }
@@ -2750,6 +2846,27 @@
        down would show a key held that nobody pressed. The modifiers are
        art, so a scene does what a visitor does: it clicks the box's own
        key, and that key holds the box's modifier for it. */
+    /* Whether the desktop can still play a scene: its apps running, its
+       windows there and within the switcher's reach. After the visitor
+       has had the screen, one may have been closed, quit or minimized
+       out of reach, and a scene tapping for a target that is not there
+       walks the switcher sixteen times for nothing. */
+    function playable(sc) {
+      var st = controller.state;
+      return sc.taps.every(function (t, i) {
+        if (t.app) { return st.apps.some(function (a) { return a.id === t.app; }); }
+        var id = t.win || t.front;
+        if (!id) { return true; }
+        var w = st.windows.filter(function (v) { return v.id === id; })[0];
+        if (!w) { return false; }
+        /* A scene that OPENS on backtick walks the front app's windows,
+           so its window must be one of them. A visitor who brought
+           another app forward during the rest leaves it a target the walk
+           never reaches, and it would tap until it ran out of taps. */
+        if (i === 0 && t.key === "tick" && (!st.apps.length || st.apps[0].id !== w.app)) { return false; }
+        return !w.minimized || (!!t.win && st.crosswayEnabled && st.includeMinimized);
+      });
+    }
     function begin() {
       if (paused()) { schedule(begin, pace.rest); waiting = true; return; }
       /* The switch was flipped between scenes: the other world's loop,
@@ -2757,6 +2874,11 @@
       var w = controller.state.crosswayEnabled;
       if (world !== null && w !== world) { scene = 0; }
       world = w;
+      /* On to the next scene the desktop can play, and if it can play
+         none (the visitor quit what they all name), a look again later. */
+      var list = current(), tried = 0;
+      while (tried < list.length && !playable(list[scene])) { scene = (scene + 1) % list.length; tried++; }
+      if (tried === list.length) { schedule(begin, pace.rest * 4); return; }
       step = 0; taps = 0; started = false;
       schedule(tapNext, pace.hold);
     }
@@ -2815,126 +2937,192 @@
       running = false;
       if (handle !== null) { cancel(handle); handle = null; }
       if (keys._held() !== null) { controller.escape(); keys.clear(); }
+      rest(false);
+    }
+    /* The visitor is using the screen with the mouse: the demo waits
+       rather than stopping, and carries on `ms` after the last press.
+       The scene in play is abandoned, not committed, as a stop abandons
+       it, so the visitor's press lands on a desktop at rest; when the
+       wait is over that scene runs again from its start (or the next
+       the desktop can play). Every press starts the wait again.
+
+       `how.keep`: the press is on a cell of the demo's own switcher, so
+       the session is left open for the visitor's click to pick it.
+       `how.hold`: asked when the wait runs out; true while the visitor is
+       still pressing (a long drag), and the wait starts again. */
+    function pauseFor(ms, how) {
+      if (!running) { return; }
+      how = how || {};
+      if (handle !== null) { cancel(handle); handle = null; }
+      if (!how.keep && keys._held() !== null) { controller.escape(); keys.clear(); }
+      rest(true);
+      var over = function () {
+        if (how.hold && how.hold()) { schedule(over, ms); return; }
+        rest(false);
+        begin();
+      };
+      schedule(over, ms);
     }
     return {
-      start: start, stop: stop, wake: wake,
+      start: start, stop: stop, wake: wake, pauseFor: pauseFor,
       get running() { return running; },
+      get resting() { return resting; },
       get scene() { return scene; },
       get loops() { return loops; },
       get waiting() { return waiting; },
     };
   }
 
-  /* The box over the keys. Checked runs the autopilot; a real press on
-     any of `stops` unchecks it, so the visitor's first go at driving
-     takes over and never fights the demo.
+  /* The screen only PAUSES the automatic demo. A press on it is a
+     visitor looking around, and the demo should be there when they are
+     done: it waits `more.rest` ms (DEMO_REST) from their last press or
+     release (autopilot.pauseFor) and then carries on. The bezel is
+     deliberately not a surface here: throwing the switch or turning the
+     blur wheel is watching the demo under other settings, so it plays
+     on in the world the switch now names. Nothing here needs to know
+     the mode: with Interactive mode on the demo is stopped, and a pause
+     of a demo that is not running is nothing.
 
-     What is IN that list is the keys and the screen: the two surfaces
-     the demo itself drives. The bezel is deliberately out — throwing
-     the switch or moving the blur wheel is watching the demo under
-     different settings, not taking it over, so it keeps running and
-     picks up the world the switch now names.
-
-     Three events, because a visitor reaches a surface three ways: a
-     pointer press; a click in the CAPTURE phase, which runs before the
-     key's own handler and so ends the autopilot's session before the
-     visitor's begins (the keys are buttons wired on click, so Enter and
-     Space arrive that way); and a keydown, also in capture, for anything
-     driven by arrow keys rather than clicks. The autopilot itself never
-     sends DOM events, so every one is the visitor. */
-  /* ====================================================================
-     IDEAS: one thing to try on the monitor at a time, fading out and in
-     through a list of them, so a visitor picks up things the demo can
-     be made to do. The list lives in the markup, once, for a screen
-     reader; this only moves the visible line through it, as plain text
-     with no words bolded. With reduced motion there is no fade, and the
-     ideas change less often.
-     ==================================================================== */
-  var IDEAS_DWELL = 4800;   /* how long an idea stands: long enough to read one without hurrying */
-  var IDEAS_FADE = 400;     /* how long it takes to go, and to come */
-  var IDEAS_DWELL_REDUCED = 9000;
-
-  function createIdeas(o) {
-    o = o || {};
-    var items = o.items || [], line = o.line || null;
-    var reduced = !!o.reduced;
-    var dwell = o.dwell || (reduced ? IDEAS_DWELL_REDUCED : IDEAS_DWELL);
-    var fade = reduced ? 0 : (o.fade == null ? IDEAS_FADE : o.fade);
-    var later = o.setTimeout || function (fn, ms) { return setTimeout(fn, ms); };
-    var cancel = o.clearTimeout || function (h) { clearTimeout(h); };
-    var at = 0, handle = null, running = false;
-    function setText(el, text) { if (el && el.textContent !== text) { el.textContent = text; } }
-    function show(i) {
-      at = i;
-      setText(line, items[at] || "");
-    }
-    function schedule(fn, ms) {
-      handle = later(function () { handle = null; if (running) { fn(); } }, ms);
-    }
-    /* Out, then the next one in: the line's opacity is the fade, and the
-       text changes while nobody can see it. */
-    function turn() {
-      var next = (at + 1) % Math.max(1, items.length);
-      if (fade > 0 && line && line.classList) {
-        line.classList.add("is-out");
-        schedule(function () {
-          show(next);
-          line.classList.remove("is-out");
-          schedule(turn, dwell);
-        }, fade);
-      } else {
-        show(next);
-        schedule(turn, dwell);
+     Heard in the CAPTURE phase, on the way down, before any handler on
+     the screen itself: the desktop keeps a press on a traffic light to
+     itself, since a light is neither a drag nor a raise, and closing or
+     minimizing takes the light away before a click can follow, so a
+     listener on the way back up never heard such a press. A press
+     still down holds the wait open, so a drag longer than the wait
+     never has the demo start under the visitor's hand; the wait then
+     counts from the release. The release is heard anywhere on the page,
+     since a press begun on the screen can end off it, and a move over
+     the screen with no button down ends a press whose release was lost.
+     A press on a cell of the demo's own switcher keeps its session, so
+     the click that follows picks it. The autopilot itself never sends
+     DOM events, so every one is the visitor. */
+  function wireDemoPause(surfaces, autopilot, more) {
+    more = more || {};
+    var restFor = more.rest || DEMO_REST;
+    var down = false;
+    var stillPressing = function () { return down; };
+    function pause(e) {
+      if (e && e.type === "pointerdown") { down = true; }
+      if (autopilot && autopilot.running && autopilot.pauseFor) {
+        autopilot.pauseFor(restFor, { hold: stillPressing, keep: !!cellOf(e && e.target, null) });
       }
     }
-    function start() {
-      if (running || items.length < 2) { return; }
-      running = true;
-      show(at);
-      schedule(turn, dwell);
+    function released(e) {
+      if (!down) { return; }
+      if (e && e.type === "pointermove" && e.buttons) { return; }
+      down = false;
+      pause(e);
     }
-    function stop() {
-      if (!running) { return; }
-      running = false;
-      if (handle !== null) { cancel(handle); handle = null; }
-      if (line && line.classList) { line.classList.remove("is-out"); }
+    var wired = 0;
+    (surfaces || []).forEach(function (el) {
+      if (!el || !el.addEventListener) { return; }
+      wired++;
+      el.addEventListener("pointerdown", pause, true);
+      el.addEventListener("pointermove", released, true);
+      el.addEventListener("click", pause, true);
+      el.addEventListener("keydown", pause, true);
+    });
+    /* The release, from anywhere on the page. The document hears it on
+       the way down before any surface can, so the surfaces need no
+       release of their own. */
+    if (wired && typeof document !== "undefined" && document.addEventListener) {
+      document.addEventListener("pointerup", released, true);
+      document.addEventListener("pointercancel", released, true);
     }
-    return {
-      start: start, stop: stop,
-      get running() { return running; },
-      get at() { return at; },
-      get count() { return items.length; },
-    };
+    return { _wired: wired > 0 };
   }
 
-  function wireDemoMode(box, autopilot, stops) {
-    if (!box) { return { _wired: false }; }
-    function sync() {
-      if (box.checked) { autopilot.start(); } else { autopilot.stop(); }
-    }
-    /* The box sits inside the keys box, so a press on the box itself, or
-       on its label, is the visitor working the box, not taking over. */
-    function onTheBox(node) {
-      var label = box.parentNode || null;
-      while (node) {
-        if (node === box || (label && node === label)) { return true; }
-        node = node.parentNode;
-      }
-      return false;
-    }
-    box.addEventListener("change", sync);
-    function takeOver(e) {
-      if (onTheBox(e && e.target)) { return; }
-      if (box.checked) { box.checked = false; autopilot.stop(); }
-    }
-    (stops || []).forEach(function (el) {
-      if (!el || !el.addEventListener) { return; }
-      el.addEventListener("pointerdown", takeOver);
-      el.addEventListener("click", takeOver, true);
-      el.addEventListener("keydown", takeOver, true);
+  /* The demo's own switcher, put away with the demo. Interactive mode
+     turned on mid-scene stops the autopilot, which abandons the scene's
+     session, and on its own the switcher would leave in one frame while
+     the blur behind it fades: a cut at the very instant the stage starts
+     to move. So a copy of whatever is open (the pane or the exposé) is
+     left where it stood and faded with the blur, over the blur's own
+     160ms, then removed.
+
+     The copy is only a picture: no ids, hidden from assistive technology,
+     inert, and never `is-open`, so nothing that reads the screen finds it.
+     Everything else it needs is its class's (`.cw-ghost` in style.css):
+     it is shown as the open pane is, out of the pointer's way, without
+     the pane's own frost (the blur behind it is going at the same time,
+     so the eye cannot tell, and a second backdrop blur in the frames
+     where the stage starts to move cost six or seven late frames under
+     software raster), and with nothing inside it allowed to animate,
+     since the monitor it stands on may be resizing under it. Nothing is
+     measured here: the pane is open, so it is showing. It is laid BEFORE
+     the real one, so a switcher the visitor opens within those 160ms
+     draws over it. Without Web Animations, or when the visitor has asked
+     for less motion (the blur does not fade then either), there is no
+     copy and the switcher simply goes, as it always has. The 160ms and
+     its curve are the blur's own (.cw-backdrop's transition). */
+  var PUT_AWAY_MS = 160;
+  function fadeAway(panes) {
+    if (typeof window === "undefined") { return; }
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { return; }
+    panes.forEach(function (pane) {
+      if (!pane || !pane.parentNode || !pane.classList.contains("is-open")) { return; }
+      if (typeof pane.animate !== "function") { return; }
+      var ghost = pane.cloneNode(true);
+      ghost.classList.remove("is-open");
+      ghost.classList.add("cw-ghost");
+      ghost.removeAttribute("id");
+      ghost.querySelectorAll("[id]").forEach(function (el) { el.removeAttribute("id"); });
+      ghost.setAttribute("aria-hidden", "true");
+      ghost.inert = true;
+      pane.parentNode.insertBefore(ghost, pane);
+      var gone = function () { ghost.remove(); };
+      ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: PUT_AWAY_MS, easing: "ease", fill: "forwards" })
+        .finished.then(gone, gone);
     });
+  }
+
+  /* Interactive mode: ONE box, and the demo is one of its two states.
+     Off, which is how the page opens, the automatic demo plays on a
+     monitor as wide as the stage allows, and the keys are put away. On,
+     the demo stops (its scene is abandoned, its key let go, nothing
+     committed), the keys come out beside the monitor, and the screen
+     and the keys are the visitor's. Off again, a key the visitor still
+     holds is let go, which commits their selection as letting go always
+     has, and the demo plays again from its first scene.
+
+     The state is the box's; the stage only wears it (`is-interactive`,
+     which drives the layout and its animation), and the keys window is
+     `inert` whenever it is put away. That is set here, in the change
+     itself, not at the end of an animation: the window is still on
+     screen while it slides back behind the display (or rolls up under
+     the bar where the stage stacks), and the demo has already started,
+     so a press that reached a key then would tap into the demo's world. */
+  function wireInteractive(toggle, autopilot, o) {
+    if (!toggle || !toggle.addEventListener || !autopilot) { return { _wired: false }; }
+    o = o || {};
+    function sync() {
+      var on = !!toggle.checked;
+      if (o.host && o.host.classList) { o.host.classList.toggle("is-interactive", on); }
+      if (o.keysWindow) { o.keysWindow.inert = !on; }
+      if (on) {
+        /* Before the stop closes the demo's switcher: see fadeAway. */
+        if (autopilot.running && o.putAway) { o.putAway(); }
+        autopilot.stop();
+      } else if (!autopilot.running) {
+        /* Only on a real change: a demo already playing holds its own
+           key, and letting that go would commit a selection nobody
+           chose. */
+        if (o.keys) { o.keys.clear(); }
+        autopilot.start();
+      }
+      if (o.onChange) { o.onChange(on); }
+    }
+    toggle.addEventListener("change", sync);
     sync();
-    return { _wired: true, sync: sync };
+    /* The layout animates from here on, not before: a state the browser
+       restored at load is simply drawn. A frame later, so the first sync
+       has painted. */
+    if (o.host && o.host.classList) {
+      var ready = function () { o.host.classList.add("is-ready"); };
+      if (typeof requestAnimationFrame === "function") { requestAnimationFrame(function () { requestAnimationFrame(ready); }); }
+      else { ready(); }
+    }
+    return { _wired: true, sync: sync, get on() { return !!toggle.checked; } };
   }
 
   /* ====================================================================
@@ -2988,6 +3176,11 @@
         status: opts.status,
         fixtures: pickFixtures(),
         projector: projector,
+        /* The automatic demo is the page's default, and it steps
+           every second and a half: a polite region narrating each step
+           would talk over everything a screen reader does on the page.
+           It speaks for the visitor, and for the demo not at all. */
+        quiet: function () { return !!(autopilot && autopilot.running && !autopilot.resting); },
       });
       /* The screen is rebuilt, so its surfaces are new elements, and are
          what is wired per build. Every mouse verb that ends a session
@@ -3022,10 +3215,10 @@
     });
 
     /* What the visitor has set, read back off the controls and put into
-       a fresh engine: the switch's checked side, the minimized box, and
-       the blur (which lives on the screen element and re-applies itself
-       through the options). The latch is dropped: the new engine has no
-       session for it to hold. */
+       a fresh engine: the switch's checked side and the minimized box.
+       The blur needs nothing: its step is marked on the screen element,
+       which the rebuild keeps. The latch is dropped: the new engine has
+       no session for it to hold. */
     function restore() {
       var cells = toggle.cells || [];
       var native = cells.some(function (cell) {
@@ -3078,30 +3271,38 @@
     }
     attend();
 
-    /* The automatic demo: the autopilot on the same keys, and the box
-       that runs it. */
+    /* The automatic demo: the autopilot on the same keys a visitor
+       uses. Interactive mode runs it (off plays, on stops), and a press
+       on the screen makes it wait. Without the box nothing plays it: the
+       social card, for one, photographs a desktop at rest. */
     autopilot = opts.autopilot || createAutopilot({
       keys: keys,
       controller: proxy,
       paused: function () { return !onScreen || hidden(); },
     });
-    /* The keys and the screen, and NOT the bezel: changing a setting is
-       watching the demo, not taking it over. Throw the switch or move
-       the wheel and the demo keeps running, in the world the switch now
-       names; only the keys, the screen and the box itself stop it. The
-       bezel is a sibling of the screen host rather than inside it, so
-       leaving it out of this list is the whole of what that takes. */
-    wireDemoMode(opts.demo, autopilot, [opts.controls, opts.root]);
+    wireDemoPause([opts.root], autopilot);
+    var interactive = wireInteractive(opts.interactive, autopilot, {
+      host: stageEl,
+      keysWindow: opts.controls,
+      keys: keys,
+      putAway: function () {
+        var r = current.controller.renderer;
+        fadeAway([r.panel, r.grid]);
+      },
+      onChange: opts.onInteractive,
+    });
 
-    /* One write a minute is enough to keep the clock honest, and it
-       touches nothing else — a full redraw would fight the session the
-       visitor is in the middle of. */
+    /* The clock is read every 20 seconds, so it turns within 20 seconds
+       of the visitor's own, and written only when the minute (or the
+       day) has changed, so it is one write a minute; it touches nothing
+       else, since a full redraw would fight the session the visitor is
+       in the middle of. */
     if (typeof setInterval === "function") {
       var ticking = setInterval(function () {
         var c = current && current.controller;
         if (c && c.renderer && c.renderer.clock) {
-          c.renderer.clock.textContent = clockText();
-          if (c.renderer.date) { c.renderer.date.textContent = dateText(); }
+          setText(c.renderer.clock, clockText());
+          if (c.renderer.date) { setText(c.renderer.date, dateText()); }
         }
       }, 20000);
       /* Under node the interval would hold the process open. */
@@ -3109,9 +3310,7 @@
     }
 
     if (typeof window !== "undefined" && window.matchMedia) {
-      var mq = window.matchMedia(NARROW);
-      if (mq.addEventListener) { mq.addEventListener("change", rebuild); }
-      else if (mq.addListener) { mq.addListener(rebuild); }
+      window.matchMedia(NARROW).addEventListener("change", rebuild);
     }
 
     return {
@@ -3120,6 +3319,7 @@
       rebuild: rebuild,
       projector: projector,
       autopilot: autopilot,
+      interactive: interactive,
     };
   }
 
@@ -3148,30 +3348,34 @@
     wireKeys: wireKeys,
     wireOptions: wireOptions,
     wireDesktop: wireDesktop,
+    wireInteractive: wireInteractive,
+    DEMO_REST: DEMO_REST,
     wireMenubar: wireMenubar,
     wireDock: wireDock,
     wirePane: wirePane,
     wireToggle: wireToggle,
-    wireDemoMode: wireDemoMode,
+    wireDemoPause: wireDemoPause,
     createAutopilot: createAutopilot,
     BLUR_NAMES: BLUR_NAMES,
-    BLUR_STEPS: BLUR_STEPS,
     DEMO_SCENES: DEMO_SCENES,
     DEMO_SCENES_NATIVE: DEMO_SCENES_NATIVE,
     DEMO_PACE: DEMO_PACE,
-    IDEAS_DWELL: IDEAS_DWELL, IDEAS_FADE: IDEAS_FADE, IDEAS_DWELL_REDUCED: IDEAS_DWELL_REDUCED,
     LET_GO_MS: LET_GO_MS,
-    createIdeas: createIdeas,
     GRID_COLUMNS: GRID_COLUMNS,
     TILE_ASPECT: TILE_ASPECT,
     DESKTOP_ASPECT: DESKTOP_ASPECT,
     MIN_WIN: MIN_WIN,
     GRIP: GRIP,
     _edgeAt: edgeAt,
+    _edgeFor: edgeFor,
+    _floorFor: floorFor,
     STRIKE_MS: STRIKE_MS,
+    RESTRIKE_MS: RESTRIKE_MS,
     /* exposed for tests */
     _nextIndex: nextIndex,
     _initialIndex: initialIndex,
+    _fadeAway: fadeAway,
+    PUT_AWAY_MS: PUT_AWAY_MS,
   };
 
   /* Browser gets a namespace; the test runner gets an export. One line,
