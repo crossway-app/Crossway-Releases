@@ -948,7 +948,11 @@ html.hacker .menubar .lamp { opacity: 0.45; cursor: default; }
 .desk-col > .mac-window:last-child { flex-grow: 1; }
 .desktop > #contact,
 .desktop > #donate { align-self: stretch; }
-#features a { white-space: nowrap; }   /* "See all features" stays one link on one line, never "features." alone */
+#features a { white-space: nowrap; }
+/* Words that name one thing (a setting, a certificate) stay on one line
+   with an ordinary space. A no-break space would do the same, but the
+   body face draws it twice as wide as a space. */
+.nowrap { white-space: nowrap; }   /* "See all features" stays one link on one line, never "features." alone */
 
 /* Terms is a page of one window. .desktop is a two-column grid, so
    without this it sits in column one and the page reads as half empty.
