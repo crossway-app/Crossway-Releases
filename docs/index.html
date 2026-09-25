@@ -51,12 +51,12 @@
 <nav class="menubar" aria-label="Site">
   <a class="apptitle" href="#top"><img class="appicon" src="assets/favicon-32.png" width="18" height="18" alt="">Crossway</a>
   <span class="spacer"></span>
+  <a href="#download">Download</a>
   <a href="#demo">Try&nbsp;it</a>
   <a href="features/">Features</a>
   <a href="#readme">Read&nbsp;Me</a>
   <a href="#privacy">Privacy</a>
   <a href="#contact">Contact</a>
-  <a href="#download">Download</a>
   <a href="#donate">Donate</a>
   <button type="button" class="lamp" role="switch" aria-checked="true" aria-label="Lights">
     <svg class="lamp-art" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false">
@@ -81,12 +81,46 @@
 
 <main class="desktop" id="top">
 
-  <!-- The title and the line under it, and nothing else: the download
-       has its own window at the foot of the page, beside Donate, so the
-       demo is what the visitor meets first. -->
-  <section class="lede">
+  <!-- The title, the line under it, and the download, over the demo.
+       ONE button and nothing said about it: what it runs on is in
+       Read Me.
+
+       The Read Me's install step links here, so this button is the one
+       zip link on the page. It reads "Download Crossway"; the Read Me's
+       step still names Crossway.zip, the file it tells the visitor to
+       unzip. -->
+  <section class="lede" id="download">
     <h1>Crossway</h1>
     <p class="tagline">A fast and powerful window switcher for macOS</p>
+    <div class="lede-actions">
+      <div class="btn-row">
+        <a class="btn btn-default" href="https://github.com/crossway-app/Crossway-Releases/releases/latest/download/Crossway.zip">Download Crossway</a>
+      </div>
+      <!-- Two ways in, stacked: download it yourself, or hand the line
+           below to a coding agent.
+
+           The string is the published bootstrap URL, and SKILL.md at the
+           site root is GENERATED, so this literal has to keep matching
+           that output path. Never hand-edit SKILL.md itself.
+
+           The Copy button ships hidden and copy.js reveals it. With
+           JavaScript off there is no dead control: the visitor reads and
+           selects the line by hand. -->
+      <!-- The offer to let an agent install Crossway, withheld.
+           Commented out rather than deleted, because the skill itself is
+           still generated, packaged and published to the site root; only
+           the OFFER is withdrawn. Restore this block verbatim to offer it
+           again.
+
+      <div class="agent-install">
+        <p>Or let an agent install it for you:</p>
+        <div class="paste-chip" data-copy="Install Crossway: https://crosswayapp.com/SKILL.md">
+          <code>Install Crossway: https://crosswayapp.com/SKILL.md</code>
+          <button type="button" class="paste-chip-copy" hidden>Copy</button>
+        </div>
+      </div>
+      -->
+    </div>
   </section>
 
   <!-- THE LIVE HERO. A display in the page's own 1-bit line art, with a
@@ -103,25 +137,19 @@
        the way the page's windows do, with its virtual keyboard beside it
        on wide screens and directly after it when the layout stacks. -->
   <section class="cw-hero" id="demo" aria-labelledby="cw-title">
-      <!-- The demo's heading is the window's own title, Interactive
-           demo, and it names the whole machine rather than the keys: a
-           title ABOUT the keys leaves visitors reading the display
-           beside it as a screenshot, and they never learn the screen is
-           theirs to use.
+      <h2 class="sr-only" id="cw-title">Interactive demo</h2>
+      <!-- The section's heading, for a screen reader, since the window
+           whose title bar carries the same words is put away until
+           Interactive mode is on: "Interactive demo" names the whole
+           machine rather than the keys, so the display reads as a screen
+           that is the visitor's to use, not a screenshot.
 
-           The window is one of the page's own kind: the title in its bar
-           and the explanation as its body, built exactly as the rest of
-           the page's windows are, so the two read as one family. The
-           display itself is NOT boxed. There is no heading over the
-           columns: the display stands bare on the left, and the ONE
-           window is on the right, titled Interactive demo (it is the
-           section's heading), holding the hint line (the marquee at the
-           left as "Hint: ...", the automatic-demo box at the right) and
-           the two boxes of keys.
-
-           The hint line is one line, and large. Every line here is a
+           The display stands bare, as wide as the stage allows, with the
+           Interactive mode bar under it. Turned on, the display gives the
+           keys window its column (beside it on wide screens, under it
+           where the stage stacks). Every line under the display is a
            line off the display, which gets the viewport minus
-           --cw-fold-overhead, so keep the window's body short. -->
+           --cw-fold-overhead, so keep the bar to one line. -->
       <div class="cw-stage">
       <div class="cw-machine cw-display">
         <!-- A display, drawn as a manual would have drawn it: paper, the
@@ -129,9 +157,11 @@
              No tone and no dot pattern anywhere: QuickDraw patterns read
              as perforation at this size. The screen is the product and
              the drawing is its frame, so the well takes 96.9% of the
-             width (x5 y5 w316 h197.5 of 326x244, at 8:5) inside a 5-unit
-             bezel, with a deeper chin under it for the controls, as a
-             modern panel has.
+             width (x5 y5 w316 h197.5 of 326x231.5, at 8:5) inside a 5-unit
+             bezel, with a slim chin under it for the controls, as a
+             modern panel has. The chin is only as deep as the tray needs:
+             the monitor is bound by the page's height at laptop sizes, so
+             every unit of chin is width the screen does not get.
 
              The live desktop is a DOM overlay registered to the well in
              percentages of the same box, so it tracks the drawing at
@@ -142,25 +172,25 @@
              must not grow the box the mount's percentages resolve
              against. -->
         <div class="cw-display-frame">
-          <svg class="cw-chassis" viewBox="0 0 326 244" role="img" aria-label="A display with Crossway running on its screen.">
+          <svg class="cw-chassis" viewBox="0 0 326 231.5" role="img" aria-label="A display with Crossway running on its screen.">
             <!-- The case: ONE panel, a 5-unit bezel round the screen and
                  a chin under it for the controls. No stand, and no
                  recess: a modern display is a flat front, not a CRT sunk
                  into a case, and walls of shadow to say so have nowhere
                  to sit in a bezel this thin. -->
-            <rect class="cw-case" x="0.75" y="0.75" width="324.5" height="242.5" rx="5"/>
+            <rect class="cw-case" x="0.75" y="0.75" width="324.5" height="230" rx="5"/>
             <!-- The well. Its fill is under the overlay and never seen;
                  its corners are the screen's, and the overlay clips to
                  the same ones. -->
             <rect class="cw-well" x="5" y="5" width="316" height="197.5" rx="3" fill="var(--desktop-b)" stroke="currentColor"/>
             <!-- The tray along the bottom bezel holds the demo's settings
                  as hardware (the .cw-bezel overlay registers to it:
-                 x5..321, y207.5..237.5, the screen's own width). The mark is
+                 x5..321, y205.5..227.5, the screen's own width). The mark is
                  centred in it and the power light belongs to the switch,
                  where the displays of the era wore them. The light is lit
                  while Crossway is the switcher on the screen and goes
                  dark when the switch says Native. -->
-            <rect class="cw-strip" x="5" y="207.5" width="316" height="30" rx="3"/>
+            <rect class="cw-strip" x="5" y="205.5" width="316" height="22" rx="3"/>
             <!-- The mark: Crossway's own, the switcher as an icon, an ink
                  frame with the app row as one pane above the three window
                  panes. Drawn, so it inverts with the rest of the case. -->
@@ -177,9 +207,12 @@
              thumbwheel with four detents for the blur. Underneath they are
              exactly the inputs the engine wires: the radiogroup
              (two radios, neither of them "off"), the checkbox, the range.
-             Each wears an engraved label in the body face. -->
+             Each setting wears an engraved label, and each side of the
+             badge a title on the tray's top edge: App Switcher over the
+             switch, Settings over the other two. -->
         <div class="cw-bezel">
           <div class="cw-bezel-ctl cw-bezel-mode">
+            <span class="cw-bezel-title" aria-hidden="true">App Switcher</span>
             <div class="cw-toggle" role="radiogroup" aria-label="App Switcher">
               <!-- The power light. It belongs to the SWITCH: green while
                    Crossway is the switcher on the screen, ink while the
@@ -196,7 +229,6 @@
               </span>
               <span class="cw-engrave" data-side="native" aria-hidden="true">macOS Native</span>
             </div>
-            <span class="cw-engrave" aria-hidden="true">App Switcher</span>
           </div>
           <!-- The badge, centred on the panel and so on the monitor: the
                maker's mark where a display of this era put it. It is the
@@ -208,6 +240,7 @@
             <svg class="cw-logo-apple" viewBox="0 0 24 26" focusable="false"><path class="cw-ink" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
           </span>
           <div class="cw-settings">
+            <span class="cw-bezel-title" aria-hidden="true">Settings</span>
             <label class="cw-set cw-push cw-bezel-ctl">
               <span class="cw-push-row"><span class="cw-led" aria-hidden="true"></span><input type="checkbox" data-option="include-minimized" checked><span class="cw-tick" aria-hidden="true"></span></span>
               <span class="cw-engrave">Include Minimized Windows</span>
@@ -216,13 +249,13 @@
               <!-- The wheel's scale is printed above it, a word over each
                    detent, the one under the cap in ink; the label under it is
                    the one word. The output is what a screen reader hears. -->
-              <span class="cw-slider" data-blur="0">
+              <span class="cw-slider" data-blur="1">
                 <span class="cw-scale" aria-hidden="true"><i>None</i><i>Light</i><i>Medium</i><i>Heavy</i></span>
                 <input type="range" id="cw-blur" data-option="blur"
-                       min="0" max="3" step="1" value="0"
+                       min="0" max="3" step="1" value="1"
                        aria-label="Blur behind the switcher" aria-describedby="cw-blur-now">
                 <span class="cw-detents" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
-                <output id="cw-blur-now" for="cw-blur" class="sr-only">None</output>
+                <output id="cw-blur-now" for="cw-blur" class="sr-only">Light</output>
               </span>
               <span class="cw-engrave">Blur</span>
             </div>
@@ -232,165 +265,111 @@
              per settled state, spoken only when it changes. -->
         <p id="cw-status" class="sr-only" role="status" aria-live="polite"></p>
       </div>
+        <!-- Interactive mode, on a line of its own under the monitor,
+             centred on it, and nothing else. The page opens with it off: the automatic
+             demo plays on a monitor as wide as the stage allows (an
+             autopilot clicks the same keys a visitor would, through
+             scenes whose commits put the desktop back where it started),
+             and a click on the screen only makes it wait. Turned on, the
+             demo stops and the keys window comes out beside the monitor
+             (under it where the stage stacks). The box is the whole
+             switch: there is no other control for the demo. autocomplete
+             is off so a reload always opens on the demo playing. -->
+        <div class="cw-mode-bar">
+          <label class="cw-demo-mode cw-interactive-mode"><input type="checkbox" id="cw-interactive" autocomplete="off" aria-controls="cw-keys"> Interactive mode</label>
+        </div>
         <!-- The keys. macOS reserves these chords at the OS level, so
              pressing them for real would switch the visitor's own apps
-             rather than the demo's. So the keys the visitor presses ARE
-             the keyboard: the two modifiers to hold (they latch, and a
-             second click lets go, which is what commits) and the two keys
-             to tap. Under each box's keys its two chords are named with
-             what each does; the row in effect lights, and the ⌥ box greys
-             as one without Crossway, because a key you cannot have is
-             the pitch.
-             The glyphs are drawn at one weight: as text, the four keys
-             come from three fonts. -->
-        <!-- The demo's ONE window, beside the display and as tall as it:
-             "Interactive demo" in its title bar (the section's heading),
-             the hint line and the two boxes of keys as its body. -->
-        <section class="cw-controls mac-window" role="group" aria-labelledby="cw-title">
-          <div class="titlebar"><span class="closebox" aria-hidden="true"></span><h2 class="title cw-title" id="cw-title">Interactive demo</h2></div>
+             rather than the demo's. So the visitor clicks the CHORDS
+             instead: each of the four panes names a chord, draws its two
+             keys and says what it does, and a click on it taps that
+             chord, putting its modifier down first; a pause lets it go,
+             which is what commits. The pane in effect lights, and the ⌥
+             box greys as one without Crossway, because a key you cannot
+             have is the pitch. The glyphs are drawn at one weight: as
+             text, the keys' symbols come from three fonts. -->
+        <!-- The keys window, put away until Interactive mode is on (inert
+             in the markup, so nothing in it can be reached before the
+             script runs): "Interactive demo" in its title bar, the one
+             line that says to click, and the two boxes of panes, nothing
+             else. -->
+        <!-- The window's slot. Beside the monitor it stands where the
+             monitor makes room and cuts the window at the monitor's
+             moving edge, so the window comes out from behind it; where
+             the stage stacks it is a row under the Interactive mode bar
+             that opens to the window's height. -->
+        <div class="cw-keys-slot">
+        <section class="cw-controls mac-window" id="cw-keys" role="group" aria-labelledby="cw-keys-title" inert>
+          <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title cw-title" id="cw-keys-title">Interactive demo</span></div>
           <div class="cw-keys-body">
-          <div class="cw-keys-lead-row">
-          <!-- Automatic demo, at the top left of the window's body and
-               on a line of its own. Left alone, the demo demonstrates
-               itself. An autopilot clicks the same keys a visitor would,
-               through scenes whose commits put the desktop back exactly
-               where it started, in whichever world the switch is set to,
-               and the visitor's first real click on the keys, the screen
-               or the switch takes over. -->
-          <label class="cw-demo-mode"><input type="checkbox" id="cw-demo" checked> Automatic demo</label>
-          </div>
-          <!-- The verbs beside the caps say the one thing visitors miss:
-               these keys are CLICKED. macOS keeps the real ones. The caps
-               are drawn at MacBook Pro proportions: command is a quarter
-               wider than option, tab half as wide again as backtick, and
-               every cap carries the legend its real key does, the symbol
-               at the top right and the name at the bottom left. -->
+          <!-- ONE instruction for the whole window, over both boxes, in
+               the page's ink. -->
+          <p class="cw-click-to-tap">Click to tap:</p>
           <!-- Two groups, one per command family: the upper one views
-               applications (tab), the lower one views windows (option).
-               Each is a group box of the era, a hairline frame with its
-               name on the line, and each is COMPLETE: the modifier to
-               hold, the two keys to tap beside it, and under them the two
-               chords they make and what each buys you. A visitor who
-               lands on a group has everything that name needs inside one
-               frame, and never has to work out which of four keys goes
-               with which of four rows, which is what a single keypad over
-               a single legend asks of them.
+               applications (command), the lower one views windows
+               (option). Each is a group box of the era, a hairline frame
+               with its name on the line.
 
-               So Tab and backtick are drawn once PER GROUP: two Tabs, two
-               backticks, each carrying data-group. A tap on a group's key
-               is a tap of that group's chord, and the group's own
-               modifier goes down first if it is not already (wireKeys):
-               the first click on either frame does something on the
-               screen. The caps keep MacBook Pro proportions and the
-               legends their real keys carry; the verb over the tap keys
-               says the one thing a cap cannot: it is CLICKED. The
-               modifiers are ART: a tap on a box's key holds its modifier
-               for you and the cap lights, and a pause lets it go, which
-               is what commits. Nothing on them is clickable, and a screen
-               reader is not told about them. -->
+               The four PANES are the keys. Each pane is one button that
+               taps its chord: data-key is the key it taps and data-group
+               the modifier that goes down first if it is not already
+               (wireKeys), and a pause after the last tap lets the
+               modifier go, which is what commits.
+
+               Each pane draws its chord as two FULL keycaps, the
+               modifier and the key, each printed as its real key is:
+               the symbol at the top right and the name at the bottom
+               left, backtick's two symbols stacked. A click presses the
+               key's cap; the modifier's stays down while it is held. The
+               caps are art (aria-hidden): the button's name is the
+               pane's own, and its description is the chord in words
+               (a hidden line, "Command-Tab.") and then its sentence, so
+               a screen reader hears which keys a pane teaches. -->
           <fieldset class="cw-group" data-group="cmd">
             <legend class="cw-group-label">View applications</legend>
-            <div class="cw-group-keys">
-              <span class="cw-keyset">
-                <span class="cw-keycap-btn cw-key-cmd is-art" data-key="cmd" data-held="false" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg><span class="cw-keycap-word" aria-hidden="true">command</span></span>
-              </span>
-              <span class="cw-keyset">
-                <span class="cw-keyset-verb">Click to&#10;tap</span>
-                <button type="button" class="cw-keycap-btn cw-key-tab" data-key="tab" data-group="cmd" aria-label="Tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h13M11 7l5 5-5 5M20 5v14"/></svg><span class="cw-keycap-word" aria-hidden="true">tab</span></button>
-                <button type="button" class="cw-keycap-btn cw-key-tick" data-key="tick" data-group="cmd" aria-label="Backtick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.45c1.125-1.65 2.25-1.65 3.375 0s2.25 1.65 3.375 0 2.25-1.65 2.25-1.65M11.1 16.95l2.25 2.25"/></svg></button>
-              </span>
-            </div>
             <ol class="cw-legend">
-              <li data-chord="cmd-tab" data-what="Switch apps and see their windows." data-what-native="Switch apps. No window previews.">
-                <span class="chord" aria-hidden="true"><span class="key">⌘</span><span class="key">⇥</span></span>
-                <span class="cw-legend-name">Switch apps</span>
-                <span class="cw-legend-what">Switch apps and see their windows.</span>
+              <li data-chord="cmd-tab" data-what="Switch apps and see their&nbsp;windows." data-what-native="Switch apps. No window previews.">
+                <button type="button" class="cw-chord" data-key="tab" data-group="cmd" aria-labelledby="cw-name-cmd-tab" aria-describedby="cw-keys-cmd-tab cw-what-cmd-tab">
+                  <span class="cw-chord-caps" aria-hidden="true"><span class="cw-cap cw-cap-mod cw-cap-cmd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg><span class="cw-cap-word">command</span></span><span class="cw-cap cw-cap-key cw-cap-tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h13M11 7l5 5-5 5M20 5v14"/></svg><span class="cw-cap-word">tab</span></span></span>
+                  <span class="sr-only" id="cw-keys-cmd-tab">Command-Tab.</span>
+                  <span class="cw-legend-name" id="cw-name-cmd-tab">Switch apps</span>
+                  <span class="cw-legend-what" id="cw-what-cmd-tab">Switch apps and see their&nbsp;windows.</span>
+                </button>
               </li>
               <li data-chord="cmd-tick" data-what="Move between the windows of one app." data-what-native="Cycle front app's windows. No previews.">
-                <span class="chord" aria-hidden="true"><span class="key">⌘</span><span class="key key-tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.45c1.125-1.65 2.25-1.65 3.375 0s2.25 1.65 3.375 0 2.25-1.65 2.25-1.65M11.1 16.95l2.25 2.25"/></svg></span></span>
-                <span class="cw-legend-name">Switch windows</span>
-                <span class="cw-legend-what">Move between the windows of one app.</span>
+                <button type="button" class="cw-chord" data-key="tick" data-group="cmd" aria-labelledby="cw-name-cmd-tick" aria-describedby="cw-keys-cmd-tick cw-what-cmd-tick">
+                  <span class="cw-chord-caps" aria-hidden="true"><span class="cw-cap cw-cap-mod cw-cap-cmd"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"/></svg><span class="cw-cap-word">command</span></span><span class="cw-cap cw-cap-key cw-cap-tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.45c1.125-1.65 2.25-1.65 3.375 0s2.25 1.65 3.375 0 2.25-1.65 2.25-1.65M11.1 16.95l2.25 2.25"/></svg></span></span>
+                  <span class="sr-only" id="cw-keys-cmd-tick">Command-backtick.</span>
+                  <span class="cw-legend-name" id="cw-name-cmd-tick">Switch windows</span>
+                  <span class="cw-legend-what" id="cw-what-cmd-tick">Move between the windows of one app.</span>
+                </button>
               </li>
             </ol>
           </fieldset>
           <fieldset class="cw-group" data-group="opt" data-crossway-only="1">
             <legend class="cw-group-label">View windows</legend>
-            <div class="cw-group-keys">
-              <span class="cw-keyset">
-                <span class="cw-keycap-btn cw-key-opt is-art" data-key="opt" data-held="false" data-crossway-only="1" aria-hidden="true"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h5.5l7 14H21M14 5h7"/></svg><span class="cw-keycap-word" aria-hidden="true">option</span></span>
-              </span>
-              <span class="cw-keyset">
-                <span class="cw-keyset-verb">Click to&#10;tap</span>
-                <button type="button" class="cw-keycap-btn cw-key-tab" data-key="tab" data-group="opt" aria-label="Tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h13M11 7l5 5-5 5M20 5v14"/></svg><span class="cw-keycap-word" aria-hidden="true">tab</span></button>
-                <button type="button" class="cw-keycap-btn cw-key-tick" data-key="tick" data-group="opt" aria-label="Backtick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.45c1.125-1.65 2.25-1.65 3.375 0s2.25 1.65 3.375 0 2.25-1.65 2.25-1.65M11.1 16.95l2.25 2.25"/></svg></button>
-              </span>
-            </div>
             <ol class="cw-legend">
               <li data-chord="opt-tab" data-crossway-only="1">
-                <span class="chord" aria-hidden="true"><span class="key">⌥</span><span class="key">⇥</span></span>
-                <span class="cw-legend-name">All windows</span>
-                <span class="cw-legend-what">Every open window on one grid.</span>
+                <button type="button" class="cw-chord" data-key="tab" data-group="opt" aria-labelledby="cw-name-opt-tab" aria-describedby="cw-keys-opt-tab cw-what-opt-tab">
+                  <span class="cw-chord-caps" aria-hidden="true"><span class="cw-cap cw-cap-mod cw-cap-opt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h6l6 14h6M14 5h7"/></svg><span class="cw-cap-word">option</span></span><span class="cw-cap cw-cap-key cw-cap-tab"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 12h13M11 7l5 5-5 5M20 5v14"/></svg><span class="cw-cap-word">tab</span></span></span>
+                  <span class="sr-only" id="cw-keys-opt-tab">Option-Tab.</span>
+                  <span class="cw-legend-name" id="cw-name-opt-tab">All windows</span>
+                  <span class="cw-legend-what" id="cw-what-opt-tab">Every open window on one grid.</span>
+                </button>
               </li>
               <li data-chord="opt-tick" data-crossway-only="1">
-                <span class="chord" aria-hidden="true"><span class="key">⌥</span><span class="key key-tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.45c1.125-1.65 2.25-1.65 3.375 0s2.25 1.65 3.375 0 2.25-1.65 2.25-1.65M11.1 16.95l2.25 2.25"/></svg></span></span>
-                <span class="cw-legend-name">App windows</span>
-                <span class="cw-legend-what">The front app's windows on one grid.</span>
+                <button type="button" class="cw-chord" data-key="tick" data-group="opt" aria-labelledby="cw-name-opt-tick" aria-describedby="cw-keys-opt-tick cw-what-opt-tick">
+                  <span class="cw-chord-caps" aria-hidden="true"><span class="cw-cap cw-cap-mod cw-cap-opt"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5h6l6 14h6M14 5h7"/></svg><span class="cw-cap-word">option</span></span><span class="cw-cap cw-cap-key cw-cap-tick"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7.5 6.45c1.125-1.65 2.25-1.65 3.375 0s2.25 1.65 3.375 0 2.25-1.65 2.25-1.65M11.1 16.95l2.25 2.25"/></svg></span></span>
+                  <span class="sr-only" id="cw-keys-opt-tick">Option-backtick.</span>
+                  <span class="cw-legend-name" id="cw-name-opt-tick">App windows</span>
+                  <span class="cw-legend-what" id="cw-what-opt-tick">The front app's windows on one grid.</span>
+                </button>
               </li>
             </ol>
           </fieldset>
-          <!-- The small print, so nobody takes the sketch for the whole
-               app: the real one has more settings and more to it. -->
-          <!-- The way out of the sketch, in the SAME note: .cw-fine draws a
-               rule and a padded block, so a second paragraph of it costs the
-               keys window about 30px at its foot and spills it past the
-               display (at 1200x1000 and, in the terminal appearance,
-               1280x700). One block, two sentences: the link still
-               immediately follows the sentence it belongs to. -->
-          <!-- The foot: the changing hint, then the divider and the
-               small print under it. ONE block, because the window's body
-               is a flex column whose gap is the boxes' own: a fourth
-               child there would have cost a whole gap at every fold, and
-               the hint's place is against the divider anyway. -->
-          <div class="cw-keys-foot">
-            <!-- One thing to try at a time, cycled by hero-init.js through
-                 the list under it; this line is what is seen, the list is
-                 what a screen reader gets, once. Every idea is one line at
-                 1280px wide, in plain words with nothing bolded, and every
-                 one is something the desktop really does. The window has
-                 nothing else: its title bar is the heading. -->
-            <p class="cw-hero-idea" aria-hidden="true"><span class="cw-hero-hint">Hint:</span> <span class="cw-hero-idea-text">Drag a window by its title bar.</span></p>
-            <ul class="cw-hero-ideas sr-only" aria-label="Things to try on the monitor">
-              <li>Drag a window by its title bar.</li>
-              <li>Resize a window from any edge or corner.</li>
-              <li>Click a window to bring it to the front.</li>
-              <li>Minimize a window with its yellow button.</li>
-              <li>Close a window with its red button.</li>
-              <li>Click a window's green button to fill the screen. Click again to shrink back.</li>
-              <li>Restore a minimized window from the Dock.</li>
-              <li>Launch an app from the Dock.</li>
-              <li>Click the app's name in the menu bar to open its menu.</li>
-              <li>Quit the front app from the menu bar.</li>
-              <li>Tap Tab to switch apps, then pause to land on one.</li>
-              <li>Tap Tab again and again to walk along the row.</li>
-              <li>Tap backtick again to move along the window strip.</li>
-              <li>Tap backtick to switch windows.</li>
-              <li>Use backtick to reach a window buried under another.</li>
-              <li>Under View windows, tap Tab to see every window on one grid.</li>
-              <li>Under View windows, tap backtick to see only the front app's windows.</li>
-              <li>Hover a preview in the switcher, then click it to jump there.</li>
-              <li>Click the wallpaper while the switcher is up to dismiss it.</li>
-              <li>Turn the blur wheel on the bezel to frost what is behind the switcher.</li>
-              <li>Press Include Minimized Windows on the bezel and watch the switcher change.</li>
-              <li>Throw the switch to macOS Native and compare.</li>
-              <li>Watch the film keep playing inside its preview.</li>
-              <li>Let the automatic demo run, then take over with a click.</li>
-            </ul>
-          
-            <p class="cw-fine">This is just a first taste.
-              <a class="cw-features-link" href="features/">Click here to see the full list of features.</a></p>
-          </div>
           </div>
         </section>
+        </div>
       </div>
   </section>
 
@@ -1170,8 +1149,7 @@
         permissions are granted, Crossway finishes setting up on its own.</li>
       </ol>
       <div class="notice">
-        <p><strong>Always download in a web browser</strong>, from this page.
-        Files sent through chat apps get marked by macOS and won't open.
+        <p>Files sent through chat apps get marked by macOS and won't open.
         If that happens, the fix is on the
         <a href="troubleshooting/">Troubleshooting</a> page.</p>
       </div>
@@ -1179,26 +1157,38 @@
       Runs on Apple Silicon and Intel.</p>
     </div>
   </section>
+
   </div>
   <div class="desk-col">
   <section class="mac-window" id="privacy">
     <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Privacy</span></div>
     <div class="window-body">
-      <p><strong>Crossway records nothing and uploads nothing.</strong></p>
+      <p><strong>Crossway doesn't record or upload anything.</strong></p>
       <p>Nothing is saved to disk except your settings. Window previews
-      live in memory only and are never written anywhere.</p>
-      <p>Auto-update is optional and opt-in, off by default, and checks only on the schedule you choose. Crossway fetches release metadata from GitHub; it never downloads or installs an update itself.</p>
-      <p>The same metadata-only check is always available manually from
-      <em>Check for Updates</em> in the menu bar or <em>Check now</em> in
-      Settings. There is no telemetry, and there are no identifiers or
-      uploads.</p>
+      live in memory only. There is no telemetry, and Crossway sends no
+      identifiers.</p>
+      <p>Crossway only goes online to check GitHub for new versions. It
+      checks when you ask it to, or on its own if you turn on
+      <em>Auto-update</em>.</p>
       <p>Every release is signed with an Apple Developer&nbsp;ID certificate
-      and notarized by Apple. An available update offers a deliberate browser
-      download; Crossway never replaces the app unattended. You can replace
-      it manually, or separately invoke the external skill above and confirm
-      its verified replacement plan.</p>
+      and notarized by Apple.</p>
     </div>
   </section>
+
+  <!-- Features, under Privacy, taking what is left of Read Me's height
+       beside them: two of the things the switcher does besides
+       switching, and the way to the full list. The shortcuts are
+       written as Read Me writes ⌘Tab, in the body's own type: the mono
+       face of <kbd> sets ⌘ small and faint in a sentence. -->
+  <section class="mac-window" id="features">
+    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Features</span></div>
+    <div class="window-body">
+      <p>Crossway has many features, like ⌘W to close the selected
+      window and ⌘Q to quit an app, right from the app switcher.
+      <a href="features/">See all features</a>.</p>
+    </div>
+  </section>
+  </div>
 
   <section class="mac-window" id="contact">
     <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Contact</span></div>
@@ -1206,88 +1196,6 @@
       <p>Found a bug or have a request? Email
       <a href="mailto:support@crosswayapp.com">support@crosswayapp.com</a>
       and it will reach the developer directly.</p>
-    </div>
-  </section>
-  </div>
-
-  <!-- The Download window: the button and its line, with a word on
-       what to do next, beside Donate at the foot of the page. The floppy
-       is pixel art in the page's ink, like the heart beside it is in its
-       red. -->
-  <section class="mac-window" id="download">
-    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Download</span></div>
-    <div class="window-body">
-    <div class="download-grid">
-      <div class="dialog-icon">
-        <svg width="56" height="56" viewBox="0 0 10 10" shape-rendering="crispEdges" fill="currentColor" role="img" aria-label="A pixel-art floppy disk">
-          <rect x="0" y="0" width="9" height="1"/>
-          <rect x="0" y="1" width="1" height="9"/>
-          <rect x="9" y="1" width="1" height="9"/>
-          <rect x="0" y="9" width="10" height="1"/>
-          <rect x="8" y="1" width="1" height="1"/>
-          <rect x="2" y="1" width="5" height="1"/>
-          <rect x="2" y="2" width="1" height="1"/><rect x="4" y="2" width="3" height="1"/>
-          <rect x="2" y="3" width="5" height="1"/>
-          <rect x="2" y="5" width="6" height="1"/>
-          <rect x="2" y="6" width="1" height="2"/><rect x="7" y="6" width="1" height="2"/>
-          <rect x="2" y="8" width="6" height="1"/>
-        </svg>
-      </div>
-      <!-- No heading: the button below already says "Download
-           Crossway". The floppy, what the download is, the button. -->
-      <div>
-        <!-- Two lines, broken where the sense breaks: what it is on
-             the first, what it runs on under it. A hard break, not a
-             wrap: the middle column's width changes with the button
-             beside it, and a balanced wrap would still find its own
-             place to break at some width.
-
-             BOTH ENDS of the range, not "14+": Sonoma is the app's
-             deployment target and Tahoe is the newest macOS it is built
-             and tested against, so 14 to 26 is what it runs on.
-
-             Plain spaces, and the rule below keeps each line whole: a
-             no-break space between "Apple" and "Silicon" holds them
-             together but sets wider than the spaces around it in this
-             face, which reads as a gap. -->
-        <p class="caption">Signed &amp; notarized&ensp;·&ensp;macOS 14 to 26<br>Apple Silicon &amp; Intel</p>
-      </div>
-      <div class="dialog-actions">
-        <div class="btn-row">
-          <a class="btn btn-default" href="https://github.com/crossway-app/Crossway-Releases/releases/latest/download/Crossway.zip">Download Crossway</a>
-        </div>
-      </div>
-    </div>
-    <!-- Two ways in, stacked: download it yourself, or hand the line
-         below to a coding agent.
-
-         The string is the published bootstrap URL, and SKILL.md at the
-         site root is GENERATED, so this literal has to keep matching that
-         output path. Never hand-edit SKILL.md itself.
-
-         The Copy button ships hidden and copy.js reveals it. With
-         JavaScript off there is no dead control: the visitor reads and
-         selects the line by hand. -->
-    <!-- PARKED (the block below); its rules in style.css are keyed
-         to #download. -->
-      <!-- PARKED: the offer to let an agent install Crossway is
-           hidden while that path is not ready. Commented out rather than
-           deleted, because the skill itself is still generated, packaged
-           and published to the site root; only the OFFER is withdrawn. Restore this
-           block verbatim when the agent path works, and restore the
-           parked geometry checks for it in the same breath: while the
-           block is out those checks assert its absence, so un-hiding it
-           without restoring them fails loudly rather than silently
-           skipping.
-
-      <div class="agent-install">
-        <p>Or let an agent install it for you:</p>
-        <div class="paste-chip" data-copy="Install Crossway: https://crosswayapp.com/SKILL.md">
-          <code>Install Crossway: https://crosswayapp.com/SKILL.md</code>
-          <button type="button" class="paste-chip-copy" hidden>Copy</button>
-        </div>
-      </div>
-      -->
     </div>
   </section>
 
@@ -1328,7 +1236,6 @@
     </div>
     </div>
   </section>
-  </div>
 
   <footer class="footer">
     <p class="links">
