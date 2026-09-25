@@ -32,7 +32,7 @@
 
   /* The left figure: the ring follows the pointer at once, but the
      strip beneath waits for the selection to SETTLE — the figure's
-     own previewDelay. Every selection change restarts one 220 ms
+     own preview delay. Every selection change restarts one 220 ms
      timer; while the pointer keeps moving, the last settled strip
      stays untouched (no open/close churn), and only a rested
      selection swaps it. The demo-live class arms the bloom animation
