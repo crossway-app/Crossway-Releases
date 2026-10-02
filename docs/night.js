@@ -56,6 +56,34 @@
       root.add(toNight ? "night" : "day");
       persist(toNight ? "1" : "0");
     }
+    reflect();
+  }
+
+  /* The lamp in the menubar: the same toggle as the word, for the
+     visitor who never types it, and WITHOUT the dissolve. The tiles
+     falling away are the word's reward; the lamp is a lamp, and a lamp
+     goes off with a click. Its drawing and the word beside it follow
+     the appearance in CSS, so all the script keeps true is what a
+     screen reader is told: checked while the lights are on. */
+  function lamps() {
+    return document.querySelectorAll ? document.querySelectorAll(".lamp") : [];
+  }
+  function reflect() {
+    var on = !isNight();
+    var all = lamps();
+    for (var i = 0; i < all.length; i++) {
+      all[i].setAttribute("aria-checked", on ? "true" : "false");
+    }
+  }
+  function lampClicked(e) {
+    var t = e.target;
+    var lamp = t && t.closest ? t.closest(".lamp") : null;
+    if (!lamp) { return; }
+    /* The terminal is not inert here: it has a light palette as well as a
+       dark one, so the flip changes what the visitor sees in the terminal
+       exactly as it does outside it. Still not under a dissolve. */
+    if (busy) { return; }
+    toggle();
   }
 
   /* The flourish: cover the view in square tiles wearing the OUTGOING
@@ -119,14 +147,11 @@
   }
 
   function trigger() {
-    /* The terminal owns the appearance while it is on: its tokens beat
-       every light and dark value here, so flipping the state would play
-       the whole dissolve and change nothing the visitor can see. Stay
-       inert and let the terminal's own word be the way out. The state
-       itself is untouched, so it is still there to come back to. */
-    if (document.documentElement.classList.contains("hacker")) {
-      return;
-    }
+    /* No early return for the terminal: it has a daylight palette as well
+       as a dark one, so a flip changes what it shows and is worth playing.
+       .day and .night select the terminal's two faces the same way they
+       select the site's, and leaving the terminal drops the visitor back
+       into the appearance they were already in. */
     if (busy) {
       return;
     }
@@ -135,6 +160,11 @@
       return;
     }
     dissolve();
+  }
+
+  document.addEventListener("click", lampClicked);
+  if (systemNight && systemNight.addEventListener) {
+    systemNight.addEventListener("change", reflect); /* a system flip moves the lamp too */
   }
 
   document.addEventListener("keydown", function (e) {
@@ -173,6 +203,7 @@
     } else if (stored === "0") {
       root.add("day");
     }
+    reflect();
   }
 
   applyStored();

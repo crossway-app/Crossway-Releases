@@ -20,8 +20,8 @@
    ---------------------------------------------------------------------
    FIDELITY CONTRACT
 
-   This file is a few hundred lines standing in for a six-thousand-line
-   controller, so it should say plainly what it does and does not claim.
+   This file is a small model standing in for the whole of the app's
+   switcher, so it should say plainly what it does and does not claim.
    The risk it guards against is drift: the app moves, this does not, and
    the hero quietly starts lying.
 
@@ -38,8 +38,9 @@
        repeated taps ping-pong between the two most recent
      · the native ruleset: an app-only switcher, a chrome-less window
        walk through a frozen order, and no exposé at all
-     · the preview pane folding on every advance and re-dropping after
-       PREVIEW_DELAY of rest
+     · the preview pane's delayed first drop, and on every advance the
+       strip's fold, dropping again with the new app's windows only
+       after PREVIEW_DELAY of rest
      · minimized windows: off the desktop and in the Dock, offered by
        the switcher only when the Include minimized option says so, and
        restored by activating them
@@ -48,9 +49,9 @@
 
    NOT MODELLED, deliberately:
      · the show-delay gate. The real app hides all chrome until you have
-       held for SHOW_DELAY; here the row appears at once (user decision).
-       A click is 80-120ms, which straddles 100ms, so gating it would
-       show or hide chrome unpredictably on identical gestures.
+       held for SHOW_DELAY; here the row appears at once. A click is
+       80-120ms, which straddles 100ms, so gating it would show or hide
+       chrome unpredictably on identical gestures.
      · live capture. Thumbnails are drawn sketches, not screenshots.
      · everything the switcher does about the real world: multiple
        monitors, hidden (as in ⌘H) apps, Spaces, window lists changing
@@ -62,17 +63,14 @@
 
    If you are changing the app and wondering whether to change this file:
    the answer is yes for anything in the first list, and no for anything
-   in the second. scripts/test-site-demo-constants.sh fails the build if
-   the two timing constants below drift from the app's own. */
+   in the second. An automated check fails the build if the two timing
+   constants below drift from the app's own. */
 (function (root) {
   "use strict";
 
   /* ---- timing ----------------------------------------------------------
-     Both come from the app's own defaults, and are pinned to them by
-     scripts/test-site-demo-constants.sh:
-
-       SHOW_DELAY    Preferences.defaultSwitcherShowDelay  (0.100 s)
-       PREVIEW_DELAY Preferences.defaultPreviewDelay       (0.400 s)
+     Both are the app's own shipped defaults, 0.100 s and 0.400 s, and an
+     automated check keeps them in step with it:
 
      SHOW_DELAY is recorded but deliberately NOT enforced — see the
      fidelity contract above. PREVIEW_DELAY is: the pane folds the moment
@@ -93,6 +91,8 @@
     NOTE: "note",         /* a note: a title, then text on ruled paper              */
     MUSIC: "music",       /* a player: album art, then what is playing              */
     MOVIE: "movie",       /* a film: the projector's screen, playing                */
+    VIDEO: "video",       /* a browser playing a film: the toolbar, then the screen */
+    FILES: "files",       /* a Finder window: a sidebar, then a grid of files       */
   };
 
   /* ---- apps ------------------------------------------------------------
@@ -102,14 +102,33 @@
 
      `glyph` names a shape we draw ourselves. No Apple icon art. */
   var APPS = [
-    { id: "safari",    name: "Safari",           glyph: "compass" },
-    /* Second, so the very first ⌘Tab lands on the film and its tile is
-       seen PLAYING in the strip: that is the live previews, shown. */
+    { id: "safari",   name: "Safari",   glyph: "compass" },
+    { id: "terminal", name: "Terminal", glyph: "prompt" },
+    { id: "finder",   name: "Finder",   glyph: "face" },
+  ];
+  /* THREE apps RUNNING and SEVEN windows: a deliberately small set, so
+     a visitor arriving in the middle of a scene has little to read.
+     What the set has to keep: a strip worth walking (Terminal, three
+     windows), a second app whose windows are worth cycling (Finder,
+     two), a tall window and a wide one, a minimized window in two
+     different apps (so Include Minimized Windows and the Dock's restore
+     mean something), more windows than one exposé row holds, and the
+     FILM, which is the live previews shown: it plays in Safari's second
+     window, a video page. Safari is in front; Terminal one Tab along.
+     The zero-window and one-window cases live in test fixtures rather
+     than on the shipped desktop.
+
+     The other four apps are on the desktop, CLOSED: in the Dock
+     without a dot, one click from running. They are what the visitor
+     launches, quits and switches to when three apps stop being enough,
+     and Mail keeps its Dock badge while closed, as the App Store keeps
+     its update count. The running three carry none: none of them badges
+     on a Mac, and the badge tests bring their own. */
+  var CLOSED = [
+    { id: "mail",      name: "Mail",             glyph: "envelope", badge: 3 },
+    { id: "notes",     name: "Notes",            glyph: "note" },
+    { id: "music",     name: "Music",            glyph: "beam" },
     { id: "quicktime", name: "QuickTime Player", glyph: "reel" },
-    { id: "terminal",  name: "Terminal",         glyph: "prompt" },
-    { id: "mail",     name: "Mail",     glyph: "envelope", badge: 3 },
-    { id: "notes",    name: "Notes",    glyph: "note" },
-    { id: "music",    name: "Music",    glyph: "beam" },
   ];
 
   /* ---- windows ---------------------------------------------------------
@@ -118,83 +137,89 @@
 
      Geometry is percent-of-screen so the desktop scales with the display.
      The windows are spread across the whole desktop at the sizes real
-     windows have (a wide mailer, a tall note, a squarer player — nothing
-     shrunk to fit), the front one sits off-centre, and every window
-     keeps a visible edge or corner in the default stack: nothing is
-     buried, so every raise is readable and every window can be clicked.
-     The test rasterises the stack to check.
-
-     Note the shape of the set: Notes has exactly ONE window (⌘` there has
-     nothing to cycle to), and Terminal has FOUR (so the preview strip is
-     worth opening). The reducer must also survive an app with ZERO
-     windows — ⌘` aborts silently — which is not representable on a
-     believable desktop, so it is covered by a fixture in the tests
-     rather than shipped in the hero. */
+     windows have, the front one sits off-centre, and every window keeps
+     a visible edge or corner in the default stack: nothing is buried,
+     so every raise is readable and every window can be clicked. The
+     test rasterises the stack to check. The reducer must also survive
+     an app with ZERO windows — ⌘` aborts silently — which is not
+     representable on a believable desktop, so it is covered by a
+     fixture in the tests rather than shipped in the hero. */
   var WINDOWS = [
-    { id: "sa1", app: "safari",    title: "Crossway — a window switcher for macOS", sketch: SKETCH.PAGE,  x: 6,  y: 12, w: 42, h: 56 },
-    /* The film, bottom right, second in the stack: only its top-left
-       corner sits under the front window, so it is seen playing. */
-    { id: "qt1", app: "quicktime", title: "Flipbook.mov",                           sketch: SKETCH.MOVIE, x: 40, y: 36, w: 46, h: 48 },
-    { id: "tm1", app: "terminal",  title: "~/Projects/Crossway — zsh",              sketch: SKETCH.CODE,  x: 66, y: 4,  w: 32, h: 28 },
-    { id: "sa2", app: "safari",    title: "GitHub — crossway-app/Crossway",         sketch: SKETCH.PAGE,  x: 24, y: 2,  w: 30, h: 30 },
-    { id: "tm2", app: "terminal",  title: "run-tests.sh — 1815 passing",            sketch: SKETCH.CODE,  x: 76, y: 30, w: 24, h: 34 },
-    { id: "ml1", app: "mail",      title: "Inbox — 3 unread",                       sketch: SKETCH.MAIL,  x: 2,  y: 6,  w: 44, h: 30 },
-    { id: "nt1", app: "notes",     title: "Release notes — 1.12",                   sketch: SKETCH.NOTE,  x: 0,  y: 46, w: 22, h: 44 },
-    { id: "ms1", app: "music",     title: "Now Playing",                            sketch: SKETCH.MUSIC, x: 52, y: 5,  w: 26, h: 32 },
-    { id: "tm4", app: "terminal",  title: "server.log — tail -f",                   sketch: SKETCH.CODE,  x: 14, y: 62, w: 30, h: 28 },
-    { id: "sa3", app: "safari",    title: "Apple Developer Documentation",          sketch: SKETCH.PAGE,  x: 10, y: 16, w: 44, h: 50, minimized: true },
-    { id: "tm3", app: "terminal",  title: "~ — top",                                sketch: SKETCH.CODE,  x: 30, y: 20, w: 46, h: 46, minimized: true },
-    { id: "ml2", app: "mail",      title: "Re: Crossway 1.11 feedback",             sketch: SKETCH.MAIL,  x: 20, y: 20, w: 50, h: 44, minimized: true },
-    { id: "ms2", app: "music",     title: "Focus — playlist",                       sketch: SKETCH.MUSIC, x: 44, y: 40, w: 40, h: 38, minimized: true },
+    { id: "sa1", app: "safari",   title: "Crossway — a window switcher for macOS", sketch: SKETCH.PAGE,  x: 6,  y: 12, w: 42, h: 56 },
+    /* A big Terminal window sits over the film: about a fifth of the
+       film shows (its bottom band, where the skyline plays), so choosing
+       it in the switcher visibly brings it forward. */
+    { id: "tm1", app: "terminal", title: "~/Documents — zsh",                      sketch: SKETCH.CODE,  x: 34, y: 28, w: 46, h: 46 },
+    { id: "fd1", app: "finder",   title: "Crossway",                               sketch: SKETCH.FILES, x: 46, y: 4,  w: 52, h: 26 },
+    { id: "sa2", app: "safari",   title: "Crossway in two minutes",                sketch: SKETCH.VIDEO, x: 37, y: 33, w: 46, h: 48 },
+    { id: "tm2", app: "terminal", title: "~/Downloads — zsh",                      sketch: SKETCH.CODE,  x: 2,  y: 60, w: 26, h: 30 },
+    { id: "tm3", app: "terminal", title: "~ — top",                                sketch: SKETCH.CODE,  x: 30, y: 20, w: 46, h: 46, minimized: true },
+    { id: "sa3", app: "safari",   title: "Apple Developer Documentation",          sketch: SKETCH.PAGE,  x: 10, y: 16, w: 44, h: 50, minimized: true },
+    /* Finder's second window. Least recent, so every index above it is
+       unchanged, and placed in the clear strip along the bottom right
+       where it overlaps nothing: the stack stays readable and ⌘` on
+       Finder has somewhere to go. */
+    { id: "fd2", app: "finder",   title: "Downloads",                              sketch: SKETCH.FILES, x: 64, y: 80, w: 32, h: 17 },
   ];
 
   /* ---- the Dock --------------------------------------------------------
      A fixed order, never the MRU: a Dock that reshuffles is not a Dock.
-     And the window a quit app opens when it is launched again, one per
-     app, placed where the spread leaves room. */
-  var DOCK = ["safari", "mail", "notes", "music", "quicktime", "terminal"];
+     Finder first, as a Mac's is. And the window a quit app opens when it
+     is launched again, one per app, placed where the spread leaves
+     room. */
+  var DOCK = ["finder", "safari", "mail", "notes", "music", "quicktime", "terminal"];
   var FRESH = {
-    safari:   { title: "Start Page",  sketch: SKETCH.PAGE,  x: 20, y: 12, w: 52, h: 56 },
-    terminal: { title: "~ — zsh",     sketch: SKETCH.CODE,  x: 34, y: 28, w: 46, h: 46 },
-    mail:     { title: "Inbox",       sketch: SKETCH.MAIL,  x: 10, y: 20, w: 48, h: 50 },
-    notes:    { title: "New Note",    sketch: SKETCH.NOTE,  x: 60, y: 14, w: 30, h: 56 },
+    finder:    { title: "Recents",      sketch: SKETCH.FILES, x: 24, y: 10, w: 44, h: 40 },
+    safari:    { title: "Start Page",   sketch: SKETCH.PAGE,  x: 20, y: 12, w: 52, h: 56 },
+    mail:      { title: "Inbox",        sketch: SKETCH.MAIL,  x: 10, y: 20, w: 48, h: 50 },
+    notes:     { title: "New Note",     sketch: SKETCH.NOTE,  x: 60, y: 14, w: 30, h: 56 },
     music:     { title: "Browse",       sketch: SKETCH.MUSIC, x: 40, y: 60, w: 30, h: 26 },
     quicktime: { title: "Flipbook.mov", sketch: SKETCH.MOVIE, x: 40, y: 36, w: 46, h: 48 },
+    terminal:  { title: "~ — zsh",      sketch: SKETCH.CODE,  x: 34, y: 28, w: 46, h: 46 },
   };
 
   /* The default desktop. Cloned on use so a stage can never mutate the
      module's own arrays — two stages on one page stay independent. */
   function defaultFixtures() {
+    var cloneApp = function (a) {
+      return { id: a.id, name: a.name, glyph: a.glyph, badge: a.badge || 0 };
+    };
+    var apps = APPS.map(cloneApp);
     return {
-      apps: APPS.map(function (a) {
-        return { id: a.id, name: a.name, glyph: a.glyph, badge: a.badge || 0 };
-      }),
+      apps: apps,
       windows: WINDOWS.map(function (w) {
         return { id: w.id, app: w.app, title: w.title, sketch: w.sketch,
                  x: w.x, y: w.y, w: w.w, h: w.h, minimized: !!w.minimized };
       }),
+      /* Every app the Dock lists: the running ones (the SAME objects, so
+         a badge set on one is seen from both) and then the closed. */
+      catalogue: apps.concat(CLOSED.map(cloneApp)),
     };
   }
 
-  /* The small screen's desktop: three apps, five windows, same shape.
-     A 3x3 exposé grid of titled thumbnails inside a drawn screen at
-     ~296px is an unreadable smudge, so the phone gets fewer things
-     rather than smaller ones. A SWAP of data — never a second renderer. */
+  /* The small screen's desktop: two apps, four windows, same shape. A
+     3x3 exposé grid of titled thumbnails inside a drawn screen at ~296px
+     is an unreadable smudge, so the phone gets fewer things rather than
+     smaller ones. A SWAP of data — never a second renderer. */
   function compactFixtures() {
-    var keepApps = { safari: 1, quicktime: 1, terminal: 1 };
+    var keepApps = { safari: 1, terminal: 1 };
     var full = defaultFixtures();
     var windows = full.windows.filter(function (w) { return keepApps[w.app]; });
     var seen = {};
-    /* Safari keeps two, everyone else one, so the strip still has
-       something to show and ⌘` still means something. */
-    var limit = { safari: 2, quicktime: 1, terminal: 2 };
+    /* Two each, so the strip still has something to show and ⌘` still
+       means something; the film is Safari's second. */
+    var limit = { safari: 2, terminal: 2 };
     windows = windows.filter(function (w) {
       seen[w.app] = (seen[w.app] || 0) + 1;
       return seen[w.app] <= limit[w.app];
     });
+    var apps = full.apps.filter(function (a) { return keepApps[a.id]; });
     return {
-      apps: full.apps.filter(function (a) { return keepApps[a.id]; }),
+      apps: apps,
       windows: windows,
+      /* The whole Dock, the rest of it closed: fewer WINDOWS is the
+         point of the small screen, not fewer things to launch. */
+      catalogue: apps.concat(full.catalogue.filter(function (a) { return !keepApps[a.id]; })),
     };
   }
 
@@ -214,15 +239,20 @@
      ==================================================================== */
 
   var MODE = { IDLE: "idle", APP: "app", WINDOW: "window", GRID: "grid" };
+  var PANE_PHASE = {
+    CLOSED: "closed",
+    WAITING: "waiting",
+    CURRENT: "current",
+  };
 
-  /* Which modifier owns a chord. The real app enforces ⌘/⌥ mutual
-     exclusion through sessionOwner; here a chord belonging to the other
+  /* Which modifier owns a chord. The real app keeps ⌘ and ⌥ sessions
+     mutually exclusive; here a chord belonging to the other
      modifier ends the open session and starts its own, which is the only
      reading that makes sense when the input is buttons. */
   var OWNER = { "cmd-tab": "cmd", "cmd-tick": "cmd", "opt-tab": "opt", "opt-tick": "opt" };
 
   /* Advance wraps in both directions and never clamps. One helper for
-     apps, windows, and the grid — the real controller uses one too. */
+     apps, windows, and the grid — the real app uses one too. */
   function nextIndex(current, count, reverse) {
     if (count <= 0) { return 0; }
     return reverse ? (current - 1 + count) % count : (current + 1) % count;
@@ -276,8 +306,9 @@
       apps: fixtures.apps,
       windows: fixtures.windows,
       /* Every app the desktop has, running or not: the Dock lists these,
-         and a quit app is launched again from here. */
-      catalogue: fixtures.apps.slice(),
+         and a quit app is launched again from here. A fixture without
+         one has every app running. */
+      catalogue: (fixtures.catalogue || fixtures.apps).slice(),
       /* Fresh windows need ids no window has had. */
       spawned: 0,
       crosswayEnabled: true,
@@ -449,12 +480,24 @@
     }
 
     if (chord === "opt-tab" || chord === "opt-tick") {
-      if (state.mode === MODE.GRID) {
+      var scope = chord === "opt-tick" ? "app" : "all";
+      /* The OTHER grid's chord inside an open grid switches to that grid
+         (⌥` in the all-windows grid shows the front app's windows, ⌥Tab
+         in the app's grid shows every window), and the same chord walks
+         the grid that is open. The app walks the open grid on either
+         chord; the demo parts from it on purpose so a visitor clicking
+         "All windows" then "App windows" sees the two features, not the
+         same grid stepping on. */
+      if (state.mode === MODE.GRID && state.gridScope === scope) {
         var e = Object.assign({}, state);
         e.gridIndex = nextIndex(state.gridIndex, state.gridWindows.length, reverse);
         return e;
       }
-      return openGrid(state, chord === "opt-tick" ? "app" : "all", reverse);
+      if (state.mode === MODE.GRID) {
+        var other = openGrid(state, scope, reverse);
+        return other.mode === MODE.GRID && other.gridScope === scope ? other : state;
+      }
+      return openGrid(state, scope, reverse);
     }
 
     return state;
@@ -566,7 +609,7 @@
   /* Clicking a window activates its app as well as raising the window:
      the app moves to the front of the MRU, so the menu bar, ⌘` and the
      app-scoped grid all agree about which app is current. Without this
-     the menu bar said Mail while ⌘` cycled Safari. */
+     the menu bar names one app while ⌘` cycles another's windows. */
   function raiseWindow(state, id) {
     var win = state.windows.find(function (w) { return w.id === id; });
     if (!win) { return state; }
@@ -625,7 +668,10 @@
 
   /* The smallest a window can be dragged to, in percent of the desktop:
      a title bar with a little body under it, still a window and still
-     catchable. The largest is the screen, which the zoom already knows. */
+     catchable. The largest is the screen, which the zoom already knows.
+     A pull may bring a floor of its own in the same percent (`from.min`,
+     the wiring's floorFor), and the larger of the two holds: on a phone's
+     small desktop this share leaves a window no taller than its bar. */
   var MIN_WIN = { w: 18, h: 16 };
 
   /* Resize by an edge or a corner. `frame` is where the pointer would
@@ -635,6 +681,8 @@
      do not resize; the zoom is the size. */
   function resizeWindow(state, id, frame, from) {
     from = from || {};
+    var minW = Math.max(MIN_WIN.w, (from.min && from.min.w) || 0);
+    var minH = Math.max(MIN_WIN.h, (from.min && from.min.h) || 0);
     return mapWindow(state, id, function (w) {
       if (w.zoomed) { return w; }
       var x = frame.x, y = frame.y;
@@ -644,13 +692,13 @@
       if (right > 100) { right = 100; }
       if (bottom > 100) { bottom = 100; }
       var width = right - x, height = bottom - y;
-      if (width < MIN_WIN.w) {
-        if (from.l) { x = right - MIN_WIN.w; }
-        width = MIN_WIN.w;
+      if (width < minW) {
+        if (from.l) { x = right - minW; }
+        width = minW;
       }
-      if (height < MIN_WIN.h) {
-        if (from.t) { y = bottom - MIN_WIN.h; }
-        height = MIN_WIN.h;
+      if (height < minH) {
+        if (from.t) { y = bottom - minH; }
+        height = minH;
       }
       if (x + width > 100) { x = 100 - width; }
       if (y + height > 100) { y = 100 - height; }
@@ -768,7 +816,7 @@
       selectWindow: function (i) { state = selectWindow(state, i); return state; },
       selectGrid: function (i) { state = selectGrid(state, i); return state; },
       /* Changing what the switcher may reach mid-session would move the
-         selection under the user, so this abandons the session first —
+         selection under the visitor, so this abandons the session first —
          the same reasoning as the mode switch below. */
       raiseWindow: function (id) { state = raiseWindow(state, id); return state; },
       closeWindow: function (id) { state = closeWindow(state, id); return state; },
@@ -822,8 +870,8 @@
     }
 
     /* The same lists the panel renders, never the raw window list: with
-       Include minimized off, the raw list named a window the strip did
-       not show and counted one it could not reach. */
+       Include minimized off, the raw list names a window the strip does
+       not show and counts one it cannot reach. */
     var app = state.apps[state.appIndex];
 
     if (state.mode === MODE.APP) {
@@ -873,6 +921,21 @@
     return e;
   }
 
+  /* DOM writes are paint requests. Keep the renderer's idempotence literal:
+     writing the value an element already has is not harmless when that
+     element sits inside a filtered compositor layer. */
+  function setText(e, value) {
+    value = value == null ? "" : String(value);
+    if (e.textContent !== value) { e.textContent = value; }
+  }
+  function setAttr(e, name, value) {
+    value = String(value);
+    if (e.getAttribute(name) !== value) { e.setAttribute(name, value); }
+  }
+  function setStyle(e, name, value) {
+    if (e.style[name] !== value) { e.style[name] = value; }
+  }
+
   function bars(n, cls) {
     var frag = document.createDocumentFragment();
     for (var i = 0; i < n; i++) { frag.appendChild(el("i", cls || "cw-bar")); }
@@ -889,7 +952,25 @@
     if (kind === SKETCH.MOVIE) {
       /* the film is what makes it a player: a screen the projector
          paints, in the window and in every preview of it alike */
-      s.appendChild(projector ? projector.mount() : el("div", "cw-reel"));
+      var screen = projector ? projector.mount() : el("div", "cw-reel");
+      s.appendChild(screen);
+      /* Miniatures keep this direct handle so the renderer can suspend a
+         cached-but-hidden screen without querying or rebuilding its tree. */
+      if (projector) { s._cwProjectorHost = screen; }
+    } else if (kind === SKETCH.VIDEO) {
+      /* a browser's toolbar over the film is what makes it a video
+         page: the same projector screen, under a page's chrome, so a
+         Safari window playing the film is not a QuickTime window */
+      var vbar = el("div", "cw-toolbar");
+      vbar.appendChild(el("i", "cw-nav"));
+      vbar.appendChild(el("i", "cw-nav"));
+      vbar.appendChild(el("i", "cw-url"));
+      s.appendChild(vbar);
+      var viewport = el("div", "cw-viewport");
+      var vscreen = projector ? projector.mount() : el("div", "cw-reel");
+      viewport.appendChild(vscreen);
+      s.appendChild(viewport);
+      if (projector) { s._cwProjectorHost = vscreen; }
     } else if (kind === SKETCH.PAGE) {
       /* the address pill is what makes it a browser */
       var bar = el("div", "cw-toolbar");
@@ -937,6 +1018,19 @@
       s.appendChild(side);
       s.appendChild(list);
       s.appendChild(read);
+    } else if (kind === SKETCH.FILES) {
+      /* a sidebar of places and a grid of files are what make it a Finder window */
+      var nav = el("div", "cw-pane cw-pane-nav");
+      nav.appendChild(bars(5));
+      var files = el("div", "cw-files");
+      for (var f = 0; f < 8; f++) {
+        var file = el("div", "cw-file");
+        file.appendChild(el("i", "cw-file-icon"));
+        file.appendChild(el("i", "cw-bar"));
+        files.appendChild(file);
+      }
+      s.appendChild(nav);
+      s.appendChild(files);
     } else if (kind === SKETCH.NOTE) {
       /* the ruling is what makes it a note */
       s.appendChild(el("i", "cw-bar is-title"));
@@ -972,21 +1066,26 @@
       lights.appendChild(el("i", "cw-light cw-light-" + k));
     });
     bar.appendChild(lights);
-    bar.appendChild(el("span", "cw-win-title", win.title));
+    var title = el("span", "cw-win-title", win.title);
+    bar.appendChild(title);
     var body = el("div", "cw-win-body cw-body-" + win.sketch);
     body.appendChild(buildSketch(win.sketch, projector));
     w.appendChild(bar);
     w.appendChild(body);
+    /* Kept for the desktop's wiring, which asks where the lights' corner
+       of the bar ends on every move of the pointer (edgeFor). */
+    w._cwBar = bar;
+    w._cwTitle = title;
     return w;
   }
 
   /* Geometry lives in the model and changes as windows are dragged and
      zoomed, so it is written on every render rather than once at build. */
   function placeWindow(e, win) {
-    e.style.left = win.x + "%";
-    e.style.top = win.y + "%";
-    e.style.width = win.w + "%";
-    e.style.height = win.h + "%";
+    setStyle(e, "left", win.x + "%");
+    setStyle(e, "top", win.y + "%");
+    setStyle(e, "width", win.w + "%");
+    setStyle(e, "height", win.h + "%");
   }
 
   /* A thumbnail is a picture of a WHOLE WINDOW, chrome included — the
@@ -994,8 +1093,8 @@
      window, so its title bar and traffic lights are in the shot; a bare
      sketch in a bordered card is a content card, not a screenshot.
      
-     It is LETTERBOXED, never stretched: `contentsGravity = .resizeAspect`
-     in the app. The miniature keeps its own aspect and
+     It is LETTERBOXED, never stretched, as the app's own tiles are. The
+     miniature keeps its own aspect and
      is centred in the slot, and the leftover bars stay transparent so the
      pane — or, on a selected tile, the selection tint — shows through
      them. Which axis binds is decided here rather than left to CSS, so a
@@ -1008,29 +1107,56 @@
       lights.appendChild(el("i", "cw-light cw-light-" + k));
     });
     bar.appendChild(lights);
-    bar.appendChild(el("span", "cw-win-title", win.title));
+    var title = el("span", "cw-win-title", win.title);
+    bar.appendChild(title);
     var body = el("div", "cw-win-body cw-body-" + win.sketch);
-    body.appendChild(buildSketch(win.sketch, projector));
+    var sketch = buildSketch(win.sketch, projector);
+    body.appendChild(sketch);
     m.appendChild(bar);
     m.appendChild(body);
+    m._cwTitle = title;
+    m._cwAllowsTag = !(opts && opts.tag === false);
+    m._cwProjectorHost = sketch._cwProjectorHost || null;
 
     /* Crossway marks a minimized window on its own tile, because
        reaching one without the mouse is the point of showing it at all.
        Bottom-right, over the picture, as the app has it. */
-    if (win.minimized && !(opts && opts.tag === false)) {
-      m.appendChild(el("span", "cw-mini-tag", "Minimized"));
+    if (win.minimized && m._cwAllowsTag) {
+      m._cwTag = el("span", "cw-mini-tag", "Minimized");
+      m.appendChild(m._cwTag);
     }
 
     var ratio = (win.w / win.h) * DESKTOP_ASPECT;
-    m.style.aspectRatio = String(ratio);
+    setStyle(m, "aspectRatio", String(ratio));
     if (ratio >= TILE_ASPECT) {
-      m.style.width = "100%";
-      m.style.height = "auto";
+      setStyle(m, "width", "100%");
+      setStyle(m, "height", "auto");
     } else {
-      m.style.height = "100%";
-      m.style.width = "auto";
+      setStyle(m, "height", "100%");
+      setStyle(m, "width", "auto");
     }
     return m;
+  }
+
+  function updateMini(m, win) {
+    if (!m) { return; }
+    if (m._cwTitle) { setText(m._cwTitle, win.title); }
+    var ratio = (win.w / win.h) * DESKTOP_ASPECT;
+    setStyle(m, "aspectRatio", String(ratio));
+    if (ratio >= TILE_ASPECT) {
+      setStyle(m, "width", "100%");
+      setStyle(m, "height", "auto");
+    } else {
+      setStyle(m, "height", "100%");
+      setStyle(m, "width", "auto");
+    }
+    if (m._cwAllowsTag && win.minimized && !m._cwTag) {
+      m._cwTag = el("span", "cw-mini-tag", "Minimized");
+      m.appendChild(m._cwTag);
+    } else if (m._cwTag && !win.minimized) {
+      m.removeChild(m._cwTag);
+      m._cwTag = null;
+    }
   }
 
   /* App glyphs are drawn, never fetched: a class per shape, filled with
@@ -1058,6 +1184,14 @@
   function clockText(now) {
     return (now || new Date()).toLocaleTimeString([], {
       hour: "numeric", minute: "2-digit",
+    });
+  }
+
+  /* The date beside it, as the menu bar shows it: weekday, day, month,
+     in the visitor's own locale. */
+  function dateText(now) {
+    return (now || new Date()).toLocaleDateString([], {
+      weekday: "short", day: "numeric", month: "short",
     });
   }
 
@@ -1141,18 +1275,23 @@
     function loops(reel) {
       return Math.max(1, Math.ceil(REEL_DWELL / (reel.frames * reel.slot)));
     }
-    /* A screen that left the document — a rebuilt desktop, a closed
-       strip — is forgotten the next time the projector looks. */
+    /* Disconnected screens are forgotten. Connected screens can still be
+       inactive: keyed preview nodes deliberately remain in a closed strip,
+       but hidden DOM is not a reason to keep requesting paint. */
     function alive() {
       screens = screens.filter(function (s) { return s.host.isConnected !== false; });
     }
     function paint(s) {
-      s.cels.forEach(function (c, i) { c.classList.toggle("is-on", i === frame); });
+      s.cels.forEach(function (c, i) {
+        var on = i === frame;
+        if (c.classList.contains("is-on") !== on) { c.classList.toggle("is-on", on); }
+      });
     }
     function load(s) {
       var reel = reels[at];
       s.host.textContent = "";
       s.cels = [];
+      s.reel = at;
       if (!reel) { return; }
       var f = film(reel);
       s.host.appendChild(f.node);
@@ -1160,11 +1299,25 @@
     }
     /* A new screen, showing the frame every other screen shows. */
     function mount() {
-      var s = { host: el("div", "cw-reel"), cels: [] };
+      var s = { host: el("div", "cw-reel"), cels: [], reel: -1, active: true };
+      s.host._cwProjectorScreen = s;
       load(s);
       paint(s);
       screens.push(s);
       return s.host;
+    }
+    /* Visibility is renderer state, not connectivity. Deactivation is a
+       zero-write operation; reactivation catches the screen up once to the
+       shared reel/frame without replacing the host or registering it twice. */
+    function setActive(host, active) {
+      var s = host && host._cwProjectorScreen;
+      if (!s || screens.indexOf(s) < 0) { return; }
+      active = !!active;
+      if (s.active === active) { return; }
+      s.active = active;
+      if (!active) { return; }
+      if (s.reel !== at) { load(s); }
+      paint(s);
     }
     function step() {
       var reel = reels[at];
@@ -1176,12 +1329,14 @@
         if (loop >= loops(reel)) {
           loop = 0;
           at = (at + 1) % reels.length;
-          alive();
-          screens.forEach(load);
         }
       }
       alive();
-      screens.forEach(paint);
+      screens.forEach(function (s) {
+        if (!s.active) { return; }
+        if (s.reel !== at) { load(s); }
+        paint(s);
+      });
     }
     function schedule() {
       var reel = reels[at];
@@ -1198,7 +1353,8 @@
       if (handle !== null) { cancel(handle); handle = null; }
     }
     return {
-      mount: mount, step: step, start: start, stop: stop, reels: reels,
+      mount: mount, setActive: setActive,
+      step: step, start: start, stop: stop, reels: reels,
       get reel() { return at; },
       get frame() { return frame; },
       get running() { return running; },
@@ -1238,6 +1394,14 @@
       menubar.appendChild(el("span", "cw-menu-item", m));
     });
     menubar.appendChild(el("span", "cw-menu-spacer"));
+    /* Crossway's own menu bar item, beside the clock where a status item
+       sits: there while Crossway runs on this screen, gone in Native, as
+       a quit menu-bar app's item is. Drawn, like every mark here. */
+    var mark = el("span", "cw-menu-mark");
+    mark.setAttribute("aria-hidden", "true");
+    menubar.appendChild(mark);
+    var date = el("span", "cw-menu-date", dateText());
+    menubar.appendChild(date);
     var clock = el("span", "cw-menu-clock", clockText());
     menubar.appendChild(clock);
 
@@ -1261,27 +1425,79 @@
     dock.appendChild(dockApps);
     dock.appendChild(dockSep);
     dock.appendChild(dockMins);
+    /* The blur behind an open switcher: one layer over the whole screen,
+       under the grid and the pane (see .cw-backdrop). */
+    var backdrop = el("div", "cw-backdrop");
+    backdrop.setAttribute("aria-hidden", "true");
     root.appendChild(menubar);
     root.appendChild(desktop);
     root.appendChild(dock);
+    root.appendChild(backdrop);
     root.appendChild(grid);
     root.appendChild(panel);
 
     var cache = new Map();
     var appCache = new Map();
+    var stripCache = new Map();
+    var gridCache = new Map();
+    var dockMinCache = new Map();
+
+    /* Reconcile repeated surfaces by model identity. Reordering is a DOM
+       mutation too, so an already-correct child list takes the zero-write
+       path; a selection-only draw changes classes on retained nodes and
+       leaves every thumbnail and projector mount in place. */
+    function reconcile(parent, items, nodes, key, build, update, dispose) {
+      var wanted = [];
+      var alive = new Set();
+      items.forEach(function (item, i) {
+        var id = key(item);
+        alive.add(id);
+        var node = nodes.get(id);
+        if (!node) {
+          node = build(item, i);
+          nodes.set(id, node);
+        }
+        update(node, item, i);
+        wanted.push(node);
+      });
+      nodes.forEach(function (node, id) {
+        if (!alive.has(id)) {
+          if (dispose) { dispose(node, id); }
+          if (node.parentNode === parent) { parent.removeChild(node); }
+          nodes.delete(id);
+        }
+      });
+      var ordered = parent.children.length === wanted.length &&
+        wanted.every(function (node, i) { return parent.children[i] === node; });
+      if (!ordered) { wanted.forEach(function (node) { parent.appendChild(node); }); }
+    }
+
+    function setMiniProjectorActive(mini, active) {
+      if (projector && projector.setActive && mini && mini._cwProjectorHost) {
+        projector.setActive(mini._cwProjectorHost, active);
+      }
+    }
+    function setCachedProjectorsActive(nodes, active) {
+      nodes.forEach(function (node) { setMiniProjectorActive(node._cwMini, active); });
+    }
+    function deactivateCachedMini(node) {
+      setMiniProjectorActive(node && node._cwMini, false);
+    }
 
     function render(state, view) {
       /* The menu bar names the ACTIVE app, apps[0], the one thing every
          surface reads: an app whose windows are all minimized or closed
          stays active on a Mac, and only an empty desktop names nothing. */
       var active = state.apps.length ? state.apps[0] : null;
-      menuApp.textContent = active ? active.name : "";
+      setText(menuApp, active ? active.name : "");
       /* No app, no menu: there is nothing to quit. */
       var menuOpen = !!(view && view.menuOpen) && !!active;
-      menuApp.setAttribute("aria-expanded", menuOpen ? "true" : "false");
-      menu.hidden = !menuOpen;
-      quitLabel.textContent = active ? "Quit " + active.name : "";
-      clock.textContent = clockText();
+      setAttr(menuApp, "aria-expanded", menuOpen ? "true" : "false");
+      if (menu.hidden !== !menuOpen) { menu.hidden = !menuOpen; }
+      setText(quitLabel, active ? "Quit " + active.name : "");
+      setText(date, dateText());
+      setText(clock, clockText());
+      if (mark.hidden !== !state.crosswayEnabled) { mark.hidden = !state.crosswayEnabled; }
 
       /* A minimized window is off the desktop entirely, in the Dock, so
          it is not drawn. */
@@ -1298,7 +1514,7 @@
           desktop.appendChild(e);
         }
         placeWindow(e, win);
-        e.style.zIndex = String(count - i);
+        setStyle(e, "zIndex", String(count - i));
         e.classList.toggle("is-front", i === 0);
         e.classList.toggle("is-zoomed", !!win.zoomed);
       });
@@ -1339,6 +1555,12 @@
           b.setAttribute("type", "button");
           b.dataset.app = id;
           b.appendChild(buildAppIcon(app));
+          /* The Dock wears the badge the row and the grid wear. */
+          if (app.badge) {
+            var badge = el("span", "cw-dock-badge", String(app.badge));
+            badge.setAttribute("aria-hidden", "true");
+            b.appendChild(badge);
+          }
           var dot = el("i", "cw-dock-dot");
           dot.setAttribute("aria-hidden", "true");
           b.appendChild(dot);
@@ -1347,19 +1569,24 @@
         if (dockApps.children[i] !== b) { dockApps.appendChild(b); }
         var running = state.apps.some(function (a) { return a.id === id; });
         b.classList.toggle("is-running", running);
-        b.setAttribute("aria-label", running ? app.name : app.name + ", not running");
+        setAttr(b, "aria-label", running ? app.name : app.name + ", not running");
       });
       var mins = state.windows.filter(function (w) { return w.minimized; });
-      dockSep.hidden = !mins.length;
-      dockMins.textContent = "";
-      mins.forEach(function (w) {
-        var b = el("button", "cw-dock-min");
-        b.setAttribute("type", "button");
-        b.dataset.win = w.id;
-        b.setAttribute("aria-label", "Restore " + w.title);
-        b.appendChild(buildMini(w, { tag: false }, projector));
-        dockMins.appendChild(b);
-      });
+      if (dockSep.hidden !== !mins.length) { dockSep.hidden = !mins.length; }
+      reconcile(dockMins, mins, dockMinCache,
+        function (w) { return w.id; },
+        function (w) {
+          var b = el("button", "cw-dock-min");
+          b.setAttribute("type", "button");
+          b.dataset.win = w.id;
+          b._cwMini = buildMini(w, { tag: false }, projector);
+          b.appendChild(b._cwMini);
+          return b;
+        },
+        function (b, w) {
+          setAttr(b, "aria-label", "Restore " + w.title);
+          updateMini(b._cwMini, w);
+        }, deactivateCachedMini);
     }
 
     /* The exposé. A FLAT list frozen when the session opened, so the
@@ -1370,47 +1597,65 @@
     function renderGrid(state) {
       var on = state.mode === MODE.GRID;
       grid.classList.toggle("is-open", on);
-      if (!on) { grid.textContent = ""; return; }
+      setAttr(grid, "aria-hidden", on ? "false" : "true");
+      if (grid.inert !== !on) { grid.inert = !on; }
+      if (!on) {
+        setCachedProjectorsActive(gridCache, false);
+        reconcile(grid, [], gridCache,
+          function (w) { return w.id; },
+          function () { return null; },
+          function () {}, deactivateCachedMini);
+        return;
+      }
 
-      grid.textContent = "";
       /* Fill to six, then wrap. A short last row is left-aligned, which
          explicit columns give for free — auto-fit would centre it. */
       var cols = Math.min(state.gridWindows.length, GRID_COLUMNS) || 1;
-      grid.style.gridTemplateColumns = "repeat(" + cols + ", var(--cw-tile-w))";
+      setStyle(grid, "gridTemplateColumns", "repeat(" + cols + ", var(--cw-tile-w))");
 
-      state.gridWindows.forEach(function (w, i) {
-        var app = state.apps.find(function (a) { return a.id === w.app; });
-        var cell = el("div", "cw-gcell");
-        cell.dataset.win = w.id;
-        if (i === state.gridIndex) { cell.classList.add("is-sel"); }
-
-        var shot = el("div", "cw-gshot");
-        shot.appendChild(buildMini(w, null, projector));
-        /* Bottom-LEFT of the thumbnail, inset, riding on top of the
-           picture — where the app puts it, and the only thing on this
-           surface that says which app a window belongs to. With the
-           focused-app grid that makes every tile carry the same mark;
-           with the all-windows grid it makes them visibly mixed. */
-        if (app) {
-          var mark = el("div", "cw-gbadge");
-          mark.appendChild(buildAppIcon(app));
-          if (app.badge) {
-            mark.appendChild(el("span", "cw-gdot", String(app.badge)));
+      reconcile(grid, state.gridWindows, gridCache,
+        function (w) { return w.id; },
+        function (w) {
+          var app = state.apps.find(function (a) { return a.id === w.app; });
+          var cell = el("div", "cw-gcell");
+          cell.dataset.win = w.id;
+          var shot = el("div", "cw-gshot");
+          cell._cwMini = buildMini(w, null, projector);
+          shot.appendChild(cell._cwMini);
+          /* Bottom-LEFT of the thumbnail, inset, riding on top of the
+             picture — where the app puts it, and the only thing on this
+             surface that says which app a window belongs to. With the
+             focused-app grid that makes every tile carry the same mark;
+             with the all-windows grid it makes them visibly mixed. */
+          if (app) {
+            var mark = el("div", "cw-gbadge");
+            mark.appendChild(buildAppIcon(app));
+            if (app.badge) {
+              mark.appendChild(el("span", "cw-gdot", String(app.badge)));
+            }
+            shot.appendChild(mark);
           }
-          shot.appendChild(mark);
-        }
-        cell.appendChild(shot);
-        cell.appendChild(el("span", "cw-gtitle", w.title));
-        grid.appendChild(cell);
-      });
+          cell.appendChild(shot);
+          cell._cwTitle = el("span", "cw-gtitle", w.title);
+          cell.appendChild(cell._cwTitle);
+          return cell;
+        },
+        function (cell, w, i) {
+          cell.classList.toggle("is-sel", i === state.gridIndex);
+          updateMini(cell._cwMini, w);
+          setText(cell._cwTitle, w.title);
+        }, deactivateCachedMini);
+      setCachedProjectorsActive(gridCache, true);
     }
 
-    /* The panel. Two independent visibilities, which is the whole of the
-       timing the user signed off:
+    /* The panel. Two independent visibilities, which is the whole of
+       the timing:
 
          the ROW appears the instant a session opens, and
-         the STRIP folds away on every advance and drops back only once
-         the selection has rested for PREVIEW_DELAY.
+         the STRIP first drops once the selection has rested for
+         PREVIEW_DELAY. After it has appeared, an advance folds it,
+         and it drops again with the new app's windows after the next
+         PREVIEW_DELAY of rest, as the app's own pane does.
 
        Window mode is the exception the app itself makes: cmd-backtick
        shows its strip in one frame, because the strip IS the point of
@@ -1419,8 +1664,13 @@
       var open = state.mode === MODE.APP || state.mode === MODE.WINDOW;
       panel.classList.toggle("is-open", open);
       panel.classList.toggle("is-native", !state.crosswayEnabled);
+      setAttr(panel, "aria-hidden", open ? "false" : "true");
+      if (panel.inert !== !open) { panel.inert = !open; }
       if (!open) {
         fold.classList.remove("is-dropped");
+        setAttr(strip, "aria-hidden", "true");
+        if (!strip.inert) { strip.inert = true; }
+        setCachedProjectorsActive(stripCache, false);
         return;
       }
 
@@ -1432,8 +1682,8 @@
           e.dataset.app = app.id;
           e.appendChild(buildAppIcon(app));
           /* Badged apps wear their Dock count whether or not they are
-             selected, exactly as in the row (the
-             badge layer sits above everything at zPosition 1000). */
+             selected, exactly as in the row, where the badge sits above
+             everything else on the icon. */
           if (app.badge) {
             e.appendChild(el("span", "cw-abadge", String(app.badge)));
           }
@@ -1444,8 +1694,8 @@
         e.classList.toggle("is-sel", i === state.appIndex);
       });
       /* An app that has quit leaves the row, cell and cache both: the
-         loop above only adds and reorders, and a quit Terminal stayed in
-         the row wearing its old selection. */
+         loop above only adds and reorders, so without this a quit
+         Terminal stays in the row wearing its old selection. */
       appCache.forEach(function (e, id) {
         if (!state.apps.some(function (a) { return a.id === id; })) {
           if (e.parentNode) { e.parentNode.removeChild(e); }
@@ -1469,33 +1719,58 @@
           if (n > widest) { widest = n; }
         });
       }
-      strip.style.minWidth = widest
+      setStyle(strip, "minWidth", widest
         ? "calc(" + widest + " * var(--cw-strip-w) + " +
           (widest - 1) + " * var(--cw-strip-gap))"
-        : "";
+        : "");
 
-      strip.textContent = "";
-      wins.forEach(function (w, i) {
-        var tile = el("div", "cw-tile");
-        tile.appendChild(buildMini(w, null, projector));
-        var cap = el("span", "cw-tile-title", w.title);
-        var wrap = el("div", "cw-tile-wrap");
-        wrap.dataset.win = w.id;
-        wrap.appendChild(tile);
-        wrap.appendChild(cap);
-        if (state.mode === MODE.WINDOW && i === state.windowIndex) {
-          wrap.classList.add("is-sel");
-        }
-        strip.appendChild(wrap);
-      });
+      /* Three phases keep content, geometry and readiness independent.
+         `paneOpen` is kept as a renderer-only compatibility seam for
+         tests and embedders that read one flag rather than the phases. */
+      var phase = view.panePhase ||
+        (view.paneOpen ? PANE_PHASE.CURRENT : PANE_PHASE.CLOSED);
+      if (state.mode === MODE.WINDOW) { phase = PANE_PHASE.CURRENT; }
+      var current = phase === PANE_PHASE.CURRENT;
+      var dropped = wins.length > 0 && current;
 
-      var dropped = wins.length > 0 &&
-        (state.mode === MODE.WINDOW || !!view.paneOpen);
+      /* Reconcile only while the strip is dropped. On an app advance it
+         FOLDS (the scheduler below), and the tiles already there stay
+         mounted and fold away with it: rebuilding the NEXT app inside a
+         collapsing pane would show those windows, take them away with
+         the fold, and build them once more at the drop, which flashes.
+         The drop after the rest performs one keyed refresh to the app
+         then selected, so no intermediate selection creates or destroys
+         preview nodes. */
+      if (dropped) {
+        reconcile(strip, wins, stripCache,
+          function (w) { return w.id; },
+          function (w) {
+            var tile = el("div", "cw-tile");
+            var wrap = el("div", "cw-tile-wrap");
+            wrap.dataset.win = w.id;
+            wrap._cwMini = buildMini(w, null, projector);
+            tile.appendChild(wrap._cwMini);
+            wrap.appendChild(tile);
+            wrap._cwTitle = el("span", "cw-tile-title", w.title);
+            wrap.appendChild(wrap._cwTitle);
+            return wrap;
+          },
+          function (wrap, w, i) {
+            wrap.classList.toggle("is-sel", state.mode === MODE.WINDOW && i === state.windowIndex);
+            updateMini(wrap._cwMini, w);
+            setText(wrap._cwTitle, w.title);
+          }, deactivateCachedMini);
+      }
+
       fold.classList.toggle("is-dropped", dropped);
+      setAttr(strip, "aria-hidden", dropped ? "false" : "true");
+      var stripInert = !dropped;
+      if (strip.inert !== stripInert) { strip.inert = stripInert; }
+      setCachedProjectorsActive(stripCache, dropped);
     }
 
     return {
-      render: render, desktop: desktop, menubar: menubar, clock: clock, screen: root,
+      render: render, desktop: desktop, menubar: menubar, clock: clock, date: date, mark: mark, screen: root,
       dock: dock,
       /* The switcher's surfaces, for the mouse. */
       panel: panel, approw: approw, strip: strip, grid: grid,
@@ -1508,8 +1783,8 @@
      A FEW MEASUREMENTS THE RENDERER SHARES WITH THE STYLESHEET
      ==================================================================== */
 
-  /* A thumbnail slot is landscape, like the windows it holds
-     (180 x 112). The fixtures' w/h are
+  /* A thumbnail slot is landscape, like the windows it holds, and the
+     app's own tiles are 180 x 112. The fixtures' w/h are
      percentages of the DESKTOP, so a window's real aspect is its
      percentage ratio times the desktop's own: the 8:5 screen less the
      menu bar and the Dock's band (--cw-dock-band, 10.4cqw) is about 2.
@@ -1520,55 +1795,77 @@
 
   /* The exposé fills each row to SIX tiles before starting another, and a
      short last row stays left-aligned rather than balancing itself —
-     eight windows is 6 + 2, never 4 + 4 in the app. */
+     eight windows is 6 + 2, never 4 + 4, as in the app. */
   var GRID_COLUMNS = 6;
 
   /* How long a tapped cap stays struck. Long enough to see, short enough
      to keep up with a burst. */
   var STRIKE_MS = 240;
+  /* How long a key that is still down from the last tap stays UP before
+     the next tap presses it again: the up-stroke's own 70ms, so every
+     tap in a quick burst shows as a lift and a press. */
+  var RESTRIKE_MS = 70;
+  /* How long after the last tap a held modifier lets itself go, which
+     is what commits. The modifier caps are art and take no click, so a
+     visitor taps, looks, and the switch lands, the way it does when a
+     hand comes off the real key. */
+  var LET_GO_MS = 1800;
 
   /* ====================================================================
      THE SCHEDULER
 
      The only place in this file that knows about time, and it owns
-     exactly one timer. The rule it implements is the one signed off for
-     the hero:
+     exactly one timer. The rule it implements:
 
        the app row appears the INSTANT a session opens — no show-delay
        gate, because a click is 80-120ms and would straddle the real
        100ms, showing or hiding chrome unpredictably on identical
        gestures; and
 
-       the preview strip folds away on EVERY advance and drops back only
-       once the selection has rested for PREVIEW_DELAY.
+       the preview strip first drops after PREVIEW_DELAY; once visible,
+       every advance FOLDS it, as the app's does, and it drops again with
+       the newly selected app's windows after PREVIEW_DELAY of rest.
 
      Advancing therefore restarts the clock, which is what makes a fast
-     walk through the row stay calm instead of strobing panes open and
-     shut. Window mode is exempt: cmd-backtick shows its strip at once,
+     walk through the row stay calm instead of rebuilding intermediate
+     panes, and the previous app's windows never stand under the next
+     app's name, as they would if the strip stayed open and dimmed
+     through the whole delay. Window mode is exempt: cmd-backtick shows its strip at once,
      because there the strip is the command rather than a bloom on it.
      ==================================================================== */
   function createController(opts) {
     var stage = createStage(opts.fixtures);
     var renderer = createRenderer(opts.root, { projector: opts.projector || null });
-    var paneOpen = false;
+    var panePhase = PANE_PHASE.CLOSED;
     var menuOpen = false;
     var timer = null;
     var status = opts.status || null;
+    /* Whether to keep the sentence to itself: the page says so while the
+       automatic demo drives (mountHero). */
+    var quiet = opts.quiet || function () { return false; };
     var spoken = "";
     var lastCommit = null;
 
-    function draw() { renderer.render(stage.state, { paneOpen: paneOpen, menuOpen: menuOpen }); }
+    function draw() { renderer.render(stage.state, { panePhase: panePhase, menuOpen: menuOpen }); }
 
-    function foldNow() {
-      paneOpen = false;
+    function clearDrop() {
       if (timer !== null) { clearTimeout(timer); timer = null; }
     }
 
+    function closePane() {
+      clearDrop();
+      panePhase = PANE_PHASE.CLOSED;
+    }
+
     function armDrop() {
-      foldNow();
+      clearDrop();
+      /* Waiting, whether or not the strip was open: an open strip folds
+         now, and the drop below brings it back with the app that is
+         selected when the visitor rests. */
+      panePhase = PANE_PHASE.WAITING;
       timer = setTimeout(function () {
         timer = null;
-        paneOpen = true;
+        panePhase = PANE_PHASE.CURRENT;
         draw();
       }, PREVIEW_DELAY);
     }
@@ -1577,11 +1874,14 @@
        the rule cannot drift apart across the five entry points. */
     function settle(before) {
       var m = stage.state.mode;
-      if (m === MODE.APP) {
+      if (m === MODE.APP && stage.state.crosswayEnabled) {
         /* Re-arm on entering the row AND on every advance within it. */
         armDrop();
+      } else if (m === MODE.WINDOW && stage.state.crosswayEnabled) {
+        clearDrop();
+        panePhase = PANE_PHASE.CURRENT;
       } else {
-        foldNow();
+        closePane();
       }
       draw();
       announce();
@@ -1595,6 +1895,7 @@
       var line = describeState(stage.state, lastCommit);
       if (line === spoken) { return; }
       spoken = line;
+      if (quiet()) { return; }
       if (status) { status.textContent = line; }
     }
 
@@ -1621,7 +1922,10 @@
     return {
       get state() { return stage.state; },
       _spoken: function () { return spoken; },
-      press: function (chord, o) { stage.press(chord, o); return settle(); },
+      /* A chord closes the app menu, as Command-Tab does on a Mac: the
+         demo's own taps included, which would otherwise run on under a
+         menu the visitor left open. */
+      press: function (chord, o) { menuOpen = false; stage.press(chord, o); return settle(); },
       advance: function (o) { stage.advance(o); return settle(); },
       escape: function () { lastCommit = null; stage.escape(); return settle(); },
       release: release,
@@ -1658,7 +1962,10 @@
       _menuOpen: function () { return menuOpen; },
       /* Test seam: the pane's visibility is timing, not switcher state,
          so it is not on `state` and needs its own window. */
-      _paneOpen: function () { return paneOpen; },
+      _paneOpen: function () {
+        return panePhase === PANE_PHASE.CURRENT;
+      },
+      _panePhase: function () { return panePhase; },
       _pending: function () { return timer !== null; },
       draw: draw,
       stage: stage,
@@ -1671,109 +1978,225 @@
 
      macOS reserves these chords at the OS level, so pressing them for
      real would switch the visitor's own apps rather than the demo's. So
-     the keys the visitor presses ARE the keyboard: four caps beside the
-     screen. The two modifiers LATCH — a click holds ⌘ or ⌥ down, a
-     second click lets it go, and letting go is what commits, exactly as
-     releasing the real key does. The two keys TAP: every click is one
-     more tap of Tab or backtick, because that is the part of the gesture
-     that moves the selection, and a visitor needs to do it repeatedly to
-     see the switcher walk. A held modifier plus a tapped key is one
-     press of that chord, and the reducer already knows whether that
-     opens, advances or descends, so this hands the chord straight over
-     rather than deciding for it.
+     the visitor clicks the CHORDS: four panes beside the screen, one per
+     chord, each drawing its two keys. A click on a pane is one more tap
+     of its key (Tab or backtick) with its modifier held: the modifier
+     goes down first if it is not already, and stays down, and a pause
+     after the last tap lets it go, which is what commits, exactly as
+     releasing the real key does. Tapping repeatedly is what walks the
+     switcher, so every click is one more tap. A held modifier plus a
+     tapped key is one press of that chord, and the reducer already
+     knows whether that opens, advances or descends, so this hands the
+     chord straight over rather than deciding for it.
 
      Only one modifier is ever held. Holding the other lets the first go
      first, so the new chord starts from rest.
 
-     Without Crossway the ⌥ cap is unavailable: aria-disabled rather than
-     the disabled attribute, deliberately, so it stays focusable and can
-     say why (the note under the legend); greyed rather than hidden,
-     because a key you cannot have is the pitch. The legend's rows follow
-     the same rule, light the chord in effect, and say what the chord
+     Without Crossway the ⌥ panes are unavailable: aria-disabled rather
+     than the disabled attribute, deliberately, so they stay focusable;
+     greyed rather than hidden, because a key you cannot have is the
+     pitch. The panes light the chord in effect, and say what the chord
      does in whichever world is on the screen.
      ==================================================================== */
-  function wireKeys(rail, controller) {
+  function wireKeys(rail, controller, o) {
+    o = o || {};
+    var later = o.setTimeout || function (fn, ms) { return setTimeout(fn, ms); };
+    var cancel = o.clearTimeout || function (h) { clearTimeout(h); };
     var noop = function () {};
     if (!rail) {
       return { hold: noop, tap: noop, clear: noop, sync: noop, _held: function () { return null; } };
     }
+    function attr(el, name) { return el && el.getAttribute ? el.getAttribute(name) : null; }
+    /* The keys, by what they tap. In the page these are the four PANES
+       (each a button carrying data-key, the key it taps, and data-group,
+       the modifier it holds), so Tab and backtick each come once PER
+       GROUP and are a LIST, each entry carrying its group. A rail
+       without groups, the tests' four-key rail, has one ungrouped cap
+       per key, which serves whichever modifier is held, and a cap each
+       for the two modifiers. */
     var keys = {};
+    var caps = { tab: [], tick: [] };
     Array.prototype.forEach.call(rail.querySelectorAll("[data-key]"), function (b) {
-      keys[b.getAttribute("data-key")] = b;
+      var k = b.getAttribute("data-key");
+      if (caps[k]) { caps[k].push(b); } else { keys[k] = b; }
+    });
+    /* The group boxes themselves, for the ⌥ one's off state. Looked up
+       by class, then kept only if they carry a group: a test rail's
+       querySelectorAll answers every non-key selector with its rows. */
+    var groups = Array.prototype.filter.call(rail.querySelectorAll(".cw-group"), function (g) {
+      return attr(g, "data-group") !== null && attr(g, "data-key") === null;
     });
     var rows = Array.prototype.slice.call(rail.querySelectorAll("[data-chord]"));
-    var note = rail.querySelector ? rail.querySelector("#cw-only-note") : null;
     var held = null;      /* "cmd", "opt", or null: the modifier being held */
-    var last = null;      /* the chord the last tap made, for the legend */
-    var strikes = {};
+    var last = null;      /* the chord the last tap made; see inEffect() */
+    var letGoHandle = null; /* the pause that lets a held modifier go */
+    /* The pane whose chord the held modifier is making: the one tapped
+       last. Only its modifier cap is drawn held; the box's other pane
+       shares the modifier but was not pressed. */
+    var holding = null;
 
     function native() { return !controller.state.crosswayEnabled; }
-    function cls(el, name, on) { if (el && el.classList) { el.classList.toggle(name, on); } }
-    function attr(el, name) { return el && el.getAttribute ? el.getAttribute(name) : null; }
+    /* WHICH ROW LIGHTS: the chord in effect, read from the reducer's own
+       state rather than from the last pane tapped. A tap inside an open
+       session can change what is running or only advance it (⌥` in the
+       all-windows grid switches to the app's grid, the same chord again
+       walks it; the grid can also refuse to switch when the front app
+       has no windows), so the reducer's mode and scope, not the tap,
+       say which pane is in effect.
+       Reading the state also gets the ⌘ side right for free, since there
+       backtick genuinely descends into window mode and Tab genuinely
+       returns to the app row, and the mode says so.
 
+       Native's ⌘` is the one chord that leaves no session behind — the
+       raise is the whole event — so there, and only there, the last tap
+       is all there is to light. */
+    function inEffect() {
+      var st = controller.state;
+      if (st.mode === MODE.APP) { return "cmd-tab"; }
+      if (st.mode === MODE.WINDOW) { return "cmd-tick"; }
+      if (st.mode === MODE.GRID) { return st.gridScope === "app" ? "opt-tick" : "opt-tab"; }
+      return native() ? last : null;
+    }
+    function cls(el, name, on) { if (el && el.classList) { el.classList.toggle(name, on); } }
+    /* The key a tap of `k` strikes: the held group's own pane, else an
+       ungrouped cap, else whichever is first. */
+    function capFor(k, m) {
+      var list = caps[k] || [];
+      var i;
+      for (i = 0; i < list.length; i++) { if (attr(list[i], "data-group") === m) { return list[i]; } }
+      for (i = 0; i < list.length; i++) { if (attr(list[i], "data-group") === null) { return list[i]; } }
+      return list[0] || null;
+    }
+
+    /* Runs on every hold, tap and let-go, so every write goes through
+       setAttr, setText or a class toggle, which leave an element alone
+       when it already says what it should. */
     function sync() {
+      var off = native();
       ["cmd", "opt"].forEach(function (m) {
         var k = keys[m];
         if (!k) { return; }
         var on = held === m;
-        k.setAttribute("aria-pressed", on ? "true" : "false");
+        /* A rail with modifier caps of its own (the tests' four-key
+           rail; the page draws its modifiers inside the panes and marks
+           the pane that holds one instead, below): lit while held, and
+           that is all they do. data-held is for the rendered suite's
+           probes. */
+        setAttr(k, "data-held", on ? "true" : "false");
         cls(k, "is-held", on);
       });
-      if (keys.opt) {
-        keys.opt.setAttribute("aria-disabled", native() ? "true" : "false");
-        if (native()) { keys.opt.setAttribute("aria-describedby", "cw-only-note"); }
-        else if (keys.opt.removeAttribute) { keys.opt.removeAttribute("aria-describedby"); }
-      }
+      ["tab", "tick"].forEach(function (k) {
+        caps[k].forEach(function (b) {
+          /* The ⌥ group's panes go with the ⌥ key: a pane you can press
+             in a box whose modifier you cannot have would be a key that
+             does nothing. */
+          if (attr(b, "data-group") === "opt") { setAttr(b, "aria-disabled", off ? "true" : "false"); }
+          /* The pane that made the chord draws its modifier held: the
+             key stays down for as long as the chord does, moves with the
+             next tap to the pane that makes it, and comes up when the
+             pause lets it go. */
+          cls(b, "is-holding", held !== null && b === holding);
+        });
+      });
+      groups.forEach(function (g) {
+        cls(g, "is-off", off && attr(g, "data-crossway-only") === "1");
+      });
+      var lit = inEffect();
       rows.forEach(function (r) {
-        var chord = attr(r, "data-chord");
-        /* Without Crossway, cmd-backtick leaves no session open — the
-           raise is the whole event — so the row stays lit on the last tap
-           rather than on an open mode. */
-        var off = native() && attr(r, "data-crossway-only") === "1";
-        cls(r, "is-active", chord === last && (controller.state.mode !== MODE.IDLE || native()));
-        /* With a modifier held, both of its chords are there to tap, and
-           the legend says so; the tapped one stays pressed on top. */
-        cls(r, "is-ready", held !== null && !off && chord.indexOf(held + "-") === 0);
-        cls(r, "is-off", off);
+        cls(r, "is-active", attr(r, "data-chord") === lit);
+        /* That frame is the row's one mark: a held modifier does not
+           mark its rows "ready", so the frame says only which command
+           is in effect. */
+        cls(r, "is-off", off && attr(r, "data-crossway-only") === "1");
+        /* The ⌘ sentences say what the chord does in the world on the
+           screen. */
         var what = r.querySelector ? r.querySelector(".cw-legend-what") : null;
         var alt = attr(r, "data-what-native");
-        if (what && alt) { what.textContent = native() ? alt : attr(r, "data-what"); }
+        if (what && alt) { setText(what, off ? alt : attr(r, "data-what")); }
       });
-      if (note) { note.hidden = !native(); }
     }
 
-    /* A tapped cap goes down for a beat and comes back up, which is the
-       only feedback that a second tap of the same key did anything. */
+    /* A tapped key goes down for a beat and comes back up, which is the
+       only feedback that a second tap of the same chord did anything.
+       The class goes on the pane, whose key cap it presses. The timer
+       lives on the element: with a Tab in each group, a timer keyed by
+       name would let one strike lift the other.
+
+       A tap that lands while the key is still down from the last one
+       LIFTS it first and presses it again RESTRIKE_MS later, so a burst
+       of taps is a burst of presses: re-arming the timer alone would
+       keep the key down through the whole burst, and the feedback the
+       strike exists for would disappear exactly when the visitor is
+       tapping. */
     function strike(b) {
       if (!b || !b.classList) { return; }
-      var k = attr(b, "data-key");
-      if (strikes[k]) { clearTimeout(strikes[k]); }
-      b.classList.add("is-struck");
-      strikes[k] = setTimeout(function () {
-        strikes[k] = null;
+      if (b._cwStrike) { clearTimeout(b._cwStrike); b._cwStrike = null; }
+      if (b._cwRestrike) { clearTimeout(b._cwRestrike); b._cwRestrike = null; }
+      function press() {
+        b.classList.add("is-struck");
+        b._cwStrike = setTimeout(function () {
+          b._cwStrike = null;
+          b.classList.remove("is-struck");
+        }, STRIKE_MS);
+      }
+      if (b.classList.contains("is-struck")) {
         b.classList.remove("is-struck");
-      }, STRIKE_MS);
+        b._cwRestrike = setTimeout(function () { b._cwRestrike = null; press(); }, RESTRIKE_MS);
+        return;
+      }
+      press();
     }
 
-    /* Click a modifier to hold it; click it again to let go, which is
-       what commits. Holding the other modifier lets this one go first. */
+    /* hold(m) puts a modifier down, or lets it go if it is already down,
+       which is what commits. Holding the other modifier lets this one go
+       first. A pane reaches it through tap(); the autopilot and the
+       tests call it directly. */
+    function disarmLetGo() {
+      if (letGoHandle !== null) { cancel(letGoHandle); letGoHandle = null; }
+    }
+    /* A visitor's tap starts the pause; the next tap restarts it; when
+       it runs out the held modifier lets go, which commits. Only a
+       CLICK on a pane arms it: the autopilot and the tests tap through
+       the API and pace themselves. */
+    function armLetGo() {
+      disarmLetGo();
+      letGoHandle = later(function () {
+        letGoHandle = null;
+        if (held !== null) { hold(held); }
+      }, LET_GO_MS);
+    }
     function hold(m) {
       if (m === "opt" && native()) { return; }
       if (held === m) {
-        held = null; last = null;
+        disarmLetGo();
+        held = null; last = null; holding = null;
         controller.release();
       } else {
         if (held !== null) { controller.release(); }
-        held = m; last = null;
+        held = m; last = null; holding = null;
       }
       sync();
     }
 
     /* Tap a key: one more press of the held modifier's chord. With no
-       modifier held there is no chord, and only the cap moves. */
-    function tap(k, e) {
-      strike(keys[k]);
+       modifier held there is no chord, and only the cap moves.
+
+       A GROUP's key is a tap of that group's chord: if its
+       modifier is not the one held, it goes down first, letting the
+       other go as holding it by hand would, so the first click on any
+       pane does something on the screen. A group whose modifier is
+       unavailable (⌥ without Crossway) does nothing at all: its panes
+       turn their clicks away before they get here (below), and the
+       guard here is for the API. The autopilot and the social card tap
+       without a group and get the plain rule. */
+    function tap(k, e, group) {
+      if (group && held !== group) {
+        if (group === "opt" && native()) { return; }
+        hold(group);
+      }
+      strike(capFor(k, held));
       if (held === null) { return; }
+      holding = capFor(k, held);
       var chord = held + "-" + k;
       controller.press(chord, { shift: !!(e && e.shiftKey) });
       last = chord;
@@ -1782,10 +2205,23 @@
 
     /* click, not pointerdown: it carries Enter and Space for free, so the
        keyboard path needs no second implementation. */
-    if (keys.cmd) { keys.cmd.addEventListener("click", function () { hold("cmd"); }); }
-    if (keys.opt) { keys.opt.addEventListener("click", function () { hold("opt"); }); }
-    if (keys.tab) { keys.tab.addEventListener("click", function (e) { tap("tab", e); }); }
-    if (keys.tick) { keys.tick.addEventListener("click", function (e) { tap("tick", e); }); }
+    /* Only the panes take a click: a click on one holds its modifier and
+       taps its key, and the pause after the last tap lets the modifier
+       go. The modifiers have no control of their own.
+
+       An unavailable pane (aria-disabled, the ⌥ ones without Crossway)
+       stays focusable, so Enter and Space still reach its click: it
+       turns them away here, before anything is struck or the pause of a
+       held ⌘ is restarted. */
+    ["tab", "tick"].forEach(function (k) {
+      caps[k].forEach(function (b) {
+        b.addEventListener("click", function (e) {
+          if (attr(b, "aria-disabled") === "true") { return; }
+          tap(k, e, attr(b, "data-group"));
+          if (held !== null) { armLetGo(); }
+        });
+      });
+    });
     sync();
 
     return {
@@ -1798,12 +2234,14 @@
         /* Only a session still open is committed; when the reducer has
            already ended it — a switch flip, a Dock click, a pick with
            the mouse — this just drops the latch. */
+        disarmLetGo();
         if (held !== null && controller.state.mode !== MODE.IDLE) { controller.release(); }
-        held = null; last = null;
+        held = null; last = null; holding = null;
         sync();
       },
       sync: sync,
       _held: function () { return held; },
+      _letGoPending: function () { return letGoHandle !== null; },
     };
   }
 
@@ -1826,6 +2264,52 @@
     var v = y - rect.top <= GRIP ? "t" : rect.bottom - y <= GRIP ? "b" : "";
     var h = x - rect.left <= GRIP ? "l" : rect.right - x <= GRIP ? "r" : "";
     return v + h;
+  }
+
+  /* Which edge of THIS window a press would pull, if any. Two things
+     edgeAt, which knows only a rectangle, cannot see.
+
+     The corner the traffic lights sit in belongs to them: from the
+     window's own corner out to where the title begins, and down to the
+     foot of the title bar, no point is an edge. Were the grips to reach
+     into it, a band over the lights and another beside the close light,
+     the pointer would turn to a resize arrow on its way onto a light and
+     a press a pixel off one would resize the window. What that corner holds
+     outside the lights' slots is title bar, as it is on a Mac. It stops
+     short of the right-hand grip, and no window is pulled smaller than
+     floorFor allows, which keeps a grip of left edge under the bar and
+     of top edge past the title's start: so every window resizes from
+     every side and every corner but that one.
+
+     A zoomed window has no edges at all: the zoom is the size, so a
+     press never resizes it and the pointer shows no arrows over it. */
+  function edgeFor(win, model, x, y) {
+    if (!win || !win.getBoundingClientRect || !model || model.zoomed) { return ""; }
+    var rect = win.getBoundingClientRect();
+    var bar = win._cwBar, title = win._cwTitle;
+    if (bar && title && bar.getBoundingClientRect && title.getBoundingClientRect) {
+      var corner = Math.min(title.getBoundingClientRect().left, rect.right - GRIP);
+      if (x < corner && y < bar.getBoundingClientRect().bottom) { return ""; }
+    }
+    return edgeAt(rect, x, y);
+  }
+
+  /* The least a window can be pulled to, in PIXELS, turned into the
+     desktop's percent for the reducer: its title bar with two grips of
+     body under it, so its left edge shows a grip under the bar and its
+     foot another, and as wide as where its title begins plus two grips,
+     so its top edge shows a grip past the lights' corner before the
+     right-hand one. The reducer's floor is a share of the desktop, and on
+     a phone's desktop a share alone would leave a window no taller than
+     its bar, whose corner (edgeFor) would then take the whole of its left
+     and top edges. */
+  function floorFor(win, box) {
+    var bar = win && win._cwBar, title = win && win._cwTitle;
+    if (!bar || !title || !win.getBoundingClientRect || !bar.getBoundingClientRect || !title.getBoundingClientRect ||
+        !box || !box.width || !box.height) { return null; }
+    var rect = win.getBoundingClientRect();
+    return { w: 100 * (title.getBoundingClientRect().left - rect.left + 2 * GRIP) / box.width,
+             h: 100 * (bar.getBoundingClientRect().bottom - rect.top + 2 * GRIP) / box.height };
   }
 
   function wireDesktop(desktop, controller, onAct) {
@@ -1878,9 +2362,9 @@
 
       /* On an edge or a corner: a resize. The pointer pulls that edge;
          the reducer keeps the window a window and on the screen. */
-      var edge = win.getBoundingClientRect ? edgeAt(win.getBoundingClientRect(), e.clientX, e.clientY) : "";
+      var edge = edgeFor(win, w, e.clientX, e.clientY);
       if (edge) {
-        drag = { id: id, w: box.width, h: box.height, edge: edge,
+        drag = { id: id, w: box.width, h: box.height, edge: edge, min: floorFor(win, box),
                  px: e.clientX, py: e.clientY, ox: w.x, oy: w.y, ow: w.w, oh: w.h };
       } else {
         if (!within(e.target, "cw-win-bar")) { return; }
@@ -1896,8 +2380,9 @@
         /* At rest, the cursor says what a press here would do: the
            window under the pointer wears the edge it is on. */
         var over = within(e.target, "cw-win");
-        if (over && over.getBoundingClientRect && over.dataset) {
-          over.dataset.edge = edgeAt(over.getBoundingClientRect(), e.clientX, e.clientY);
+        if (over && over.dataset) {
+          var model = controller.state.windows.filter(function (x) { return x.id === over.dataset.win; })[0];
+          over.dataset.edge = edgeFor(over, model, e.clientX, e.clientY);
         }
         return;
       }
@@ -1908,7 +2393,7 @@
         return;
       }
       var frame = { x: drag.ox, y: drag.oy, w: drag.ow, h: drag.oh };
-      var from = {};
+      var from = drag.min ? { min: drag.min } : {};
       if (drag.edge.indexOf("l") >= 0) { frame.x += dx; frame.w -= dx; from.l = true; }
       if (drag.edge.indexOf("r") >= 0) { frame.w += dx; }
       if (drag.edge.indexOf("t") >= 0) { frame.y += dy; frame.h -= dy; from.t = true; }
@@ -1941,21 +2426,23 @@
      the pointer's position actually changed since it was last seen
      anywhere on the screen. Clicks are always deliberate and always
      win, and a pick tells whoever holds the keys to let go. */
+  /* The switcher cell a node is in, if any: an app in the row, a tile in
+     the strip, or a tile in the exposé. */
+  function cellOf(node, root) {
+    while (node && node !== root) {
+      var c = node.classList, d = node.dataset || {};
+      if (c && c.contains("cw-app") && d.app) { return { kind: "app", id: d.app }; }
+      if (c && c.contains("cw-tile-wrap") && d.win) { return { kind: "strip", id: d.win }; }
+      if (c && c.contains("cw-gcell") && d.win) { return { kind: "grid", id: d.win }; }
+      node = node.parentNode;
+    }
+    return null;
+  }
+
   function wirePane(parts, controller, onAct) {
     var screen = parts && parts.screen, panel = parts && parts.panel, grid = parts && parts.grid;
     if (!panel && !grid) { return { _wired: false }; }
     var lastX = null, lastY = null;
-
-    function cellOf(node, root) {
-      while (node && node !== root) {
-        var c = node.classList, d = node.dataset || {};
-        if (c && c.contains("cw-app") && d.app) { return { kind: "app", id: d.app }; }
-        if (c && c.contains("cw-tile-wrap") && d.win) { return { kind: "strip", id: d.win }; }
-        if (c && c.contains("cw-gcell") && d.win) { return { kind: "grid", id: d.win }; }
-        node = node.parentNode;
-      }
-      return null;
-    }
     function indexOf(cell) {
       var st = controller.state;
       if (cell.kind === "app") {
@@ -2060,39 +2547,56 @@
   }
 
   /* Blur behind the switcher, as the app has it. Four steps, because a
-     continuous slider on a demo is a fiddle rather than a setting. */
-  var BLUR_STEPS = ["0px", "8px", "18px", "30px"];
+     continuous slider on a demo is a fiddle rather than a setting. Here
+     each step has only its name: its radius is the stylesheet's (the
+     .cw-screen[data-blur] rules), the one place the radii are written. */
   var BLUR_NAMES = ["None", "Light", "Medium", "Heavy"];
 
   /* Options are not chords: they change what the switcher may REACH, or
      how it looks, rather than driving it. One handler for all of them,
      keyed by data-option, so a third option needs no new wiring. */
-  function wireOptions(root, controller, screen) {
+  function wireOptions(root, controller, screen, onAct) {
     if (!root) { return { sync: function () {} }; }
     var boxes = Array.prototype.slice.call(root.querySelectorAll("[data-option]"));
-    var box = root.querySelector ? root.querySelector(".cw-settings") : null;
+    /* The wheel, whose printed scale marks the word its cap is under, and
+       the readout that names the step. Both live in the bezel, which the
+       engine's rebuild at the breakpoint leaves alone. */
+    var wheel = root.querySelector ? root.querySelector(".cw-slider") : null;
+    var out = root.querySelector ? root.querySelector("#cw-blur-now") : null;
 
+    /* The step is marked as data-blur on the screen, where the
+       stylesheet turns it into the blur layer (and at None into no layer
+       at all), and on the wheel; each write happens only when the step
+       changes, so a thumb moved within one touches nothing. */
     function applyBlur(value) {
-      var i = Math.max(0, Math.min(BLUR_STEPS.length - 1, Number(value) || 0));
-      if (screen && screen.style) { screen.style.setProperty("--cw-blur", BLUR_STEPS[i]); }
-      var out = root.querySelector ? root.querySelector("#cw-blur-now") : null;
-      if (out) { out.textContent = BLUR_NAMES[i]; }
+      var i = Math.max(0, Math.min(BLUR_NAMES.length - 1, Number(value) || 0));
+      if (screen) { setAttr(screen, "data-blur", i); }
+      if (wheel) { setAttr(wheel, "data-blur", i); }
+      if (out) { setText(out, BLUR_NAMES[i]); }
       return i;
     }
 
     function sync() {
       /* Without Crossway there is nothing here to set: the system cannot
          reach a minimized window at all, and its switcher's blur is not
-         ours. Shown but not offered, as the exposé buttons are. */
+         ours. Shown but not offered, as the exposé buttons are. Each
+         input is the one mark: the stylesheet dims the control around a
+         disabled input and nothing else, so Interactive mode, which sits
+         among the options but is not one, stays live. */
       var native = !controller.state.crosswayEnabled;
       boxes.forEach(function (b) { b.disabled = native; });
-      if (box && box.classList) { box.classList.toggle("is-disabled", native); }
     }
 
     boxes.forEach(function (b) {
       var what = b.getAttribute("data-option");
       var handler = function () {
-        if (what === "include-minimized") { controller.setIncludeMinimized(b.checked); }
+        if (what === "include-minimized") {
+          /* The reducer abandons any session here; whoever holds the
+             keys is told to let go, as after every other verb that
+             ends one. */
+          controller.setIncludeMinimized(b.checked);
+          if (onAct) { onAct(); }
+        }
         else if (what === "blur") { applyBlur(b.value); }
       };
       b.addEventListener("change", handler);
@@ -2171,13 +2675,468 @@
   }
 
   /* ====================================================================
+     THE AUTOMATIC DEMO
+
+     Left alone, the demo demonstrates itself: an autopilot taps the
+     same chords a visitor clicks, at a visitor's pace (a little uneven,
+     as a hand is), through eleven scenes that use all four chords. It
+     opens on the film: ⌘Tab along the row to QuickTime, its tile seen
+     playing, and letting go brings the mostly hidden window forward.
+     Then ⌘` brings ONE Terminal window forward and leaves the others as
+     they were, ⌥` walks Terminal's own windows, ⌥Tab walks everything
+     to a Safari window, and so on. Each commit moves one window and its app to the
+     front of the MRU, and the LAST FIVE are ordered so the desktop ends
+     EXACTLY where it started: the loop ends in the state it began in and
+     runs again from there, with no reset and no jump. Only windows of
+     Safari, QuickTime and Terminal are ever committed, so nothing else
+     can drift.
+
+     Targets are named, not counted: a tap is repeated until the named
+     app or window is selected, so a scene still lands if the visitor
+     left the desktop rearranged.
+
+     macOS Native has its own nine (DEMO_SCENES_NATIVE, below): the
+     system has no ⌥ chords and no strip to read, so those scenes are
+     ⌘ alone and their targets name the window left IN FRONT rather
+     than a selection. The switch chooses which loop runs, and flipping
+     it between scenes starts the other from ITS first scene, since a
+     loop only closes when it runs whole. The autopilot waits while the
+     demo is scrolled away or the tab is hidden. Interactive mode, the
+     button on the display's tray, turns the automatic demo off and back
+     on; a press on the screen only makes it wait (wireDemoPause).
+     ==================================================================== */
+  var DEMO_SCENES = [
+    /* The shape of every scene: Tab a few times, then backtick a few
+       times, under one box. And the boxes ALTERNATE — the ⌘ and ⌥
+       halves are intermixed rather than one being front-loaded — so a
+       visitor who watches any two scenes sees both halves of the window
+       used.
+       Targets are named, not counted: a tap is repeated until the named
+       app or window is selected, so a scene still lands if the visitor
+       left the desktop rearranged; `min` taps first where the target
+       would otherwise be one tap away, so the walk is seen.
+       The loop closes because of its LAST FOUR commits, in this order:
+       sa2, fd1, tm1, sa1. A commit moves its window to the front and
+       its app to the front of the MRU, so the stack at the end is those
+       four in reverse, then the windows nothing touched (tm2, and the
+       two minimized). That is the desktop it started on. Everything
+       before those four is free, which is what leaves the boxes room to
+       alternate.
+       1. VIEW APPLICATIONS: ⌘Tab a lap of the row and one more, to
+       Terminal, then ⌘` a lap of its three windows, home to the one in
+       front. Terminal comes forward. */
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal", min: 4 }, { key: "tick", win: "tm1" }] },
+    /* 2. VIEW WINDOWS: ⌥Tab, every window, three along to the film. It
+       is seen playing in its tile, and letting go brings the mostly
+       hidden window forward. */
+    { hold: "opt", taps: [{ key: "tab", win: "sa2" }] },
+    /* 3. Applications again: ⌘Tab a lap back to Safari, ⌘` a lap of its
+       strip back to the film. Both walks seen whole, and a no-op for
+       state, so it can sit anywhere in the loop. */
+    { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa2" }] },
+    /* 4. Windows again: ⌥`, the front app's own, a lap of Safari's
+       three back to the film. Also a no-op. */
+    { hold: "opt", taps: [{ key: "tick", win: "sa2" }] },
+    /* 5. Applications: ⌘Tab two along to Finder, which has one window,
+       so there is no strip to walk. */
+    { hold: "cmd", taps: [{ key: "tab", app: "finder" }] },
+    /* 6. Windows: ⌥Tab across everything to a Terminal window, which is
+       the grid doing what the strip did in scene 1, from the other box. */
+    { hold: "opt", taps: [{ key: "tab", win: "tm1" }] },
+    /* 7. Applications: ⌘Tab two along to Safari, ⌘` a lap and one more
+       to its first window. The desktop is exactly as it began. */
+    { hold: "cmd", taps: [{ key: "tab", app: "safari" }, { key: "tick", win: "sa1", min: 4 }] },
+  ];
+  /* The same demo without Crossway, in what the system has: Command-Tab
+     lands on an app's front window, and Command-backtick raises the
+     front app's next window at once, with no session to read, so those
+     targets name the window that must be IN FRONT afterwards. One key
+     per scene: the system's switcher has no strip for ` to descend into,
+     so a ` under a held ⌘Tab does nothing there. The same shape as
+     Crossway's: Tab a few times, then ` a few times.
+     Twelve scenes that close the loop, checked by walking them: the
+     system's ` ping-pongs an app's two most recent windows, so the
+     raises are tm1, tm2, sa1, sa2, sa1, tm2, tm1, sa1, sa1 (after a
+     ping-pong), fd1, tm1, sa1, and the last raise of each of the five
+     leaves sa1, tm1, fd1, sa2, tm2: the opening stack. It opens on
+     Terminal after a lap of the row where Crossway's loop opens on
+     Terminal's strip, so a flip of the switch between scenes can be
+     seen to start the other loop. */
+  var DEMO_SCENES_NATIVE = [
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal", min: 4 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "tm2", min: 3 }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "safari", min: 4 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "sa2", min: 3 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "sa1", min: 3 }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal", min: 4 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "tm1", min: 3 }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "safari", min: 4 }] },
+    { hold: "cmd", taps: [{ key: "tick", front: "sa1", min: 4 }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "finder" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "terminal" }] },
+    { hold: "cmd", taps: [{ key: "tab", app: "safari" }] },
+  ];
+  /* A visitor's pace, in ms, and an unhurried one: the modifier goes
+     down and is seen down before the first tap, the taps come at a
+     stroll (each well past the preview delay, so every strip is seen to
+     bloom) and a little unevenly, the last selection is looked at, and
+     the modifier goes up; then a real rest before the next scene. Half
+     these values reads as jarring; a test keeps the floors.
+
+     The jitter scales with the beats, so the whole cadence stretches
+     evenly and the hand still does not tap on a metronome. The scene a
+     visitor arrives in the middle of is the one they have to read, and
+     a hurried pace is over before they have found the keys. */
+  /* `first` is the wait from the demo coming into view to the modifier
+     going down; with `hold` and SHOW_DELAY it puts Crossway's switcher
+     on the screen 1.5 s after the visitor can see the demo. `rest` is
+     the pause after a scene commits before the next modifier goes down,
+     so close-to-open is rest + hold + SHOW_DELAY, 1.5 s too: the pause
+     between one switcher closing and the next opening is as much a part
+     of the lesson as the taps. The taps and the settle carry the
+     teaching cadence — those are the parts a visitor is meant to
+     follow. */
+  var DEMO_PACE = { first: 800, hold: 600, tap: 1440, jitter: 264, settle: 1920, rest: 800 };
+  /* No scene needs more taps than this; a target that never comes
+     (a rearranged desktop) is given up on rather than tapped forever. */
+  var DEMO_MAX_TAPS = 16;
+  /* How long the demo waits after the visitor's last click on the
+     screen before it carries on: two seconds (it was six until
+     2026-10-02), so a visitor who clicks around is never long without
+     the demo, and one who wants the screen for longer turns Mode to
+     Interactive, which stops it outright. A press still held keeps it
+     waiting, however long. */
+  var DEMO_REST = 2000;
+
+  function createAutopilot(o) {
+    o = o || {};
+    var keys = o.keys, controller = o.controller;
+    var scenes = o.scenes || DEMO_SCENES, nativeScenes = o.nativeScenes || DEMO_SCENES_NATIVE;
+    var pace = o.pace || DEMO_PACE;
+    var later = o.setTimeout || function (fn, ms) { return setTimeout(fn, ms); };
+    var cancel = o.clearTimeout || function (h) { clearTimeout(h); };
+    var paused = o.paused || function () { return false; };
+    var random = o.random || Math.random;
+    var running = false, handle = null, scene = 0, step = 0, taps = 0, loops = 0;
+    var started = false; /* a tap of this scene has landed, so its modifier is down */
+    var world = null;   /* which switcher the last scene ran under */
+    var waiting = false; /* the pending timer is a look-again while nobody can see the demo */
+    var resting = false; /* waiting out the visitor's clicks on the screen (pauseFor) */
+    function rest(on) { resting = on; }
+
+    /* The scenes of the world the switch is set to. */
+    function current() { return controller.state.crosswayEnabled ? scenes : nativeScenes; }
+
+    /* A hand does not tap on a metronome. */
+    function jittered(ms) { return ms + (random() * 2 - 1) * (pace.jitter || 0); }
+
+    function onTarget(t) {
+      if (t.app) { var a = controller.stage.selectedApp(); return !!a && a.id === t.app; }
+      if (t.win) { var w = controller.stage.selectedWindow(); return !!w && w.id === t.win; }
+      /* A raise with no session to read: the window is simply in front. */
+      if (t.front) { var f = controller.state.windows[0]; return !!f && f.id === t.front; }
+      return true;
+    }
+    function schedule(fn, ms) {
+      waiting = false;
+      handle = later(function () { handle = null; if (running) { fn(); } }, ms);
+    }
+    /* A scene begins. A demo nobody is looking at can wait: it looks
+       again after a rest, and `wake` (the visibility wiring) cuts that
+       short the moment the demo comes into view, so the first switcher
+       is 1.5 s from THEN, not from whenever the last look was.
+       NOTHING is held here: a scene that opened with a modifier already
+       down would show a key held that nobody pressed. The modifiers are
+       art, so a scene does what a visitor does: it clicks the box's own
+       key, and that key holds the box's modifier for it. */
+    /* Whether the desktop can still play a scene: its apps running, its
+       windows there and within the switcher's reach. After the visitor
+       has had the screen, one may have been closed, quit or minimized
+       out of reach, and a scene tapping for a target that is not there
+       walks the switcher sixteen times for nothing. */
+    function playable(sc) {
+      var st = controller.state;
+      return sc.taps.every(function (t, i) {
+        if (t.app) { return st.apps.some(function (a) { return a.id === t.app; }); }
+        var id = t.win || t.front;
+        if (!id) { return true; }
+        var w = st.windows.filter(function (v) { return v.id === id; })[0];
+        if (!w) { return false; }
+        /* A scene that OPENS on backtick walks the front app's windows,
+           so its window must be one of them. A visitor who brought
+           another app forward during the rest leaves it a target the walk
+           never reaches, and it would tap until it ran out of taps. */
+        if (i === 0 && t.key === "tick" && (!st.apps.length || st.apps[0].id !== w.app)) { return false; }
+        return !w.minimized || (!!t.win && st.crosswayEnabled && st.includeMinimized);
+      });
+    }
+    function begin() {
+      if (paused()) { schedule(begin, pace.rest); waiting = true; return; }
+      /* The switch was flipped between scenes: the other world's loop,
+         from its first scene, since a loop closes only when run whole. */
+      var w = controller.state.crosswayEnabled;
+      if (world !== null && w !== world) { scene = 0; }
+      world = w;
+      /* On to the next scene the desktop can play, and if it can play
+         none (the visitor quit what they all name), a look again later. */
+      var list = current(), tried = 0;
+      while (tried < list.length && !playable(list[scene])) { scene = (scene + 1) % list.length; tried++; }
+      if (tried === list.length) { schedule(begin, pace.rest * 4); return; }
+      step = 0; taps = 0; started = false;
+      schedule(tapNext, pace.hold);
+    }
+    /* One tap of the scene's current key; on to the next key once its
+       named target is selected. */
+    function tapNext() {
+      var sc = current()[scene], t = sc ? sc.taps[step] : null;
+      if (!sc) { next(); return; }
+      /* The latch can be dropped under a running scene (a rebuild at
+         the breakpoint, a switch flipped from the keyboard): then the
+         scene is over, not sixteen taps of nothing. Only once a tap has
+         landed, since the first tap is what puts the modifier down. */
+      if (started && keys._held() !== sc.hold) { next(); return; }
+      if (!t) { schedule(letGo, pace.settle); return; }
+      /* Tapped in the scene's own BOX, so its modifier goes down for it
+         exactly as a visitor's click does. A box whose modifier cannot
+         be had (⌥ without Crossway) holds nothing, and the guard above
+         ends the scene on the next beat. */
+      keys.tap(t.key, null, sc.hold);
+      if (!started && keys._held() !== sc.hold) { next(); return; }
+      started = true;
+      taps += 1;
+      /* `min`: a target one tap away would end the walk before it was
+         seen, so a scene may ask for a few taps first. */
+      if ((onTarget(t) && taps >= (t.min || 1)) || taps >= DEMO_MAX_TAPS) { step += 1; taps = 0; }
+      schedule(tapNext, jittered(pace.tap));
+    }
+    /* The modifier goes up, which commits, exactly as a visitor's does. */
+    function letGo() {
+      var sc = current()[scene];
+      if (sc && keys._held() === sc.hold) { keys.hold(sc.hold); }
+      next();
+    }
+    function next() {
+      scene = (scene + 1) % current().length;
+      if (scene === 0) { loops += 1; }
+      schedule(begin, pace.rest);
+    }
+    function start() {
+      if (running) { return; }
+      running = true;
+      scene = 0; world = null;
+      schedule(begin, pace.first);
+    }
+    /* The demo has just come into view: if the autopilot was only
+       looking again, begin on the first beat instead. */
+    function wake() {
+      if (!running || !waiting) { return; }
+      if (handle !== null) { cancel(handle); handle = null; }
+      schedule(begin, pace.first);
+    }
+    /* Stopping mid-scene abandons the session rather than committing a
+       selection nobody chose, and lets the key go. */
+    function stop() {
+      if (!running) { return; }
+      running = false;
+      if (handle !== null) { cancel(handle); handle = null; }
+      if (keys._held() !== null) { controller.escape(); keys.clear(); }
+      rest(false);
+    }
+    /* The visitor is using the screen with the mouse: the demo waits
+       rather than stopping, and carries on `ms` after the last press.
+       The scene in play is abandoned, not committed, as a stop abandons
+       it, so the visitor's press lands on a desktop at rest; when the
+       wait is over that scene runs again from its start (or the next
+       the desktop can play). Every press starts the wait again.
+
+       `how.keep`: the press is on a cell of the demo's own switcher, so
+       the session is left open for the visitor's click to pick it.
+       `how.hold`: asked when the wait runs out; true while the visitor is
+       still pressing (a long drag), and the wait starts again. */
+    function pauseFor(ms, how) {
+      if (!running) { return; }
+      how = how || {};
+      if (handle !== null) { cancel(handle); handle = null; }
+      if (!how.keep && keys._held() !== null) { controller.escape(); keys.clear(); }
+      rest(true);
+      var over = function () {
+        if (how.hold && how.hold()) { schedule(over, ms); return; }
+        rest(false);
+        begin();
+      };
+      schedule(over, ms);
+    }
+    return {
+      start: start, stop: stop, wake: wake, pauseFor: pauseFor,
+      get running() { return running; },
+      get resting() { return resting; },
+      get scene() { return scene; },
+      get loops() { return loops; },
+      get waiting() { return waiting; },
+    };
+  }
+
+  /* The screen only PAUSES the automatic demo. A press on it is a
+     visitor looking around, and the demo should be there when they are
+     done: it waits `more.rest` ms (DEMO_REST) from their last press or
+     release (autopilot.pauseFor) and then carries on. The bezel is
+     deliberately not a surface here: throwing the switch or turning the
+     blur wheel is watching the demo under other settings, so it plays
+     on in the world the switch now names. Nothing here needs to know
+     the mode: with Interactive mode on the demo is stopped, and a pause
+     of a demo that is not running is nothing.
+
+     Heard in the CAPTURE phase, on the way down, before any handler on
+     the screen itself: the desktop keeps a press on a traffic light to
+     itself, since a light is neither a drag nor a raise, and closing or
+     minimizing takes the light away before a click can follow, so a
+     listener on the way back up never heard such a press. A press
+     still down holds the wait open, so a drag longer than the wait
+     never has the demo start under the visitor's hand; the wait then
+     counts from the release. The release is heard anywhere on the page,
+     since a press begun on the screen can end off it, and a move over
+     the screen with no button down ends a press whose release was lost.
+     A press on a cell of the demo's own switcher keeps its session, so
+     the click that follows picks it. The autopilot itself never sends
+     DOM events, so every one is the visitor. */
+  function wireDemoPause(surfaces, autopilot, more) {
+    more = more || {};
+    var restFor = more.rest || DEMO_REST;
+    var down = false;
+    var stillPressing = function () { return down; };
+    function pause(e) {
+      if (e && e.type === "pointerdown") { down = true; }
+      if (autopilot && autopilot.running && autopilot.pauseFor) {
+        autopilot.pauseFor(restFor, { hold: stillPressing, keep: !!cellOf(e && e.target, null) });
+      }
+    }
+    function released(e) {
+      if (!down) { return; }
+      if (e && e.type === "pointermove" && e.buttons) { return; }
+      down = false;
+      pause(e);
+    }
+    var wired = 0;
+    (surfaces || []).forEach(function (el) {
+      if (!el || !el.addEventListener) { return; }
+      wired++;
+      el.addEventListener("pointerdown", pause, true);
+      el.addEventListener("pointermove", released, true);
+      el.addEventListener("click", pause, true);
+      el.addEventListener("keydown", pause, true);
+    });
+    /* The release, from anywhere on the page. The document hears it on
+       the way down before any surface can, so the surfaces need no
+       release of their own. */
+    if (wired && typeof document !== "undefined" && document.addEventListener) {
+      document.addEventListener("pointerup", released, true);
+      document.addEventListener("pointercancel", released, true);
+    }
+    return { _wired: wired > 0 };
+  }
+
+  /* The demo's own switcher, put away with the demo. Interactive mode
+     turned on mid-scene stops the autopilot, which abandons the scene's
+     session, and on its own the switcher would leave in one frame while
+     the blur behind it fades: a cut at the very instant the stage starts
+     to move. So a copy of whatever is open (the pane or the exposé) is
+     left where it stood and faded with the blur, over the blur's own
+     160ms, then removed.
+
+     The copy is only a picture: no ids, hidden from assistive technology,
+     inert, and never `is-open`, so nothing that reads the screen finds it.
+     Everything else it needs is its class's (`.cw-ghost` in style.css):
+     it is shown as the open pane is, out of the pointer's way, without
+     the pane's own frost (the blur behind it is going at the same time,
+     so the eye cannot tell, and a second backdrop blur in the frames
+     where the stage starts to move cost six or seven late frames under
+     software raster), and with nothing inside it allowed to animate,
+     since the monitor it stands on may be resizing under it. Nothing is
+     measured here: the pane is open, so it is showing. It is laid BEFORE
+     the real one, so a switcher the visitor opens within those 160ms
+     draws over it. Without Web Animations, or when the visitor has asked
+     for less motion (the blur does not fade then either), there is no
+     copy and the switcher simply goes, as it always has. The 160ms and
+     its curve are the blur's own (.cw-backdrop's transition). */
+  var PUT_AWAY_MS = 160;
+  function fadeAway(panes) {
+    if (typeof window === "undefined") { return; }
+    if (window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) { return; }
+    panes.forEach(function (pane) {
+      if (!pane || !pane.parentNode || !pane.classList.contains("is-open")) { return; }
+      if (typeof pane.animate !== "function") { return; }
+      var ghost = pane.cloneNode(true);
+      ghost.classList.remove("is-open");
+      ghost.classList.add("cw-ghost");
+      ghost.removeAttribute("id");
+      ghost.querySelectorAll("[id]").forEach(function (el) { el.removeAttribute("id"); });
+      ghost.setAttribute("aria-hidden", "true");
+      ghost.inert = true;
+      pane.parentNode.insertBefore(ghost, pane);
+      var gone = function () { ghost.remove(); };
+      ghost.animate([{ opacity: 1 }, { opacity: 0 }], { duration: PUT_AWAY_MS, easing: "ease", fill: "forwards" })
+        .finished.then(gone, gone);
+    });
+  }
+
+  /* Interactive mode: ONE checkbox (the latching button on the display's
+     tray), and the demo is one of its two states. Off, which is how the
+     page opens, the automatic demo plays on a monitor as wide as the
+     stage allows, and the keys are put away. On, the demo stops (its
+     scene is abandoned, its key let go, nothing committed), the keys come
+     out beside the monitor, and the screen and the keys are the
+     visitor's. Off again, a key the visitor still holds is let go, which
+     commits their selection as letting go always has, and the demo plays
+     again from its first scene.
+
+     The state is the checkbox's; the stage only wears it
+     (`is-interactive`, which drives the layout and its animation), and
+     the keys window is `inert` whenever it is put away. That is set here,
+     in the change itself, not at the end of an animation: the window is
+     still on screen while it slides back behind the display (or rolls up
+     under it where the stage stacks), and the demo has already started,
+     so a press that reached a key then would tap into the demo's world. */
+  function wireInteractive(toggle, autopilot, o) {
+    if (!toggle || !toggle.addEventListener || !autopilot) { return { _wired: false }; }
+    o = o || {};
+    function sync() {
+      var on = !!toggle.checked;
+      if (o.host && o.host.classList) { o.host.classList.toggle("is-interactive", on); }
+      if (o.keysWindow) { o.keysWindow.inert = !on; }
+      if (on) {
+        /* Before the stop closes the demo's switcher: see fadeAway. */
+        if (autopilot.running && o.putAway) { o.putAway(); }
+        autopilot.stop();
+      } else if (!autopilot.running) {
+        /* Only on a real change: a demo already playing holds its own
+           key, and letting that go would commit a selection nobody
+           chose. */
+        if (o.keys) { o.keys.clear(); }
+        autopilot.start();
+      }
+      if (o.onChange) { o.onChange(on); }
+    }
+    toggle.addEventListener("change", sync);
+    sync();
+    /* The layout animates from here on, not before: a state the browser
+       restored at load is simply drawn. A frame later, so the first sync
+       has painted. */
+    if (o.host && o.host.classList) {
+      var ready = function () { o.host.classList.add("is-ready"); };
+      if (typeof requestAnimationFrame === "function") { requestAnimationFrame(function () { requestAnimationFrame(ready); }); }
+      else { ready(); }
+    }
+    return { _wired: true, sync: sync, get on() { return !!toggle.checked; } };
+  }
+
+  /* ====================================================================
      MOUNTING
 
      The phone gets FEWER things, not smaller ones. A 3x3 exposé of
      titled thumbnails inside a drawn screen at ~296px is a smudge, so
      below the breakpoint the demo runs on the compact fixture set: three
-     apps, five windows, same reducer, same renderer. That is the whole
-     reason the fixtures were data from the first task rather than code.
+     apps, five windows, same reducer, same renderer. That is why the
+     fixtures are data rather than code.
 
      Rebuilt when the breakpoint is crossed, because a visitor who
      rotates a phone should get the set that fits, not the one they
@@ -2195,15 +3154,17 @@
     var current = null;
 
     /* The DOM is wired ONCE, against this stand-in, and the engine is
-       swapped underneath it at the breakpoint. Wiring per build stacked a
-       second set of listeners on every key and control each time the
-       breakpoint was crossed, so a tap moved the selection twice, and a
-       Native choice on the switch was thrown away by a fresh engine that
-       started in Crossway. */
+       swapped underneath it at the breakpoint. Wiring per build would
+       stack a second set of listeners on every key and control each
+       time the breakpoint is crossed, so a tap would move the selection
+       twice, and a Native choice on the switch would be thrown away by
+       a fresh engine starting in Crossway. */
     var proxy = {
       get state() { return current.controller.state; },
+      get stage() { return current.controller.stage; },
       press: function (chord, o) { return current.controller.press(chord, o); },
       release: function () { return current.controller.release(); },
+      escape: function () { return current.controller.escape(); },
       setCrosswayEnabled: function (on) { return current.controller.setCrosswayEnabled(on); },
       setIncludeMinimized: function (on) { return current.controller.setIncludeMinimized(on); },
     };
@@ -2219,6 +3180,11 @@
         status: opts.status,
         fixtures: pickFixtures(),
         projector: projector,
+        /* The automatic demo is the page's default, and it steps
+           every second and a half: a polite region narrating each step
+           would talk over everything a screen reader does on the page.
+           It speaks for the visitor, and for the demo not at all. */
+        quiet: function () { return !!(autopilot && autopilot.running && !autopilot.resting); },
       });
       /* The screen is rebuilt, so its surfaces are new elements, and are
          what is wired per build. Every mouse verb that ends a session
@@ -2235,7 +3201,8 @@
     var keys = null;
     current = build();
     keys = wireKeys(opts.controls, proxy);
-    var options = wireOptions(opts.settings || opts.controls, proxy, opts.root);
+    var options = wireOptions(opts.settings || opts.controls, proxy, opts.root,
+      function () { if (keys) { keys.clear(); } });
     /* The stage wears the mode, so the drawing around the screen can
        answer it: the display's power light is lit with Crossway and
        dark without. */
@@ -2247,15 +3214,15 @@
       options.sync();
       markMode(crossway);
       /* A session open on a chord the other mode does not have must not
-         survive the flip, and it was abandoned rather than committed. */
+         survive the flip, so it is abandoned rather than committed. */
       keys.clear();
     });
 
     /* What the visitor has set, read back off the controls and put into
-       a fresh engine: the switch's checked side, the minimized box, and
-       the blur (which lives on the screen element and re-applies itself
-       through the options). The latch is dropped: the new engine has no
-       session for it to hold. */
+       a fresh engine: the switch's checked side and the minimized box.
+       The blur needs nothing: its step is marked on the screen element,
+       which the rebuild keeps. The latch is dropped: the new engine has
+       no session for it to hold. */
     function restore() {
       var cells = toggle.cells || [];
       var native = cells.some(function (cell) {
@@ -2277,34 +3244,64 @@
       restore();
     }
 
-    /* The hero starts at rest: the desktop, the film playing, nothing
-       held, so the first thing a visitor does is the first thing that
-       happens. A caller that wants it open — the social card — asks. */
-    if (opts.open === true) { keys.hold("cmd"); keys.tap("tab"); }
-
-    /* The film runs while the demo is on screen and stands on its first
-       frame when it is scrolled away, and for good when the visitor has
-       asked for less motion, as the retro figures do. */
+    /* Whether anyone can see the demo: scrolled away or in a hidden tab,
+       the film stands on its frame and the autopilot waits. The film also
+       stands still for good when the visitor has asked for less motion,
+       as the retro figures do. */
     var reduced = typeof window !== "undefined" && !!window.matchMedia
       && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!reduced && projector.reels.length) {
-      if (typeof IntersectionObserver !== "undefined" && opts.root) {
-        new IntersectionObserver(function (entries) {
-          if (entries[0].isIntersecting) { projector.start(); } else { projector.stop(); }
-        }).observe(opts.root);
-      } else {
-        projector.start();
-      }
+    var onScreen = true;
+    function hidden() { return typeof document !== "undefined" && !!document.hidden; }
+    var filmRuns = !reduced && projector.reels.length > 0;
+    var autopilot = null;
+    function attend() {
+      var visible = onScreen && !hidden();
+      if (filmRuns) { if (visible) { projector.start(); } else { projector.stop(); } }
+      if (visible && autopilot && autopilot.wake) { autopilot.wake(); }
     }
+    if (typeof IntersectionObserver !== "undefined" && opts.root) {
+      new IntersectionObserver(function (entries) {
+        onScreen = !!entries[0].isIntersecting;
+        attend();
+      }).observe(opts.root);
+    }
+    if (typeof document !== "undefined" && document.addEventListener) {
+      document.addEventListener("visibilitychange", attend);
+    }
+    attend();
 
-    /* One write a minute is enough to keep the clock honest, and it
-       touches nothing else — a full redraw would fight the session the
-       visitor is in the middle of. */
+    /* The automatic demo: the autopilot on the same keys a visitor
+       uses. Interactive mode runs it (off plays, on stops), and a press
+       on the screen makes it wait. Without that checkbox nothing plays
+       it. */
+    autopilot = opts.autopilot || createAutopilot({
+      keys: keys,
+      controller: proxy,
+      paused: function () { return !onScreen || hidden(); },
+    });
+    wireDemoPause([opts.root], autopilot);
+    var interactive = wireInteractive(opts.interactive, autopilot, {
+      host: stageEl,
+      keysWindow: opts.controls,
+      keys: keys,
+      putAway: function () {
+        var r = current.controller.renderer;
+        fadeAway([r.panel, r.grid]);
+      },
+      onChange: opts.onInteractive,
+    });
+
+    /* The clock is read every 20 seconds, so it turns within 20 seconds
+       of the visitor's own, and written only when the minute (or the
+       day) has changed, so it is one write a minute; it touches nothing
+       else, since a full redraw would fight the session the visitor is
+       in the middle of. */
     if (typeof setInterval === "function") {
       var ticking = setInterval(function () {
         var c = current && current.controller;
         if (c && c.renderer && c.renderer.clock) {
-          c.renderer.clock.textContent = clockText();
+          setText(c.renderer.clock, clockText());
+          if (c.renderer.date) { setText(c.renderer.date, dateText()); }
         }
       }, 20000);
       /* Under node the interval would hold the process open. */
@@ -2312,9 +3309,7 @@
     }
 
     if (typeof window !== "undefined" && window.matchMedia) {
-      var mq = window.matchMedia(NARROW);
-      if (mq.addEventListener) { mq.addEventListener("change", rebuild); }
-      else if (mq.addListener) { mq.addListener(rebuild); }
+      window.matchMedia(NARROW).addEventListener("change", rebuild);
     }
 
     return {
@@ -2322,12 +3317,15 @@
       keys: keys,
       rebuild: rebuild,
       projector: projector,
+      autopilot: autopilot,
+      interactive: interactive,
     };
   }
 
   var CrosswayStage = {
     SKETCH: SKETCH,
     MODE: MODE,
+    PANE_PHASE: PANE_PHASE,
     SHOW_DELAY: SHOW_DELAY,
     PREVIEW_DELAY: PREVIEW_DELAY,
     DOCK: DOCK,
@@ -2341,6 +3339,7 @@
     REEL_BOX: REEL_BOX,
     REEL_DWELL: REEL_DWELL,
     clockText: clockText,
+    dateText: dateText,
     createController: createController,
     mountHero: mountHero,
     pickFixtures: pickFixtures,
@@ -2348,20 +3347,34 @@
     wireKeys: wireKeys,
     wireOptions: wireOptions,
     wireDesktop: wireDesktop,
+    wireInteractive: wireInteractive,
+    DEMO_REST: DEMO_REST,
     wireMenubar: wireMenubar,
     wireDock: wireDock,
     wirePane: wirePane,
     wireToggle: wireToggle,
+    wireDemoPause: wireDemoPause,
+    createAutopilot: createAutopilot,
+    BLUR_NAMES: BLUR_NAMES,
+    DEMO_SCENES: DEMO_SCENES,
+    DEMO_SCENES_NATIVE: DEMO_SCENES_NATIVE,
+    DEMO_PACE: DEMO_PACE,
+    LET_GO_MS: LET_GO_MS,
     GRID_COLUMNS: GRID_COLUMNS,
     TILE_ASPECT: TILE_ASPECT,
     DESKTOP_ASPECT: DESKTOP_ASPECT,
     MIN_WIN: MIN_WIN,
     GRIP: GRIP,
     _edgeAt: edgeAt,
+    _edgeFor: edgeFor,
+    _floorFor: floorFor,
     STRIKE_MS: STRIKE_MS,
+    RESTRIKE_MS: RESTRIKE_MS,
     /* exposed for tests */
     _nextIndex: nextIndex,
     _initialIndex: initialIndex,
+    _fadeAway: fadeAway,
+    PUT_AWAY_MS: PUT_AWAY_MS,
   };
 
   /* Browser gets a namespace; the test runner gets an export. One line,
