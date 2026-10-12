@@ -306,6 +306,10 @@
      offset, its first 17px sit behind a two-row bar. */
   .features-toc { top: 88px; }
 }
+/* Those steps are for the plain bar. With the pull-down menus the bar
+   is one row at every width and measured (style.css), so the list parks
+   where a jump lands, under the bar and its air. */
+html.menus .features-toc { top: var(--menubar-clearance); }
 
 /* ---- Narrow screens -------------------------------------------------- */
 /* At the site's breakpoint the two columns become one, the TOC leads and
