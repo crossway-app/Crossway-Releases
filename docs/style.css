@@ -794,6 +794,11 @@ html.hacker .cat .c-g { fill: var(--dim); }
 html.hacker .cat.kitten .c-e { fill: #020704; }
 html.hacker .cat .c-t { fill: #1d4a2c; }
 
+/* Every page with a menu bar preloads this file in its head, so it comes
+   down beside the stylesheet rather than after it. menus.js measures the
+   bar in this face to decide whether the bar folds, and a face arriving
+   after the first paint would fold it again in front of a first visitor
+   on a narrow phone. */
 @font-face {
   font-family: "ChicagoFLF";
   src: url("assets/ChicagoFLF.ttf") format("truetype");
@@ -823,13 +828,18 @@ html.hacker .cat .c-t { fill: #1d4a2c; }
    step clears it by 13 to 17px, as 52px clears one row, and each takes
    over about ten pixels before the bar wraps, so a face drawn a little
    wider in another browser still lands clear. The steps under 780px
-   are here and after the phone block below. */
+   are here and after the phone block below.
+
+   Those steps are for the plain bar. With the pull-down menus the bar is
+   one row at every width, and menus.js measures it, so the padding is
+   simply its height and the same air (--menubar-clearance). */
 html {
   scroll-padding-top: 52px;
 }
 @media (700px < width < 780px) {   /* range syntax: no gap at a zoomed 700.5px */
   html { scroll-padding-top: 84px; }
 }
+html.menus { scroll-padding-top: var(--menubar-clearance); }
 
 body {
   margin: 0;
@@ -1058,6 +1068,397 @@ html.hacker .menubar .lamp { opacity: 0.45; }
   .lamp-bulb, .lamp-beam { transition: opacity 260ms ease, fill 260ms ease; }
 }
 
+/* ---------- pull-down menus (menus.js) ---------- */
+
+/* The bar above is the plain one, the whole bar for a visitor without
+   scripts. menus.js marks the page html.menus in the head, before the
+   first paint, and puts Crossway, Learn and Support in place of its
+   links, with a Download button before the lamp. Everything here is
+   drawn from the tokens, so every appearance re-cuts it, and ChicagoFLF
+   has one weight, so nothing here sets one. */
+
+/* One row at every width: titles that do not fit fold into the Crossway
+   menu (menus.js measures), so the bar never wraps. The phone rules that
+   hide the spacer and put the app title on a row of its own are undone
+   here. */
+html.menus .menubar {
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 0;
+  min-height: calc(34px + var(--border));
+  padding: 0 14px 0 6px;
+  overflow-x: clip;
+  -webkit-user-select: none;
+  user-select: none;
+}
+html.menus .menubar > a:not(.apptitle):not(.menu-download) { display: none; }
+html.menus .menubar > .spacer { display: block; flex: 1 1 0; min-width: 0; }
+/* Until the menus are built the app title stands where the Crossway
+   title will, so nothing moves when it is replaced. */
+html.menus .menubar > .apptitle {
+  flex-basis: auto;
+  align-self: stretch;
+  padding: 0 10px;
+}
+html.menus .menubar > .lamp { flex: none; }
+@media (max-width: 700px) {
+  html.menus .menubar { padding: 0 8px 0 4px; }
+  html.menus .menubar > .apptitle { padding: 0 8px; }
+}
+
+/* The bar's height, measured by menus.js, and 17px of air under it:
+   where a jump lands (the scroll padding, at the top of the ground),
+   the display's height budget and the features page's sticky list. */
+html.menus { --menubar-clearance: calc(var(--menubar-height, 35px) + 17px); }
+
+.menubar .menu-titles {
+  display: flex;
+  align-items: stretch;
+  flex: none;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.menubar .menu {
+  display: flex;
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+}
+
+/* A title: the links' padding and the bar's full height, with no
+   highlight at rest. Open, it is the inverted rectangle, from the top of
+   the bar down to the rule. */
+.menubar .menu-title {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  margin: 0;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  white-space: nowrap;
+  cursor: default;
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.menubar .menu-title[aria-expanded="true"] {
+  background: var(--ink);
+  color: var(--paper);
+}
+html.hacker .menubar .menu-title[aria-expanded="true"] { text-shadow: none; }
+
+/* The keyboard's mark, distinct from the open state's inversion: the
+   site's marching ants inside the title, in paper when it is inverted. */
+.menubar .menu-title:focus { outline: none; }
+.menubar .menu-title:focus-visible {
+  outline: 2px dashed var(--ink);
+  outline-offset: -5px;
+}
+.menubar .menu-title[aria-expanded="true"]:focus-visible { outline-color: var(--paper); }
+
+@media (max-width: 700px) {
+  .menubar .menu-title { padding: 0 8px; font-size: 14px; }
+}
+
+/* Folded for a narrow screen: the Crossway title alone, with the lamp,
+   and the Download button wherever it still fits (menus.js measures). */
+.menubar.is-folded .menu:not(:first-child) { display: none; }
+.menubar.hides-download .menu-download { display: none; }
+
+/* A menu: it hangs from the bar's rule with no gap (menus.js places it
+   under its title), a one-bit panel with System 7's one-pixel hard
+   shadow, right and bottom, starting a pixel down and in (2u 2u 0 -1u,
+   u = 1.5px). */
+.menubar .menu-panel {
+  position: absolute;
+  top: calc(100% + var(--border));
+  left: 0;
+  z-index: 1;
+  display: block;
+  box-sizing: border-box;
+  width: max-content;
+  min-width: 180px;
+  max-height: calc(100vh - var(--menubar-height, 35px) - 16px);
+  max-height: calc(100dvh - var(--menubar-height, 35px) - 16px);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  list-style: none;
+  background: var(--paper);
+  color: var(--ink);
+  border: var(--border) solid var(--ink);
+  border-top: 0;
+  font-family: var(--font-display);
+  font-size: 15px;
+  /* 18px lines plus 3px above and below: System 7's 16u rows, 24px. */
+  line-height: 18px;
+  text-align: left;
+  box-shadow: 3px 3px 0 -1.5px var(--ink);
+}
+.menubar .menu-panel[hidden] { display: none; }
+.menubar .menu-panel ul,
+.menubar .menu-panel li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.menubar .menu-panel li { display: block; }
+
+/* An item: the check column, the words, and a column for the arrow of a
+   link that leaves the site. In the Crossway menu the check column is as
+   wide as the title's icon (menus.js measures it), so the words line up
+   under the word Crossway. The rules above for links in the bar
+   (padding, nowrap, inverse on hover) are overruled: the highlight is
+   menus.js's, so the mouse and the keys share one. */
+.menubar .menu-panel a.menu-item {
+  display: grid;
+  grid-template-columns: var(--menu-check-width, 24px) minmax(0, 1fr) 30px;
+  align-items: center;
+  min-height: 24px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: inherit;
+  text-decoration: none;
+  white-space: normal;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+}
+.menubar .menu-panel a.menu-item:focus,
+.menubar .menu-panel a.menu-item:focus-visible { outline: none; }
+.menubar .menu-panel a.menu-item.is-lit {
+  background: var(--ink);
+  color: var(--paper);
+}
+/* A chosen item's one flash: back to paper for a moment. */
+.menubar .menu-panel a.menu-item.is-lit.is-flashing {
+  background: transparent;
+  color: var(--ink);
+}
+html.hacker .menubar .menu-panel a.menu-item.is-lit { text-shadow: none; }
+html.hacker .menubar .menu-panel a.menu-item.is-lit.is-flashing { text-shadow: inherit; }
+
+.menubar .menu-check { text-align: center; }
+.menubar .menu-text { padding: 3px 8px 3px 0; }
+.menubar .menu-key { text-align: center; }
+/* The arrow for a link that leaves the site, drawn as a one-bit bitmap on
+   the font's own grid (ChicagoFLF at 15px draws 1.25px pixels), so it has
+   Chicago's weight rather than a thin system arrow's. It takes the item's
+   colour, so it inverts with the highlight. */
+.menubar .menu-key.menu-external {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 0;
+}
+.menubar .menu-key.menu-external::before {
+  content: "";
+  width: 11.25px;
+  height: 11.25px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M3 0h6v2H3zM5 2h4v1H5zM4 3h2v1H4zM7 3h2v3H7zM3 4h2v1H3zM2 5h2v1H2zM1 6h2v1H1zM0 7h2v1H0zM0 8h1v1H0z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 9 9' shape-rendering='crispEdges'%3E%3Cpath d='M3 0h6v2H3zM5 2h4v1H5zM4 3h2v1H4zM7 3h2v3H7zM3 4h2v1H3zM2 5h2v1H2zM1 6h2v1H1zM0 7h2v1H0zM0 8h1v1H0z'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}
+
+/* A divider: System 7's dotted line, one unit on and one off, with only
+   a little room above and below it, tighter than System 7's full 24px
+   row. On a screen of one device pixel to the pixel, whole pixels, so
+   the dots stay crisp. */
+.menubar .menu-sep {
+  position: relative;
+  height: 9px;
+}
+.menubar .menu-sep::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 3.75px;
+  height: var(--border);
+  background: repeating-linear-gradient(90deg, currentColor 0 1.5px, transparent 1.5px 3px);
+}
+@media (max-resolution: 1.49dppx) {
+  .menubar .menu-sep::before {
+    top: 4px;
+    height: 1px;
+    background: repeating-linear-gradient(90deg, currentColor 0 1px, transparent 1px 2px);
+  }
+}
+
+@media (pointer: coarse) {
+  .menubar .menu-panel a.menu-item { min-height: 40px; }
+}
+
+/* The folded bar's one menu: a sheet the screen's width under the bar,
+   with 44px rows. Its groups after the first sit under a grey header
+   named after the title they come from, never focusable and in --muted
+   rather than --dim, which falls short of 4.5:1 on --paper in every
+   appearance (--muted holds 5.6:1 or better). The arrow's column is only
+   as wide as a row needs: 40px where there is an arrow, and elsewhere
+   8px, which with the words' own 8px makes the 16px gutter, so long
+   names keep the room (the terminal's face runs wide). */
+.menubar.is-folded .menu-panel.menu-sheet {
+  left: 0;
+  right: 0;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  border-left: 0;
+  border-right: 0;
+}
+.menubar .menu-sheet a.menu-item {
+  min-height: 44px;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  font-size: 16px;
+  line-height: 20px;
+}
+.menubar .menu-sheet .menu-check { text-align: right; padding-right: 10px; }
+.menubar .menu-sheet .menu-key { width: 8px; }
+.menubar .menu-sheet .menu-key.menu-external { width: 40px; }
+.menubar .menu-header {
+  display: flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 6px 30px 3px 36px;
+  color: var(--muted);
+  font-size: 14px;
+  white-space: nowrap;
+  cursor: default;
+}
+
+/* The cover over the page while a menu is open (menus.js says why).
+   Under the folded bar's sheet it wears the site's dither, lightly, so
+   the strip of page left under a short sheet reads as covered, and as
+   the place to tap to close it, and the page under it holds still. */
+.menubar .menu-scrim {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: var(--menubar-height, 35px);
+  z-index: -1;
+  -webkit-tap-highlight-color: transparent;
+}
+.menubar .menu-scrim[hidden] { display: none; }
+.menubar .menu-scrim.is-dithered {
+  background: repeating-conic-gradient(var(--ink) 0% 25%, transparent 0% 50%) 0 0 / 2px 2px;
+  opacity: 0.16;
+}
+html.menu-sheet-open { overflow: hidden; overscroll-behavior: none; }
+
+/* The Download button: the site's push button with its default ring,
+   scaled to sit in the bar. It goes to the home page's Download button,
+   never to the zip. */
+.menubar a.menu-download,
+.menubar a.menu-download:visited,
+.menubar a.menu-download:hover {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  align-self: center;
+  flex: none;
+  margin: 0 14px 0 10px;
+  padding: 1px 12px;
+  border: var(--border) solid var(--ink);
+  border-radius: 6px;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-display);
+  font-size: 13px;
+  line-height: 1.3;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.menubar a.menu-download::after {
+  content: "";
+  position: absolute;
+  inset: -5px;
+  border: 2px solid var(--ink);
+  border-radius: 10px;
+  pointer-events: none;
+}
+.menubar a.menu-download:active {
+  background: var(--ink);
+  color: var(--paper);
+}
+html.hacker .menubar a.menu-download:active { text-shadow: none; }
+.menubar a.menu-download:focus { outline: none; }
+.menubar a.menu-download:focus-visible {
+  outline: 1.5px dashed var(--ink);
+  outline-offset: 1px;
+}
+@media (max-width: 700px) {
+  .menubar a.menu-download,
+  .menubar a.menu-download:visited,
+  .menubar a.menu-download:hover { margin: 0 10px 0 8px; padding: 1px 10px; }
+}
+
+/* Where a jump landed (menus.js): the target's title bar inverts twice,
+   or the Download button, or the display's frame for Try it. */
+.titlebar.menu-landing { background: var(--ink); }
+.titlebar.menu-landing::before {
+  background: repeating-linear-gradient(180deg, var(--paper) 0 2px, transparent 2px 4px);
+}
+.titlebar.menu-landing .title {
+  background: var(--ink);
+  color: var(--paper);
+  text-shadow: none;
+}
+.titlebar.menu-landing .closebox {
+  background: var(--ink);
+  border-color: var(--paper);
+  box-shadow: 0 0 0 4px var(--ink);
+}
+/* A visited link keeps its ink in the buttons' section below, which
+   would leave the inverted button blank for anyone who has downloaded
+   before, so the mark covers that state too. */
+.btn.menu-landing,
+.btn.menu-landing:visited {
+  background: var(--ink);
+  color: var(--paper);
+  text-shadow: none;
+}
+.cw-display-frame.menu-landing {
+  outline: 3px solid var(--ink);
+  outline-offset: 5px;
+}
+
+/* High contrast: the system's highlight, with a ring, since an inverted
+   rectangle alone is not drawn there. The keyboard's ring on an open
+   title stays distinct from the open state's solid one. */
+@media (forced-colors: active) {
+  .menubar .menu-title[aria-expanded="true"],
+  .menubar .menu-panel a.menu-item.is-lit {
+    forced-color-adjust: none;
+    background: Highlight;
+    color: HighlightText;
+    outline: 2px solid HighlightText;
+    outline-offset: -3px;
+  }
+  .menubar .menu-title[aria-expanded="true"]:focus-visible {
+    outline-style: dashed;
+    outline-offset: -5px;
+  }
+  .menubar .menu-header { color: GrayText; }
+  /* The dividers and the arrow are painted backgrounds, which forced
+     colors would drop. Both are drawn in currentColor, so here they keep
+     their paint in the system's colours: the text's for a divider, and
+     for the arrow its link's, or the highlight's text on a highlighted
+     item, which it already takes from the rule above. */
+  .menubar .menu-sep::before { forced-color-adjust: none; color: CanvasText; }
+  .menubar .menu-panel a.menu-item:not(.is-lit) .menu-external::before { forced-color-adjust: none; color: LinkText; }
+}
+
 /* ---------- desktop layout ---------- */
 
 .desktop {
@@ -1095,19 +1496,19 @@ html.hacker .menubar .lamp { opacity: 0.45; }
 }
 
 /* THE HOME PAGE'S GRID. The lede and the demo span the desk; under them
-   Privacy and Features stand side by side at one height, the shorter
-   stretched to the taller, with Donate the full width beneath both and
-   the footer under that.
+   Privacy and then Donate, each standing centred and as wide as its
+   words, and the footer under them.
 
    The side gutters are columns here rather than padding, so that the
    lower desk (.lattice, in the desk's ground at the end of this file)
    can span the grid from one edge of the browser window to the other: a
    grid item reaches the window's edges only if the grid does, and this
    way it does so without 100vw, which counts a visible scrollbar and
-   would scroll the page sideways by its width. The content stops where
-   the padded .desktop's does on every other page, at --desk-max less a
-   gutter each side, so the demo keeps exactly the width it had. The 40px
-   between Privacy and Features is the 40px between the rows.
+   would scroll the page sideways by its width. The middle column stops
+   where the padded .desktop's content does on every other page, at
+   --desk-max less a gutter each side, so the demo keeps exactly the
+   width it has there. Where the window is narrower the middle column
+   gives way first, and the gutters keep their width.
 
    Every item is placed by name, the lattice by line: auto-placement
    would put the windows after the lattice's rows rather than over them.
@@ -1117,14 +1518,8 @@ html.hacker .menubar .lamp { opacity: 0.45; }
   max-width: none;
   padding-left: 0;
   padding-right: 0;
-  --desk-half: calc((var(--desk-max) - 2 * var(--desk-gutter) - 40px) / 2);
-  grid-template-columns: minmax(var(--desk-gutter), 1fr) minmax(0, var(--desk-half)) 40px minmax(0, var(--desk-half)) minmax(var(--desk-gutter), 1fr);
-  grid-template-areas:
-    ". lede    lede   lede     ."
-    ". demo    demo   demo     ."
-    ". privacy .      features ."
-    ". donate  donate donate   ."
-    ". footer  footer footer   .";
+  grid-template-columns: minmax(var(--desk-gutter), 1fr) minmax(0, calc(var(--desk-max) - 2 * var(--desk-gutter))) minmax(var(--desk-gutter), 1fr);
+  grid-template-areas: ". lede ." ". demo ." ". privacy ." ". donate ." ". footer .";
   column-gap: 0;
   /* The room under the footer holds the cats (cat.js), who rest and walk
      along the page's very bottom, under the woven mark: their tallest is
@@ -1137,87 +1532,39 @@ html.hacker .menubar .lamp { opacity: 0.45; }
 }
 .home > .lede { grid-area: lede; }
 .home > #demo { grid-area: demo; }
-.home > #privacy { grid-area: privacy; }
-.home > #features { grid-area: features; }
-.home > #donate { grid-area: donate; }
 .home > .footer { grid-area: footer; }
-.home > #privacy,
-.home > #features { align-self: stretch; }
+/* Privacy and Donate stand centred, each as wide as its words: the
+   reading measure, so the two are one width and read as one column. */
+.home > #privacy { grid-area: privacy; justify-self: center; }
+.home > #donate { grid-area: donate; justify-self: center; }
 /* More air round the reading windows than the desk's gap gives: 56px
    under the demo, so the windows read as the next part of the page
-   rather than the demo's caption, and 40px between the rows. Added as
+   rather than the demo's caption, and 40px between them. Added as
    margins over the gap, since the gap also sets the lede's distance
    from the demo, which is spent above the fold. */
-.home > #privacy,
-.home > #features { margin-top: 30px; }
+.home > #privacy { margin-top: 30px; }
 .home > #donate { margin-top: 14px; }
-/* Where two windows side by side would leave each too narrow for its
-   words, Privacy, Features and Donate stand in one column, each the
-   width of the desk, their text held at its measure inside. */
-@media (max-width: 1039px) {
-  .desktop.home {
-    grid-template-columns: var(--desk-gutter) minmax(0, 1fr) var(--desk-gutter);
-    grid-template-areas: ". lede ." ". demo ." ". privacy ." ". features ." ". donate ." ". footer .";
-  }
-  .home > #features { margin-top: 14px; }
-}
-/* No sentence in the reading windows ends on one word alone: at the
-   width the two columns give on a laptop's screen, Privacy's last
-   sentence otherwise leaves "Apple." on a line of its own, and other
-   widths strand a word in Features and Donate. text-wrap: pretty moves a
+/* No sentence in the reading windows ends on one word alone: at some
+   widths Privacy's last sentence would leave "Apple." on a line of its
+   own, and others strand a word in Donate. text-wrap: pretty moves a
    word down to keep it company and adds no line, so the windows keep
    their heights. A browser without it wraps as before. */
 .home > #privacy p,
-.home > #features li,
 .home > #donate p { text-wrap: pretty; }
-
-/* The Features window's list, in the Read Me steps' idiom: the body's
-   type and the steps' indent. The gap between items is a touch under the
-   steps' 0.7em so that the list and its link never stand taller than
-   Privacy's words: from 1467px wide Privacy's last sentence fits on one
-   line, and at 0.7em the six lines then came out 7.5px taller, which
-   stretched Privacy with a strip of empty paper at its foot. At 0.6em,
-   wherever the two stand side by side, Features is Privacy's height or
-   one line shorter. The bullet is a small square of ink in whole
-   pixels, the bullet of the era's manuals, rather than the browser's
-   round disc. The class is its own: .feature-list is the features page's
-   list, and this stylesheet is that page's too. */
-.feature-highlights {
-  margin: 0 0 1em;
-  padding-left: 1.4em;
-  list-style: none;
-}
-.feature-highlights li {
-  position: relative;
-  margin-bottom: 0.6em;
-}
-.feature-highlights li:last-child { margin-bottom: 0; }
-.feature-highlights li::before {
-  content: "";
-  position: absolute;
-  left: -1.4em;
-  top: 10px;
-  width: 6px;
-  height: 6px;
-  background: var(--ink);
-}
-/* "See all features" stays one link on one line. */
-#features a { white-space: nowrap; }
 /* Words that name one thing (a setting, a certificate) stay on one line
    with an ordinary space. A no-break space would do the same, but the
    body face draws it twice as wide as a space. */
 .nowrap { white-space: nowrap; }
 
 /* A page of one window: Read Me, Contact, Terms. .desktop is a
-   two-column grid, so without this the window sits in column one and
-   the page reads as half empty. The window is the only section on its
-   desktop, which is what picks it out, so a new page of one window
-   needs no rule of its own (the features page's intro is picked out
-   the same way, and spans there anyway). Spanning does not run the
-   sentences to 1480px: the measure cap on .window-body holds them at
-   74ch and centres them, the same as in the two-column pages'
-   windows. */
-.desktop > .mac-window:only-of-type { grid-column: 1 / -1; }
+   two-column grid, so the window spans both and stands centred, as wide
+   as its words need: the measure cap on .window-body holds them at 74ch,
+   so a page of prose is that wide and a short note narrower, never a
+   1480px frame round a column of text. The window is the only section
+   on its desktop, which is what picks it out, so a new page of one
+   window needs no rule of its own (the features page's intro is picked
+   out the same way, and sets its own width there). */
+.desktop > .mac-window:only-of-type { grid-column: 1 / -1; justify-self: center; }
 
 /* Text keeps its measure while the figure takes the full width. The
    demo's own body carries .figure and is exempt. */
@@ -1315,7 +1662,11 @@ pre.cmd {
   border: var(--border) solid var(--ink);
   background: var(--paper);
   padding: 10px 14px;
-  overflow-x: auto;
+  /* Wraps rather than scrolls, so a phone shows the whole command (a
+     scrolled box there hid its end with no sign of more). A soft wrap
+     still copies as one line. */
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
   font-family: var(--font-mono);
   font-size: 13px;
   margin: 10px 0 0;
@@ -1490,7 +1841,6 @@ pre.cmd {
   gap: 16px;
   align-items: center;
 }
-.btn-row.right { justify-content: flex-end; }
 
 /* ---------- alert dialog ---------- */
 
@@ -1522,41 +1872,19 @@ pre.cmd {
 }
 
 /* the Donate window's inner layout: the dialog grid without the
-   dialog frame (the section is a regular titled window) */
-/* The heart, the words, and the button in one row, using the width
-   the window was given. The body is exempt from the reading measure,
-   so the row spans the window.
-
-   The words take their own width (a reading measure of 62ch at most)
-   and the button takes the rest of the row, CENTRED in it: on a wide
-   monitor it stands midway between the end of the words and the
-   window's right border, not hugging the border with a gulf of paper
-   between it and the text. Where the row is
-   tight the button's column shrinks to the button's own width and no
-   further: its floor is max-content, because a bare 1fr's floor is the
-   button's MIN-content, and the words would take the row first and fold
-   "Support Crossway" onto two lines (measured at 760 and 900 wide). */
-#donate .window-body { max-width: none; }
+   dialog frame (the section is a regular titled window). The heart
+   stands beside the words, and the button is centred in the window
+   22px under them (the grid's 8px gap and its own 14px), on a phone
+   too. The body keeps the reading measure, so Donate is as wide as
+   Privacy above it and the two stand as one column. */
 .donate-grid {
   display: grid;
-  grid-template-columns: 72px auto minmax(max-content, 1fr);
+  grid-template-columns: 72px minmax(0, 1fr);
   gap: 8px 28px;
   align-items: center;
 }
 .donate-grid .dialog-icon { grid-row: auto; }
-.donate-grid p { max-width: 62ch; }
-.donate-grid .dialog-actions { grid-column: 3; margin-top: 0; justify-content: center; }
-/* Donate stands the desk's width under Privacy and Features, so its
-   three columns (the heart, the words, the button between them and the
-   border) have room on all but a phone's screen. Where the window is
-   narrower than 640px, the button goes under the words, at the right as
-   a dialog's button is, rather than squeezing the words into a sliver.
-   After the rules above, which it overrides at the same weight. */
-#donate { container: donate / inline-size; }
-@container donate (width < 640px) {
-  .donate-grid { grid-template-columns: 72px minmax(0, 1fr); }
-  .donate-grid .dialog-actions { grid-column: 2; justify-content: flex-end; }
-}
+.donate-grid .dialog-actions { grid-column: 1 / -1; margin-top: 14px; justify-content: center; }
 
 /* ---------- read-me list ---------- */
 
@@ -1776,7 +2104,7 @@ pre.cmd {
   /* That margin stacks on the grid's own 28px gap. Over the demo the
      extra air is wanted; between the reading windows less is: they
      stand 40px apart, and the footer 28px under the last. */
-  .desktop > #features, .desktop > #donate { margin-top: 12px; }
+  .desktop > #donate { margin-top: 12px; }
   .desktop > .footer { margin-top: 0; }
   .window-duo { grid-template-columns: 1fr; gap: 28px; }
   .window-body { padding: 20px 18px; }
@@ -1785,7 +2113,6 @@ pre.cmd {
     padding: 26px 22px 24px;
   }
   .donate-grid { grid-template-columns: 1fr; }
-  .donate-grid .dialog-actions { grid-column: 1; justify-content: flex-end; }   /* under the words on a phone, at the right as a dialog's button is */
   .dialog-icon { grid-row: auto; }
   .dialog-actions { grid-column: 1; }
   }
@@ -3474,6 +3801,7 @@ html:not(.hacker) .cw-screen::after {
    the width does (the interactive view on most laptops), nothing
    moves. */
 :root { --cw-fold-overhead: 52px; --cw-fold-fit: 0.95; }
+html.menus { --cw-fold-overhead: var(--menubar-clearance); }   /* the measured bar (pull-down menus) */
 
 /* One exposé tile. Six of these plus their gutters is the pane's inner
    width, which is how the app arrives at ~6 per row. */
