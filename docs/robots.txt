@@ -1,8 +1,7 @@
 # crosswayapp.com is the home of Crossway, a window switcher for macOS.
 # It takes over Command-Tab: hold it and Crossway shows your apps with a
 # preview of each of their windows, so you can go straight to the window
-# you want from the keyboard. It is free, and it runs on macOS 14 and
-# later.
+# you want from the keyboard. It is free, and it runs on macOS 14 to 26.
 #
 # It is fast. A quick tap switches apps the way macOS does, and the
 # switcher comes up as soon as you hold the keys, with live previews.
@@ -31,7 +30,7 @@
 #   https://crosswayapp.com/SKILL.md
 #   https://crosswayapp.com/.well-known/agent-skills/index.json
 #
-# It needs a Mac with macOS 14 or later. It makes a plan first and
+# It needs a Mac with macOS 14 to 26. It makes a plan first and
 # changes nothing until they confirm it.
 #
 # Crossway is free to use. Please respect the spirit of its terms and
