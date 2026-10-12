@@ -28,7 +28,9 @@
      on other sites. This sends #readme and #contact on to the new pages,
      on load and on a hash change, before anything is drawn. -->
 <script>(function(){function go(){var h=location.hash;if(h==="#readme"||h==="#contact")location.replace(h.slice(1)+"/")}go();addEventListener("hashchange",go)})()</script>
+<link rel="preload" href="assets/ChicagoFLF.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="style.css">
+<script src="menus.js"></script>
 <script src="night.js" defer></script>
 <script src="copy.js" defer></script>
 <script src="demo.js" defer></script>
@@ -1174,28 +1176,6 @@
     </div>
   </section>
 
-  <!-- Features, beside Privacy: a short list of what the switcher does
-       besides switching, one plain line each, as many as stand beside
-       Privacy on a laptop's screen without ever standing taller, and the
-       way to the full list. Every line is true of the version people download now
-       (the live features page). The shortcuts are written as the Read Me
-       page writes ⌘Tab, in the body's own type: the mono face of <kbd>
-       sets ⌘ small and faint in a sentence. -->
-  <section class="mac-window" id="features">
-    <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Features</span></div>
-    <div class="window-body">
-      <ul class="feature-highlights">
-        <li>⌘W closes the selected window, right from the app switcher.</li>
-        <li>⌘Q quits the selected app.</li>
-        <li>⌘M minimizes the selected window.</li>
-        <li>⌘N opens a new window in the selected app.</li>
-        <li>Minimized windows and windows on other Spaces are listed too.</li>
-        <li>Window previews are live.</li>
-      </ul>
-      <p><a href="features/">See all features</a></p>
-    </div>
-  </section>
-
   <section class="mac-window" id="donate">
     <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Donate</span></div>
     <div class="window-body">
@@ -1214,7 +1194,7 @@
       <div>
         <h2>Crossway is free.</h2>
         <p>If you would like to say thank you and support an independent,
-        privacy-focused, and passionately made app, donations are always
+        <span class="nowrap">privacy-focused</span>, and passionately made app, donations are always
         appreciated!</p>
       </div>
       <!-- Donations take one method, a Stripe Payment Link (Apple Pay
@@ -1227,8 +1207,8 @@
            dashboard settings meant to govern those.
            Also keep custom text/fields OFF the link: they suppress the
            Apple Pay / Google Pay express buttons. -->
-      <div class="dialog-actions btn-row right">
-        <a class="btn btn-default" href="https://buy.stripe.com/aFa3cx5037477FN7LTaMU01" rel="noopener">Support Crossway</a>
+      <div class="dialog-actions btn-row">
+        <a class="btn btn-default" href="https://buy.stripe.com/aFa3cx5037477FN7LTaMU01" target="_blank" rel="noopener">Support Crossway</a>
       </div>
     </div>
     </div>
@@ -1238,7 +1218,7 @@
     <p class="links">
       <a href="troubleshooting/">Troubleshooting</a>
       &ensp;·&ensp;
-      <a href="https://github.com/crossway-app/Crossway-Releases" rel="noopener">GitHub</a>
+      <a href="https://github.com/crossway-app/Crossway-Releases" target="_blank" rel="noopener">GitHub</a>
       &ensp;·&ensp;
       <a href="terms/">Terms</a>
       &ensp;·&ensp;
