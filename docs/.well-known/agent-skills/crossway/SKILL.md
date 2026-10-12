@@ -1,7 +1,7 @@
 ---
 name: crossway
 description: Install, update, diagnose, repair, or launch the latest official Crossway macOS app. Use when a user wants a local agent to manage Crossway end to end on their Mac.
-compatibility: Requires a local Mac running macOS 14 or later, outbound HTTPS access to GitHub Releases, and permission to inspect applications, run macOS security checks, write the selected Applications directory, and launch apps. Remote or container-only agents cannot use this skill to change the user's Mac.
+compatibility: Requires a local Mac running macOS 14 to 26, outbound HTTPS access to GitHub Releases, and permission to inspect applications, run macOS security checks, write the selected Applications directory, and launch apps. Remote or container-only agents cannot use this skill to change the user's Mac.
 ---
 
 # Crossway
