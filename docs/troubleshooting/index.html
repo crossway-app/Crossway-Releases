@@ -20,7 +20,9 @@
 <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32.png">
 <link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <script>try{var v=localStorage.getItem("crossway-night");if(v==="1")document.documentElement.classList.add("night");else if(v==="0")document.documentElement.classList.add("day");if(localStorage.getItem("crossway-hacker")==="1")document.documentElement.classList.add("hacker");if(localStorage.getItem("crossway-retro")==="1")document.documentElement.classList.add("retro")}catch(e){}</script>
+<link rel="preload" href="../assets/ChicagoFLF.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="stylesheet" href="../style.css">
+<script src="../menus.js"></script>
 <script src="../night.js" defer></script>
 <script src="../cameo.js" defer></script>
 <script src="../hacker.js" defer></script>
@@ -82,34 +84,52 @@
     <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Troubleshooting</span></div>
     <div class="window-body">
 
-      <h3>"The application "Crossway.app" can't be opened." (a plain dialog with only an OK button)</h3>
-      <p>The zip most likely reached your Mac through a chat app (WhatsApp,
-      Telegram, and similar). macOS marks files saved by those apps so they
-      can never run, no matter how the app is signed. Paste this into
-      Terminal, then open the app again:</p>
+      <h3>"The application “Crossway.app” can't be opened." (a plain dialog with only an OK button)</h3>
+      <p>This usually means the zip reached your Mac through a chat app,
+      such as WhatsApp or Telegram. macOS won't open an app that a chat app
+      saved. To open Crossway anyway, make sure it is in your Applications
+      folder. Then open Terminal, which is in the Utilities folder inside
+      Applications, paste this command, press Return, and open Crossway
+      again:</p>
       <pre class="cmd">xattr -r -d com.apple.quarantine /Applications/Crossway.app</pre>
-      <p class="caption" style="margin-top: 10px">To avoid this entirely,
+      <p class="caption" style="margin-top: 10px">Next time,
       <a href="../#download">download the zip in your browser</a> instead of
-      receiving it through a messenger.</p>
+      through a chat app, and this won't happen.</p>
 
       <h3 style="margin-top: 28px">"Crossway is damaged and can't be opened."</h3>
-      <p>The zip was modified on its way to you. Delete the app and
-      <a href="../#download">re-download it</a>.</p>
+      <p>Your copy of Crossway was changed after it was downloaded, for
+      example re-zipped or only partly copied, so macOS won't open it. To
+      fix it, move Crossway from your Applications folder to the Trash,
+      then <a href="../#download">download the zip again</a> in your
+      browser.</p>
 
       <h3 style="margin-top: 28px">"Crossway can't be opened because Apple cannot check it for malicious software."</h3>
-      <p>Same cause: a re-zipped or damaged copy.
-      <a href="../#download">Re-download it</a> in a browser.</p>
+      <p>On macOS 15 and later, this message reads "Apple could not verify
+      “Crossway” is free of malware that may harm your Mac or compromise
+      your privacy." Your copy of Crossway was changed after it was downloaded, for
+      example re-zipped by another app or service, so macOS can't confirm
+      it is the real one. To fix it, move Crossway from your Applications
+      folder to the Trash, then <a href="../#download">download the zip
+      again</a> in your browser.</p>
 
       <h3 style="margin-top: 28px">"Crossway requires macOS 14.0 or later."</h3>
-      <p>Your Mac runs an older macOS. Crossway needs macOS 14 (Sonoma) or
-      newer; there is no workaround.</p>
+      <p>Crossway runs on macOS 14 Sonoma to macOS 26 Tahoe, and this Mac
+      has an older version of macOS. If your Mac can be updated, open
+      <strong><span class="nowrap">System Settings</span> → General →
+      <span class="nowrap">Software Update</span></strong> (on macOS 12 or
+      earlier, <strong><span class="nowrap">System Preferences</span> →
+      <span class="nowrap">Software Update</span></strong>). When the update
+      is done, open Crossway again. Crossway can't run on an older
+      version.</p>
 
       <h3 style="margin-top: 28px">"Crossway was not downloaded from the App Store."</h3>
-      <p>Your Gatekeeper setting allows App Store apps only. In
-      <strong><span class="nowrap">System Settings</span> → <span class="nowrap">Privacy &amp; Security</span></strong>, set
-      "Allow applications downloaded from" to <strong><span class="nowrap">App Store</span> and
-      identified developers</strong> (on newer macOS: "<span class="nowrap">App Store</span> &amp;
-      Known Developers").</p>
+      <p>Your Mac is set to open apps from the App Store only. To allow
+      Crossway, open <strong><span class="nowrap">System Settings</span> → <span class="nowrap">Privacy &amp; Security</span></strong>
+      and scroll down to Security. On macOS 15 and later, set "Allow
+      applications from" to <strong><span class="nowrap">App Store</span> &amp; Known
+      Developers</strong>. On macOS 14, set "Allow applications downloaded
+      from" to <strong><span class="nowrap">App Store</span> and identified
+      developers</strong>. Then open Crossway again.</p>
 
     </div>
   </section>
@@ -117,19 +137,23 @@
   <section class="mac-window">
     <div class="titlebar"><span class="closebox" aria-hidden="true"></span><span class="title">Which version am I running?</span></div>
     <div class="window-body">
-      <p><strong>Once installed:</strong> click the Crossway menu-bar icon →
-      <em>Settings</em> and your version is shown at the bottom of the
-      Settings window. Or select <code>/Applications/Crossway.app</code> in
-      Finder and press ⌘I (<span class="nowrap">Get Info</span>).</p>
-      <p><strong>To see if you're current:</strong> click the menu-bar icon →
-      <em>Check for Updates</em>, or <em>Check now</em> beside Auto-update in
-      Settings → General → Startup and updates. Crossway compares your version with the
-      newest release, then offers the download if there's something
-      newer.</p>
-      <p><strong>For optional automatic checks:</strong> open
-      <em>Settings → General → Startup and updates</em>, turn on <em>Auto-update</em>,
-      and choose the schedule you want. It is off until you opt in, and an
-      available update still requires a deliberate browser download.</p>
+      <p><strong>To find which version you have:</strong> click the
+      Crossway icon in the menu bar and choose <em>Settings</em>. Your
+      version is shown at the bottom of the Settings window. You can also
+      select Crossway in your Applications folder and press ⌘I. The
+      version is listed in the window that opens.</p>
+      <p><strong>To check if you have the latest version:</strong> click
+      the Crossway icon in the menu bar and choose <em>Check for
+      Updates</em>. Crossway tells you whether you have the latest version.
+      If a newer one is out, it offers to download it in your browser. The
+      <em>Check now</em> button in <em>Settings → General</em>, under
+      Startup and updates, does the same.</p>
+      <p><strong>To have Crossway check for you:</strong> click the
+      Crossway icon in the menu bar and choose <em>Settings</em>. On the
+      General tab, turn on <em>Auto-update</em> under Startup and updates,
+      and choose how often it checks. It is off until
+      you turn it on. When a newer version is out, Crossway tells you, and
+      you download it in your browser yourself.</p>
     </div>
   </section>
 
@@ -137,7 +161,7 @@
     <p class="links">
       <a href="../">Home</a>
       &ensp;·&ensp;
-      <a href="https://github.com/crossway-app/Crossway-Releases" rel="noopener">GitHub</a>
+      <a href="https://github.com/crossway-app/Crossway-Releases" target="_blank" rel="noopener">GitHub</a>
       &ensp;·&ensp;
       <a href="../terms/">Terms</a>
       &ensp;·&ensp;
