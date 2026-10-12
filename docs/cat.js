@@ -10,8 +10,10 @@
    from the edge of the screen on the side Shai is not, and goes to
    sleep in that corner; type it again and she gets up and walks off the
    way she came. If Shai is called while the kitten is there, the kitten
-   makes way: she walks off through her edge as Shai walks over, and
-   Shai takes her corner.
+   makes way: she walks off through her edge as Shai walks over, comes
+   straight back in through the screen's other edge, and curls up in the
+   corner Shai left. The cats have swapped corners, and the kitten stays
+   until her name sends her off.
 
    Click either cat while she sleeps and she lifts her head to look at
    whoever clicked; five seconds after the last click she puts it down
@@ -541,8 +543,9 @@
   /* Run a cat's steps in sequence, each entry [delay-after-previous, fn].
      She counts as moving from the first step to the end of the last, and
      a nap she was clicked out of is called off: what she does now is
-     what she was called for. */
-  function chain(c, steps) {
+     what she was called for. `then`, if given, runs once she has stopped
+     moving, so it may start her on another chain. */
+  function chain(c, steps, then) {
     clearTimeout(c.nap);
     c.nap = null;
     c.moving = true;
@@ -557,6 +560,7 @@
       c.moving = false;
       c.el.removeAttribute("data-moving");
       moving--;
+      if (then) { then(); }
     }, t);
   }
 
@@ -645,12 +649,14 @@
   }
 
   /* The kitten, up and off the screen through the edge behind her
-     corner, and gone; in a hurry, without her stretch. */
-  function leave(c, hurry) {
+     corner, and gone; in a hurry, without her stretch. `then` runs once
+     she is gone. */
+  function leave(c, hurry, then) {
     var corner = sideOf(c);
     if (lessMotion()) {
       clearTimeout(c.nap);
       c.el.hidden = true;
+      if (then) { then(); }
       return;
     }
     var go = stroll(c, (corner === "right" ? 1 : -1) * beyond(c));
@@ -660,7 +666,7 @@
         glide(c, 0, 0);
         pose(c, "sleep");
       }]
-    ]));
+    ]), then);
   }
 
   /* ---------------------------------------------------- clicking */
@@ -687,15 +693,19 @@
        walk), then wakes and hurries off ahead of her, the way Shai is
        going. On a narrow screen, where Shai's walk is short, she goes
        sooner, early enough to be up and a body length out of the corner
-       before Shai arrives in it. */
+       before Shai arrives in it. Off the screen, she comes straight back
+       in through its other edge, behind Shai, and sleeps in the corner
+       Shai left. */
     shai: function () {
       var k = kitten && !kitten.el.hidden ? kitten : null;
+      var from = sideOf(shai);
       var walk = cross(shai);
       if (!k) { return; }
-      if (!walk) { leave(k); return; } /* less motion: she is simply gone */
+      var back = function () { enter(k, from); };
+      if (!walk) { leave(k, false, back); return; } /* less motion: they have simply swapped corners */
       var away = span(setOff(k, sideOf(k), { ms: 0, x: 0 }, true)) + 1000 / k.kind.pace;
       var at = Math.max(0, Math.min(walk.start + HEADS_UP * walk.ms, walk.start + walk.ms - away));
-      setTimeout(function () { leave(k, true); }, at); /* Shai is moving all the while, so a name typed meanwhile is ignored */
+      setTimeout(function () { leave(k, true, back); }, at); /* Shai is moving all the while, so a name typed meanwhile is ignored */
     },
     /* The kitten comes in on the side Shai is not, or, if she is here,
        goes out the way she came. */
