@@ -1146,11 +1146,13 @@ html.menus { --menubar-clearance: calc(var(--menubar-height, 35px) + 17px); }
   appearance: none;
   -webkit-tap-highlight-color: transparent;
 }
-.menubar .menu-title[aria-expanded="true"] {
+.menubar .menu-title[aria-expanded="true"],
+.menubar .menu-title.is-lit {
   background: var(--ink);
   color: var(--paper);
 }
-html.hacker .menubar .menu-title[aria-expanded="true"] { text-shadow: none; }
+html.hacker .menubar .menu-title[aria-expanded="true"],
+html.hacker .menubar .menu-title.is-lit { text-shadow: none; }
 
 /* The keyboard's mark, distinct from the open state's inversion: the
    site's marching ants inside the title, in paper when it is inverted. */
@@ -1239,13 +1241,16 @@ html.hacker .menubar .menu-title[aria-expanded="true"] { text-shadow: none; }
   background: var(--ink);
   color: var(--paper);
 }
-/* A chosen item's one flash: back to paper for a moment. */
-.menubar .menu-panel a.menu-item.is-lit.is-flashing {
+/* A chosen item's one flash, and the Crossway title's when a click on it
+   goes home: back to paper for a moment. */
+.menubar .menu-panel a.menu-item.is-lit.is-flashing,
+.menubar .menu-title.is-lit.is-flashing {
   background: transparent;
   color: var(--ink);
 }
 html.hacker .menubar .menu-panel a.menu-item.is-lit { text-shadow: none; }
-html.hacker .menubar .menu-panel a.menu-item.is-lit.is-flashing { text-shadow: inherit; }
+html.hacker .menubar .menu-panel a.menu-item.is-lit.is-flashing,
+html.hacker .menubar .menu-title.is-lit.is-flashing { text-shadow: inherit; }
 
 .menubar .menu-check { text-align: center; }
 .menubar .menu-text { padding: 3px 8px 3px 0; }
@@ -1438,6 +1443,7 @@ html.hacker .menubar a.menu-download:active { text-shadow: none; }
    title stays distinct from the open state's solid one. */
 @media (forced-colors: active) {
   .menubar .menu-title[aria-expanded="true"],
+  .menubar .menu-title.is-lit,
   .menubar .menu-panel a.menu-item.is-lit {
     forced-color-adjust: none;
     background: Highlight;
