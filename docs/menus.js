@@ -15,8 +15,10 @@
    roles), so a screen reader hears a list of links. A menu opens when the
    pointer rests on its title, and once one is open the others open as the
    pointer slides across. A press and drag works too, as on the Mac. A
-   click on the Crossway title goes home, as choosing Home does; Enter,
-   Space and a tap open its menu instead, since they have no hover.
+   click on the Crossway title goes home at once, the title blinking as a
+   chosen item does, with no menu shown and Home not flashed; its menu
+   opens on a longer rest than the others', on a press dragged down off
+   the bar under it, and on Enter, Space and a tap, which have no hover.
 
    A chosen item flashes once while the browser is already following its
    link, so nothing waits for the flash. The browser follows the link
@@ -306,7 +308,9 @@
     openedBy: "",      /* "hover" (resting on a closed bar's title), "mouse"
                           (sliding across from an open menu), "press", "key"
                           or "tap" */
-    press: null,       /* a mouse button held since a press on a title or panel */
+    press: null,       /* a mouse button held since a press on a title or panel;
+                          `waits` while a press on the Crossway title has not
+                          opened its menu */
     busy: false,       /* a chosen item is on its way */
     lit: null,         /* the one highlighted item */
     owner: "",         /* "pointer" or "keys": the device that moved last in
@@ -328,6 +332,9 @@
   var SETTLE_MS = 120;
   var STAY_MS = 2000;
   var HOVER_OPEN_MS = 100;
+  /* The Crossway title's rest is longer than a move-and-click takes, so
+     a click on it goes home before its menu has shown. */
+  var APP_HOVER_OPEN_MS = 200;
   var HOVER_GRACE_MS = 150;
   var HOVER_CLICK_GUARD_MS = 500;
   var AIM_MS = 300;
@@ -585,6 +592,7 @@
     chooseTimers.forEach(clearTimeout);
     chooseTimers = [];
     S.busy = false;
+    if (chosenTitle) { chosenTitle.classList.remove("is-lit", "is-flashing"); chosenTitle = null; }
     close();
   }
   function choose(a) {
@@ -606,11 +614,30 @@
     later(function () { follow(a); }, 0);
   }
 
+  /* A click on the Crossway title: home at once. The click was on the
+     title, not on Home, so the title answers it the way a chosen item
+     does: it inverts and blinks once (only inverts, with less motion),
+     and stays inverted for a trip to another page until that page
+     replaces this one, or clears after the blink on this one. Home is not
+     flashed, and a menu that was up closes now. The title then waits for
+     the pointer to leave before a rest on it opens the menu. */
+  var chosenTitle = null;
   function goHome(m) {
     var home = m.panel.querySelector('a.menu-item[data-dest="home"]');
     if (!home) { return; }
-    if (S.open !== m) { show(m, "press"); }
-    choose(home);
+    settle();
+    S.quiet = m;
+    chosenTitle = m.btn;
+    chosenTitle.classList.add("is-lit");
+    var blink = motionOK() ? 2 * FLASH_MS : 0;
+    if (blink) {
+      later(function () { m.btn.classList.add("is-flashing"); }, FLASH_MS);
+      later(function () { m.btn.classList.remove("is-flashing"); }, blink);
+    }
+    var url = new URL(home.href, location.href);
+    later(settle, url.pathname === location.pathname && url.search === location.search ? blink + SETTLE_MS : STAY_MS);
+    passThrough = home;
+    home.click();
   }
 
   var LANDING_KEY = "crossway-menu-landing";
@@ -717,8 +744,13 @@
       /* A click soon after resting on the title opened its menu is the
          visitor confirming it, not asking to close it. */
       if (wasOpen && S.openedBy === "hover" && now() - S.openedAt < HOVER_CLICK_GUARD_MS) { wasOpen = false; }
-      if (S.open !== title) { cancelAim(); show(title, "press"); }
-      S.press = { id: e.pointerId, m: title, wasOpen: wasOpen };
+      /* On a bar with no menu up, a press on the Crossway title opens
+         nothing yet: if it is a click, it goes home with no menu shown.
+         Its menu opens once the press is dragged down off the bar under
+         it; onto another title, that title's opens (onPointerMove). */
+      var waits = title.app && !S.open;
+      if (S.open !== title && !waits) { cancelAim(); show(title, "press"); }
+      S.press = { id: e.pointerId, m: title, wasOpen: wasOpen, waits: waits };
     } else {
       S.press = { id: e.pointerId, m: null, wasOpen: true };
       lightByMouse(itemIn(S.open, t));
@@ -740,6 +772,17 @@
     if (S.quiet && title !== S.quiet) { S.quiet = null; }
     if (S.busy) { return; }
     if (S.press && !(e.buttons & 1)) { S.press = null; }   /* a release we never heard */
+    if (S.press && S.press.waits) {
+      /* A press on the Crossway title, still on the bar: nothing to show
+         yet, so a release back on the title still goes home unseen. Off
+         the bar under the title, down toward its menu, the menu opens;
+         off it anywhere else the press is armed as on the empty bar
+         (below), and onto another title, that title's menu opens. */
+      if (title === S.press.m || (!title && inside)) { return; }
+      S.press.waits = false;
+      var g = S.press.m.btn.getBoundingClientRect();
+      if (!title && e.clientX >= g.left && e.clientX < g.right) { show(S.press.m, "press"); }
+    }
     if (S.open && inside) { S.owner = "pointer"; }
     if (S.press || S.open) {
       var inPanel = !!S.open && S.open.panel.contains(t);
@@ -772,7 +815,7 @@
             var m = intent.m;
             cancelIntent();
             if (m && !S.open && overTitle === m && !S.busy) { show(m, "hover"); }
-          }, HOVER_OPEN_MS);
+          }, title.app ? APP_HOVER_OPEN_MS : HOVER_OPEN_MS);
         }
       } else {
         cancelIntent();
@@ -978,9 +1021,10 @@
     if (S.open && !S.busy && isPhone()) { close(); }
   }
   /* Back to this page from the browser's cache: the menu left up for the
-     trip away comes back closed. */
+     trip away comes back closed, and the Crossway title the trip left by
+     answers a rest again. */
   function onPageShow(e) {
-    if (e.persisted) { settle(); }
+    if (e.persisted) { S.quiet = null; settle(); }
   }
 
   window.addEventListener("pointerdown", onPointerDown, true);
