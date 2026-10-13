@@ -5,8 +5,8 @@
       "name": "crossway",
       "type": "archive",
       "description": "Install, update, diagnose, repair, or launch the latest official Crossway macOS app. Use when a user wants a local agent to manage Crossway end to end on their Mac.",
-      "url": "/.well-known/agent-skills/artifacts/crossway-fc2a4a3d30da9df095d92c14dba126e1268751393b0160777ac33760d3bdbffc.zip",
-      "digest": "sha256:fc2a4a3d30da9df095d92c14dba126e1268751393b0160777ac33760d3bdbffc"
+      "url": "/.well-known/agent-skills/artifacts/crossway-e73af1347fb6439fdb4486189b4633fcfb44298600b427f046edec63a7cf008c.zip",
+      "digest": "sha256:e73af1347fb6439fdb4486189b4633fcfb44298600b427f046edec63a7cf008c"
     }
   ]
 }
