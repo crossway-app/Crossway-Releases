@@ -93,7 +93,7 @@
       <h1 id="features-title">Crossway feature guide</h1>
       <p>This guide covers every command and setting in Crossway. Use the
       sections list or search box to find a feature.</p>
-      <p class="caption">This page describes Crossway 2.1.</p>
+      <p class="caption">This page describes Crossway 2.0.</p>
     </div>
   </section>
 
@@ -341,7 +341,6 @@
               <dt>Where</dt><dd>App row, window strip. Not available on the grid.</dd>
               <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
             </dl>
-            <p class="feature-related">See also <a href="#hidden-windows">Hidden windows</a>.</p>
           </article>
 
           <article class="feature" id="mouse-hover" data-search="mouse pointer hover trackpad highlight select">
@@ -410,7 +409,7 @@
 
           <article class="feature" id="cached-stills" data-search="still snapshot cached picture thumbnail live stream feed sequence first">
             <h3 class="feature-title"><a href="#cached-stills">Still image, then live feed</a></h3>
-            <p>A tile first displays the most recent still captured for its window. If live previews are enabled, a live feed replaces the still as soon as it arrives. Tiles out of view keep their most recent still.</p>
+            <p>A tile first displays the most recent still captured for its window. If live previews are enabled, a live feed replaces the still after the preview settles.</p>
             <dl class="feature-meta">
               <dt>Where</dt><dd>Window strip, grid</dd>
               <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
@@ -429,7 +428,7 @@
 
           <article class="feature" id="live-previews" data-search="live previews stream video moving realtime recording indicator purple optional toggle">
             <h3 class="feature-title"><a href="#live-previews">Live previews</a></h3>
-            <p>When live previews are enabled, each tile you can see changes from its still to its live feed as soon as the feed arrives, and a tile that slides into view switches to live shortly after. A master switch controls the feature, with separate switches for the app switcher and grid. Disabled surfaces continue to display stills. macOS shows its purple recording indicator while live feeds are active.</p>
+            <p>When live previews are enabled, each tile changes from a still to a live feed after the preview settles. A master switch controls the feature, with separate switches for the app switcher and grid. Disabled surfaces continue to display stills. macOS shows its purple recording indicator while live feeds are active.</p>
             <dl class="feature-meta">
               <dt>Where</dt><dd>Window strip, grid</dd>
               <dt>Settings</dt><dd>Optional → Previews → Enable live previews, Application switcher, Exposé</dd>
@@ -442,7 +441,7 @@
             <h3 class="feature-title"><a href="#background-capture">Background capture</a></h3>
             <p>Background capture refreshes stills between sessions: when you switch apps, switch to another window of the same app, change Spaces, wake or unlock the Mac, change your display setup, change the system appearance, or open a window in the front app. Moving between windows of one app captures the window you just left. Crossway does not capture while the screen is locked, and window pixels are not written to disk. When this setting is off, capture occurs only while the switcher is open.</p>
             <dl class="feature-meta">
-              <dt>Settings</dt><dd>Optional → Previews → Capture window previews in the background</dd>
+              <dt>Settings</dt><dd>Optional → Previews → Background capture</dd>
               <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional</dd>
             </dl>
             <p class="feature-related">See also <a href="#memory-only-capture">Memory-only window captures</a>.</p>
@@ -459,25 +458,12 @@
             <p class="feature-related">See also <a href="#minimize-window">Minimize window</a> and <a href="#minimized-badge">Minimized label</a>.</p>
           </article>
 
-          <article class="feature" id="hidden-windows" data-search="hidden hide hidden app windows include hidden windows badge still icon">
-            <h3 class="feature-title"><a href="#hidden-windows">Hidden windows</a></h3>
-            <p>Windows of hidden apps remain available in the window strip and grid. Their tiles display the last still, or the app icon, with a <em>Hidden</em> label. Crossway can capture a still of a hidden app's window but cannot provide a live feed. Activating the tile shows the app and brings the window forward. A minimized window of a hidden app keeps its <em>Minimized</em> label. Turn off Include hidden windows to omit them.</p>
-            <dl class="feature-meta">
-              <dt>Where</dt><dd>Window strip, grid</dd>
-              <dt>Settings</dt><dd>Optional → Window inclusion → Include hidden windows</dd>
-              <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional</dd>
-            </dl>
-            <p class="feature-related">See also <a href="#hide-app">Hide app</a> and <a href="#hidden-badge">Hidden label</a>.</p>
-          </article>
-
-          <article class="feature" id="other-space-windows" data-search="spaces desktops other space full screen mission control this desktop only all desktops current space">
+          <article class="feature" id="other-space-windows" data-search="spaces desktops other space full screen mission control">
             <h3 class="feature-title"><a href="#other-space-windows">Windows on other Spaces</a></h3>
-            <p>By default, windows on other Spaces are listed with windows on the current Space, and choosing one brings its app forward. The app switcher and the grid can each list only the current Space instead: choose This desktop only under General → Desktops. This desktop only still lists minimized windows, and the application switcher still lists apps with no open windows. Tabs within a window do not appear as separate tiles.</p>
+            <p>Windows on other Spaces are listed with windows on the current Space. Activating one moves to its Space. Tabs within a window do not appear as separate tiles.</p>
             <dl class="feature-meta">
               <dt>Where</dt><dd>Window strip, grid</dd>
-              <dt>Default</dt><dd>All desktops</dd>
-              <dt>Settings</dt><dd>General → Desktops → Application switcher and Exposé</dd>
-              <dt>Status</dt><dd><span class="feature-status">On by default</span> Choice</dd>
+              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
             </dl>
           </article>
 
@@ -518,37 +504,14 @@
         <div class="window-body">
           <p class="feature-category-lede">Position, size, ordering, displays, and system appearance.</p>
 
-          <article class="feature" id="preview-alignment" data-search="alignment left center centre under app carousel glide position of previews fit width">
+          <article class="feature" id="preview-alignment" data-search="alignment left center centre under app carousel glide position of previews">
             <h3 class="feature-title"><a href="#preview-alignment">Preview alignment</a></h3>
-            <p>Left lines the window strip up with the left edge of the app row, and moves it left only when it needs more room. With Center and Under app, the window you pick always sits under the middle of the app row or under the selected app's icon, and before you pick, the window Switch windows will pick first sits there.</p>
-            <p>The glass fits the row of windows from the first to the last and grows as the row slides, up to the edges of the screen. Every move of the row is animated, including wraparound. Left scrolls only as far as it needs to show the selected window.</p>
+            <p>Left aligns tiles with the left edge of the window strip. Center keeps the selected window in the middle. Under app keeps the selected window below the selected app icon. Center and Under app animate every selection change, including wraparound.</p>
             <dl class="feature-meta">
-              <dt>Default</dt><dd>Under app</dd>
-              <dt>Settings</dt><dd>General → Previews → Window alignment (Left, Center, Under app)</dd>
+              <dt>Default</dt><dd>Left</dd>
+              <dt>Settings</dt><dd>General → Previews → Alignment (Left, Center, Under app)</dd>
               <dt>Status</dt><dd><span class="feature-status">On by default</span> Choice</dd>
             </dl>
-            <p class="feature-related">See also <a href="#preview-motion">Preview pane animation</a>.</p>
-          </article>
-
-          <article class="feature" id="window-shaped-previews" data-search="window-shaped previews tile shape wide tall aspect ratio tile width ⌘tab strip grid">
-            <h3 class="feature-title"><a href="#window-shaped-previews">Window-shaped previews</a></h3>
-            <p>Each tile in the window strip takes the shape of its window, so a wide window gets a wide tile and a tall window a narrower one. The Open tile of an app with no windows has the shape of a typical window. Grid tiles take the shape of their window too.</p>
-            <dl class="feature-meta">
-              <dt>Where</dt><dd>Window strip, grid</dd>
-              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
-            </dl>
-            <p class="feature-related">See also <a href="#window-previews">Window strip</a>.</p>
-          </article>
-
-          <article class="feature" id="preview-motion" data-search="preview pane animation motion slide carousel loop wheel ring wrap wraparound overflow more windows than fit dot indicator mark next window first window">
-            <h3 class="feature-title"><a href="#preview-motion">Preview pane animation</a></h3>
-            <p>Sets how the window strip moves when an app has more windows than fit. Slide glides the row to the window you pick. Carousel turns the previews round in a loop, so the first window comes right after the last. When the previews loop, a small dot marks the window <kbd>⌘</kbd> <kbd>`</kbd> picks first. Preview pane animation applies to Center and Under app alignment. With Left it has no effect, and the setting is dimmed.</p>
-            <dl class="feature-meta">
-              <dt>Default</dt><dd>Slide</dd>
-              <dt>Settings</dt><dd>Optional → Previews → Preview pane animation (Slide, Carousel)</dd>
-              <dt>Status</dt><dd><span class="feature-status">On by default</span> Choice</dd>
-            </dl>
-            <p class="feature-related">See also <a href="#preview-alignment">Preview alignment</a>.</p>
           </article>
 
           <article class="feature" id="single-row-app-switcher" data-search="single row one row app row wrap multiple rows number of app rows icon size">
@@ -563,9 +526,9 @@
 
           <article class="feature" id="interface-scale" data-search="scale scaling size bigger smaller app row icons interface scale">
             <h3 class="feature-title"><a href="#interface-scale">Interface scale</a></h3>
-            <p>Sets the size of the app row and app icons, from half size to triple size. The Settings preview updates while you drag. Crossway uses the new scale the next time it opens.</p>
+            <p>Sets the size of the app row and app icons, from half size to double size. The Settings preview updates while you drag. Crossway uses the new scale the next time it opens.</p>
             <dl class="feature-meta">
-              <dt>Default</dt><dd>1.0, from 0.5 to 3.0</dd>
+              <dt>Default</dt><dd>1.0, from 0.5 to 2.0</dd>
               <dt>Settings</dt><dd>Scaling → Interface scale</dd>
               <dt>Status</dt><dd><span class="feature-status">On by default</span> Adjustable</dd>
             </dl>
@@ -575,7 +538,7 @@
             <h3 class="feature-title"><a href="#window-preview-size">Window preview size</a></h3>
             <p>Sets the size of tiles in the window strip, independently of the app row.</p>
             <dl class="feature-meta">
-              <dt>Default</dt><dd>1.0, from 0.5 to 3.0</dd>
+              <dt>Default</dt><dd>1.0, from 0.5 to 2.0</dd>
               <dt>Settings</dt><dd>Scaling → Window preview size</dd>
               <dt>Status</dt><dd><span class="feature-status">On by default</span> Adjustable</dd>
             </dl>
@@ -585,22 +548,11 @@
             <h3 class="feature-title"><a href="#expose-preview-size">Exposé tile sizes</a></h3>
             <p>Each grid has its own tile size, app icon size, and title text size, so All windows and Focused app's windows can be sized independently. These six controls depend on the grid master switch; see <a href="#settings-expose">Exposé settings</a>.</p>
             <dl class="feature-meta">
-              <dt>Default</dt><dd>1.0 for all six, from 0.5 to 3.0</dd>
+              <dt>Default</dt><dd>1.0 for all six, from 0.5 to 2.0</dd>
               <dt>Settings</dt><dd>Scaling → Exposé: All windows; Scaling → Exposé: Focused app's windows</dd>
               <dt>Status</dt><dd><span class="feature-status">On by default</span> Adjustable</dd>
             </dl>
             <p class="feature-related">See also <a href="#windows-only-previews">Grid master switch</a>.</p>
-          </article>
-
-          <article class="feature" id="expose-window-count" data-search="exposé expose grid windows out of view more below above count counter number hidden scroll down bottom label ↓ ↑">
-            <h3 class="feature-title"><a href="#expose-window-count">Windows out of view</a></h3>
-            <p>When a grid has more windows than fit, it scrolls down. A label at the bottom of the grid shows how many windows are out of view. It reads <em>↓ 12 more</em> while any are below and <em>↑ 12 more</em> once the last row is in view. When Show counter for windows out of view at bottom is off, the label is hidden.</p>
-            <dl class="feature-meta">
-              <dt>Where</dt><dd>Grid</dd>
-              <dt>Settings</dt><dd>Optional → Exposé → Show counter for windows out of view at bottom</dd>
-              <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional</dd>
-            </dl>
-            <p class="feature-related">See also <a href="#all-windows">All windows</a> and <a href="#settings-expose">Exposé settings</a>.</p>
           </article>
 
           <article class="feature" id="background-blur" data-search="blur dim backdrop frosted glass amount intensity behind the switcher">
@@ -614,30 +566,30 @@
             <p class="feature-related">See also <a href="#platform-presentation">macOS 26 and 27, and macOS 14 and 15</a>.</p>
           </article>
 
-          <article class="feature" id="app-order" data-search="order apps applications most recently used alphabetical sort app row">
+          <article class="feature" id="app-order" data-search="order apps most recently used alphabetical sort app row">
             <h3 class="feature-title"><a href="#app-order">Order of apps</a></h3>
             <p>Most recently used places the previous app first. Alphabetical orders apps by name.</p>
             <dl class="feature-meta">
               <dt>Default</dt><dd>Most recently used</dd>
-              <dt>Settings</dt><dd>General → Ordering → Order apps by</dd>
+              <dt>Settings</dt><dd>General → Ordering → Applications</dd>
               <dt>Status</dt><dd><span class="feature-status">On by default</span> Choice</dd>
             </dl>
           </article>
 
           <article class="feature" id="window-order" data-search="order windows most recently focused alphabetical macos window order sort strip grid">
             <h3 class="feature-title"><a href="#window-order">Order of windows</a></h3>
-            <p>Most recently focused places recent windows first. Alphabetical sorts by window title. macOS window order uses the system's front-to-back order. Minimized windows and the windows of hidden apps follow the other windows in every order.</p>
+            <p>Most recently focused places recent windows first. Alphabetical sorts by window title. macOS window order uses the system's front-to-back order. Minimized windows follow unminimized windows in every order.</p>
             <dl class="feature-meta">
               <dt>Default</dt><dd>Most recently focused</dd>
-              <dt>Settings</dt><dd>General → Ordering → Order windows by</dd>
+              <dt>Settings</dt><dd>General → Ordering → Windows</dd>
               <dt>Status</dt><dd><span class="feature-status">On by default</span> Choice</dd>
             </dl>
             <p class="feature-related">See also <a href="#native-window-cycling">Native window cycling</a>.</p>
           </article>
 
-          <article class="feature" id="native-window-cycling" data-search="native window cycling cycle fast taps ping pong walk windows back and forth ⌘` ⌥` ⌥tab all windows repeat">
+          <article class="feature" id="native-window-cycling" data-search="native window cycling cycle fast taps ping pong walk windows back and forth ⌘` repeat">
             <h3 class="feature-title"><a href="#native-window-cycling">Native window cycling</a></h3>
-            <p>When Native window cycling is off, quick <kbd>⌘</kbd> <kbd>`</kbd> presses alternate between the app's two most recent windows. When it is on, quick presses move through every window in the selected window order; add <kbd>⇧</kbd> to move in reverse. Most recently focused order is updated when previews appear. Alphabetical and macOS window order remain fixed. The same rules apply to quick presses of Focused app's windows, and of All windows, which moves through the windows of all your apps.</p>
+            <p>When Native window cycling is off, quick <kbd>⌘</kbd> <kbd>`</kbd> presses alternate between the app's two most recent windows. When it is on, quick presses move through every window in the selected window order; add <kbd>⇧</kbd> to move in reverse. Most recently focused order is updated when previews appear. Alphabetical and macOS window order remain fixed. The same rules apply to quick presses of Focused app's windows.</p>
             <dl class="feature-meta">
               <dt>Settings</dt><dd>General → Ordering → Native window cycling</dd>
               <dt>Status</dt><dd><span class="feature-status">Off by default</span> Optional</dd>
@@ -729,16 +681,6 @@
             <p class="feature-related">See also <a href="#minimized-windows">Minimized windows</a>.</p>
           </article>
 
-          <article class="feature" id="hidden-badge" data-search="hidden label corner tile badge">
-            <h3 class="feature-title"><a href="#hidden-badge">Hidden label</a></h3>
-            <p>A tile of a hidden app's window displays a <em>Hidden</em> label over its still or app icon, in the same place and style as the Minimized label. Activating the tile shows the app.</p>
-            <dl class="feature-meta">
-              <dt>Where</dt><dd>Window strip, grid</dd>
-              <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
-            </dl>
-            <p class="feature-related">See also <a href="#hidden-windows">Hidden windows</a>.</p>
-          </article>
-
         </div>
       </section>
 
@@ -747,9 +689,9 @@
         <div class="window-body">
           <p class="feature-category-lede">All Settings controls, in window order, with choices and defaults.</p>
 
-          <article class="feature" id="settings-window" data-search="settings preferences window open settings cmd comma ⌘, tabs general scaling keybindings optional manage footer version donate">
+          <article class="feature" id="settings-window" data-search="settings preferences window open settings cmd comma ⌘, tabs general scaling keybindings optional footer version donate">
             <h3 class="feature-title"><a href="#settings-window">Settings</a></h3>
-            <p>Open Settings from the Crossway menu, or press <kbd>⌘</kbd> <kbd>,</kbd> while Crossway is frontmost. The window has General, Scaling, Keybindings, Optional, and Manage tabs. Most changes apply the next time Crossway opens. Scaling changes also appear in the Settings preview while you drag.</p>
+            <p>Open Settings from the Crossway menu, or press <kbd>⌘</kbd> <kbd>,</kbd> while Crossway is frontmost. The window has General, Scaling, Keybindings, and Optional tabs. Most changes apply the next time Crossway opens. Scaling changes also appear in the Settings preview while you drag.</p>
             <dl class="feature-meta">
               <dt>Where</dt><dd>Menu bar → Settings, or <kbd>⌘</kbd> <kbd>,</kbd></dd>
               <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
@@ -758,7 +700,7 @@
 
           <div class="settings-tab" id="general-tab">
             <h3 class="feature-title settings-tab-title"><a href="#general-tab">General</a></h3>
-            <p class="feature-category-lede">Monitors, desktops, preview timing and placement, and ordering.</p>
+            <p class="feature-category-lede">Monitors, preview timing and placement, ordering, and startup.</p>
 
             <article class="feature feature-setting" id="settings-monitors" data-search="monitors displays screens active monitor only all monitors general">
               <h4 class="feature-title"><a href="#settings-monitors">Monitors</a></h4>
@@ -776,23 +718,6 @@
               <p class="feature-related">See <a href="#monitors">Multiple displays</a>.</p>
             </article>
 
-            <article class="feature feature-setting" id="settings-desktops" data-search="desktops spaces mission control this desktop only all desktops current desktop other desktops general">
-              <h4 class="feature-title"><a href="#settings-desktops">Desktops</a></h4>
-              <p class="feature-path">Settings → General → Desktops</p>
-              <p>Controls which desktops supply windows. The app switcher and the grid each have their own choice. With This desktop only, windows on your other desktops are left out, and the app switcher also leaves out apps whose windows are all on other desktops. Minimized windows follow Include minimized windows either way. The help button beside each row names the shortcuts it covers.</p>
-              <div class="features-table-wrap">
-                <table class="settings-table">
-                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
-                  <tbody>
-                  <tr><th scope="row">Application switcher</th><td>This desktop only, All desktops</td><td>All desktops</td></tr>
-                  <tr><th scope="row">Exposé</th><td>This desktop only, All desktops</td><td>All desktops</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <p>Exposé depends on the grid master switch; see <a href="#settings-expose">Exposé settings</a>.</p>
-              <p class="feature-related">See <a href="#other-space-windows">Windows on other Spaces</a>.</p>
-            </article>
-
             <article class="feature feature-setting" id="previews-timing" data-search="previews delay timing show delay window preview show delay expose exposé show delay grid delay animation speed reveal presets fluid fast custom alignment window alignment">
               <h4 class="feature-title"><a href="#previews-timing">Previews</a></h4>
               <p class="feature-path">Settings → General → Previews</p>
@@ -801,7 +726,7 @@
                 <table class="settings-table">
                   <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
                   <tbody>
-                  <tr><th scope="row">Window alignment</th><td>Left, Center, Under app</td><td>Under app</td></tr>
+                  <tr><th scope="row">Window alignment</th><td>Left, Center, Under app</td><td>Left</td></tr>
                   <tr><th scope="row">UX presets</th><td>Fluid, Fast, Custom</td><td>Fluid</td></tr>
                   <tr><th scope="row">Switcher show delay</th><td>0 to 1.00 s, in steps of 0.01</td><td>0.10 s</td></tr>
                   <tr><th scope="row">Window preview show delay</th><td>0 to 2.00 s, in steps of 0.1</td><td>0.40 s</td></tr>
@@ -832,28 +757,47 @@
               <p class="feature-related">See <a href="#app-order">Order of apps</a>, <a href="#window-order">Order of windows</a>, and <a href="#native-window-cycling">Native window cycling</a>.</p>
             </article>
 
+            <article class="feature feature-setting" id="settings-startup" data-search="startup launch at login auto-update automatically check for updates frequency check now hours days weeks months">
+              <h4 class="feature-title"><a href="#settings-startup">Startup</a></h4>
+              <p class="feature-path">Settings → General → Startup and updates</p>
+              <p>Controls launch at login and update checks.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Launch at login</th><td>On or off</td><td>On</td></tr>
+                  <tr><th scope="row">Auto-update</th><td>On or off</td><td>Off</td></tr>
+                  <tr><th scope="row">Frequency</th><td>1 to 999 hours, days, weeks, or months</td><td>1 week</td></tr>
+                  <tr><th scope="row">Check now</th><td>Button</td><td></td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p>Auto-update performs a metadata check only. A month is treated as 30 days. Check now performs an immediate check.</p>
+              <p class="feature-related">See <a href="#update-checks">Update checks</a>.</p>
+            </article>
+
           </div>
 
           <div class="settings-tab" id="scaling-tab">
             <h3 class="feature-title settings-tab-title"><a href="#scaling-tab">Scaling</a></h3>
             <p class="feature-category-lede">Independent sizes for the app row, window strip, and grid.</p>
 
-            <article class="feature feature-setting" id="settings-scaling" data-search="scaling scale size application switcher interface scale window preview size exposé preview size bigger smaller">
+            <article class="feature feature-setting" id="settings-scaling" data-search="scaling scale size interface scale window preview size exposé preview size bigger smaller">
               <h4 class="feature-title"><a href="#settings-scaling">Scaling</a></h4>
               <p class="feature-path">Settings → Scaling</p>
-              <p>The tab has three sections. Application switcher holds Interface scale and Window preview size. Exposé: All windows and Exposé: Focused app's windows each hold a preview size, an app icon size, and a title text size. Every slider is independent, so the app row, the window strip, and each grid can be sized on its own. The preview panel updates while you drag. Crossway uses the new values the next time it opens. On a large display, everything is also drawn larger to suit the screen, on top of these values.</p>
+              <p>The tab has three sections. Scaling holds Interface scale and Window preview size. Exposé: All windows and Exposé: Focused app's windows each hold a preview size, an app icon size, and a title text size. Every slider is independent, so the app row, the window strip, and each grid can be sized on its own. The preview panel updates while you drag. Crossway uses the new values the next time it opens.</p>
               <div class="features-table-wrap">
                 <table class="settings-table">
                   <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
                   <tbody>
-                  <tr><th scope="row">Interface scale</th><td>0.5 to 3.0, in steps of 0.05</td><td>1.0</td></tr>
-                  <tr><th scope="row">Window preview size</th><td>0.5 to 3.0, in steps of 0.05</td><td>1.0</td></tr>
-                  <tr><th scope="row">Preview size (Exposé: All windows)</th><td>0.5 to 3.0, in steps of 0.05</td><td>1.0</td></tr>
-                  <tr><th scope="row">App icon size (Exposé: All windows)</th><td>0.5 to 3.0, in steps of 0.05</td><td>1.0</td></tr>
-                  <tr><th scope="row">Title text size (Exposé: All windows)</th><td>0.5 to 3.0, in steps of 0.05</td><td>1.0</td></tr>
-                  <tr><th scope="row">Preview size (Exposé: Focused app's windows)</th><td>0.5 to 3.0, in steps of 0.05</td><td>1.0</td></tr>
-                  <tr><th scope="row">App icon size (Exposé: Focused app's windows)</th><td>0.5 to 3.0, in steps of 0.05</td><td>1.0</td></tr>
-                  <tr><th scope="row">Title text size (Exposé: Focused app's windows)</th><td>0.5 to 3.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Interface scale</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Window preview size</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Preview size (Exposé: All windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">App icon size (Exposé: All windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Title text size (Exposé: All windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Preview size (Exposé: Focused app's windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">App icon size (Exposé: Focused app's windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
+                  <tr><th scope="row">Title text size (Exposé: Focused app's windows)</th><td>0.5 to 2.0, in steps of 0.05</td><td>1.0</td></tr>
                   </tbody>
                 </table>
               </div>
@@ -918,28 +862,12 @@
 
           <div class="settings-tab" id="optional-tab">
             <h3 class="feature-title settings-tab-title"><a href="#optional-tab">Optional</a></h3>
-            <p class="feature-category-lede">Grid, live capture, background capture, preview animation, window inclusion, app-row options, and blur.</p>
+            <p class="feature-category-lede">Live capture, background capture, blur, grid, window inclusion, and app-row options.</p>
 
-            <article class="feature feature-setting" id="settings-expose" data-search="exposé expose windows-only previews enable grid scope all monitors active monitor only window count counter windows out of view at bottom more optional">
-              <h4 class="feature-title"><a href="#settings-expose">Exposé (windows-only previews)</a></h4>
-              <p class="feature-path">Settings → Optional → Exposé (windows-only previews)</p>
-              <p>Controls the grid and its count of windows out of view. When Enable Exposé is off, Show counter for windows out of view at bottom, the two Exposé keybindings and their enable switches, Exposé live previews, Exposé blur, the Exposé display scope under General → Monitors, the Exposé desktop scope under General → Desktops, the Exposé show delay under General → Previews, and all six Exposé sliders under Scaling are disabled. Their values are retained.</p>
-              <div class="features-table-wrap">
-                <table class="settings-table">
-                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
-                  <tbody>
-                  <tr><th scope="row">Enable Exposé</th><td>On or off</td><td>On</td></tr>
-                  <tr><th scope="row">Show counter for windows out of view at bottom</th><td>On or off</td><td>On</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="feature-related">See <a href="#windows-only-previews">Grid master switch</a>, <a href="#expose-window-count">Windows out of view</a>, and <a href="#monitors">Multiple displays</a>.</p>
-            </article>
-
-            <article class="feature feature-setting" id="settings-live-previews" data-search="live previews enable live previews application switcher windows-only previews background capture capture window previews in the background preview pane animation motion slide carousel optional">
+            <article class="feature feature-setting" id="settings-live-previews" data-search="live previews enable live previews application switcher windows-only previews background capture capture window previews in the background optional">
               <h4 class="feature-title"><a href="#settings-live-previews">Previews</a></h4>
               <p class="feature-path">Settings → Optional → Previews</p>
-              <p>Controls live feeds by surface, still capture between sessions, and the animation of the window strip. The per-surface switches depend on Enable live previews. Exposé also depends on the grid master switch.</p>
+              <p>Controls live feeds by surface and still capture between sessions. The per-surface switches depend on Enable live previews. Exposé also depends on the grid master switch.</p>
               <div class="features-table-wrap">
                 <table class="settings-table">
                   <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
@@ -948,43 +876,11 @@
                   <tr><th scope="row">Application switcher</th><td>On or off</td><td>On</td></tr>
                   <tr><th scope="row">Exposé</th><td>On or off</td><td>On</td></tr>
                   <tr><th scope="row">Capture window previews in the background</th><td>On or off</td><td>On</td></tr>
-                  <tr><th scope="row">Preview pane animation</th><td>Slide, Carousel</td><td>Slide</td></tr>
                   </tbody>
                 </table>
               </div>
-              <p>Background capture is independent of live previews. When enabled, it refreshes stills at launch and during normal app activity. When disabled, stills are captured only while the switcher is open. The help button beside Enable live previews describes the macOS recording indicator. Preview pane animation is dimmed unless Window alignment under General → Previews is Center or Under app.</p>
-              <p class="feature-related">See <a href="#live-previews">Live previews</a>, <a href="#background-capture">Background capture</a>, and <a href="#preview-motion">Preview pane animation</a>.</p>
-            </article>
-
-            <article class="feature feature-setting" id="settings-window-inclusion" data-search="window inclusion include minimized windows minimised include hidden windows hidden optional">
-              <h4 class="feature-title"><a href="#settings-window-inclusion">Window inclusion</a></h4>
-              <p class="feature-path">Settings → Optional → Window inclusion</p>
-              <p>Controls whether minimized windows and the windows of hidden apps appear in Crossway.</p>
-              <div class="features-table-wrap">
-                <table class="settings-table">
-                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
-                  <tbody>
-                  <tr><th scope="row">Include minimized windows</th><td>On or off</td><td>On</td></tr>
-                  <tr><th scope="row">Include hidden windows</th><td>On or off</td><td>On</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="feature-related">See <a href="#minimized-windows">Minimized windows</a> and <a href="#hidden-windows">Hidden windows</a>.</p>
-            </article>
-
-            <article class="feature feature-setting" id="settings-app-rows" data-search="number of app rows single-row app switcher macos native wrap rows optional">
-              <h4 class="feature-title"><a href="#settings-app-rows">Number of app rows</a></h4>
-              <p class="feature-path">Settings → Optional → Number of app rows</p>
-              <p>Controls whether app icons fit on one row or wrap at full size.</p>
-              <div class="features-table-wrap">
-                <table class="settings-table">
-                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
-                  <tbody>
-                  <tr><th scope="row">Single-row app switcher (macOS native)</th><td>On or off</td><td>On</td></tr>
-                  </tbody>
-                </table>
-              </div>
-              <p class="feature-related">See <a href="#single-row-app-switcher">Single-row app switcher</a>.</p>
+              <p>Background capture is independent of live previews. When enabled, it refreshes stills at launch and during normal app activity. When disabled, stills are captured only while the switcher is open. The help button beside Enable live previews describes the macOS recording indicator.</p>
+              <p class="feature-related">See <a href="#live-previews">Live previews</a> and <a href="#background-capture">Background capture</a>.</p>
             </article>
 
             <article class="feature feature-setting" id="settings-background-blur" data-search="background blur dim frosted blur amount application switcher windows-only previews optional">
@@ -1004,43 +900,49 @@
               <p class="feature-related">See <a href="#background-blur">Background blur</a>.</p>
             </article>
 
-          </div>
-
-          <div class="settings-tab" id="manage-tab">
-            <h3 class="feature-title settings-tab-title"><a href="#manage-tab">Manage</a></h3>
-            <p class="feature-category-lede">How Crossway starts and how it checks for updates.</p>
-
-            <article class="feature feature-setting" id="settings-startup" data-search="startup launch at login open at login manage">
-              <h4 class="feature-title"><a href="#settings-startup">Startup</a></h4>
-              <p class="feature-path">Settings → Manage → Startup</p>
-              <p>Controls whether Crossway opens when you log in.</p>
+            <article class="feature feature-setting" id="settings-expose" data-search="exposé expose windows-only previews enable grid scope all monitors active monitor only optional">
+              <h4 class="feature-title"><a href="#settings-expose">Exposé (windows-only previews)</a></h4>
+              <p class="feature-path">Settings → Optional → Exposé (windows-only previews)</p>
+              <p>Controls the grid. When it is off, the two Exposé keybindings and their enable switches, Exposé live previews, Exposé blur, the Exposé display scope under General → Monitors, the Exposé show delay under General → Previews, and all six Exposé sliders under Scaling are disabled. Their values are retained.</p>
               <div class="features-table-wrap">
                 <table class="settings-table">
                   <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
                   <tbody>
-                  <tr><th scope="row">Launch at login</th><td>On or off</td><td>On</td></tr>
+                  <tr><th scope="row">Enable Exposé</th><td>On or off</td><td>On</td></tr>
                   </tbody>
                 </table>
               </div>
-              <p class="feature-related">See <a href="#launch-at-login">Launch at login</a>.</p>
+              <p class="feature-related">See <a href="#windows-only-previews">Grid master switch</a> and <a href="#monitors">Multiple displays</a>.</p>
             </article>
 
-            <article class="feature feature-setting" id="settings-updates" data-search="updates auto-update automatically check for updates frequency how often check now hours days weeks months manage">
-              <h4 class="feature-title"><a href="#settings-updates">Updates</a></h4>
-              <p class="feature-path">Settings → Manage → Updates</p>
-              <p>Controls update checks. Frequency sits beside Auto-update, and Check now sits on the row below.</p>
+            <article class="feature feature-setting" id="settings-window-inclusion" data-search="window inclusion include minimized windows minimised optional">
+              <h4 class="feature-title"><a href="#settings-window-inclusion">Window inclusion</a></h4>
+              <p class="feature-path">Settings → Optional → Window inclusion</p>
+              <p>Controls whether minimized windows appear in Crossway.</p>
               <div class="features-table-wrap">
                 <table class="settings-table">
                   <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
                   <tbody>
-                  <tr><th scope="row">Auto-update</th><td>On or off</td><td>Off</td></tr>
-                  <tr><th scope="row">Frequency</th><td>1 to 999 hours, days, weeks, or months</td><td>1 week</td></tr>
-                  <tr><th scope="row">Check now</th><td>Button</td><td></td></tr>
+                  <tr><th scope="row">Include minimized windows</th><td>On or off</td><td>On</td></tr>
                   </tbody>
                 </table>
               </div>
-              <p>Auto-update performs a metadata check only. A month is treated as 30 days. Check now performs an immediate check.</p>
-              <p class="feature-related">See <a href="#update-checks">Update checks</a>.</p>
+              <p class="feature-related">See <a href="#minimized-windows">Minimized windows</a>.</p>
+            </article>
+
+            <article class="feature feature-setting" id="settings-app-rows" data-search="number of app rows single-row app switcher macos native wrap rows optional">
+              <h4 class="feature-title"><a href="#settings-app-rows">Number of app rows</a></h4>
+              <p class="feature-path">Settings → Optional → Number of app rows</p>
+              <p>Controls whether app icons fit on one row or wrap at full size.</p>
+              <div class="features-table-wrap">
+                <table class="settings-table">
+                  <thead><tr><th scope="col">Control</th><th scope="col">Choices or range</th><th scope="col">Default</th></tr></thead>
+                  <tbody>
+                  <tr><th scope="row">Single-row app switcher (macOS native)</th><td>On or off</td><td>On</td></tr>
+                  </tbody>
+                </table>
+              </div>
+              <p class="feature-related">See <a href="#single-row-app-switcher">Single-row app switcher</a>.</p>
             </article>
 
           </div>
@@ -1079,7 +981,7 @@
             <dl class="feature-meta">
               <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
             </dl>
-            <p class="feature-related">See also <a href="#settings-startup">Startup</a> and <a href="#settings-updates">Updates</a> in the Settings reference.</p>
+            <p class="feature-related">See also <a href="#settings-startup">Startup</a> in the Settings reference.</p>
           </article>
 
           <article class="feature" id="memory-only-capture" data-search="memory only no disk pictures pixels cache privacy stored nothing written">
@@ -1093,7 +995,7 @@
 
           <article class="feature" id="permission-revocation" data-search="revoke permission remove take away purge clear pictures stop">
             <h3 class="feature-title"><a href="#permission-revocation">Permission revocation</a></h3>
-            <p>Crossway checks both permissions about once a second while it runs, and whenever you press a switcher shortcut or open Crossway. When a check finds Accessibility or Screen Recording permission removed, Crossway clears all captured stills at once, stops capturing, and opens setup again. Crossway remains unavailable until the required permission is restored.</p>
+            <p>Removing Accessibility or Screen Recording permission clears all captured stills the next time Crossway checks its permissions, such as when you open Crossway. Crossway remains unavailable until the required permission is restored.</p>
             <dl class="feature-meta">
               <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
             </dl>
@@ -1137,7 +1039,7 @@
 
           <article class="feature" id="settings-storage" data-search="storage preferences plist userdefaults what is stored settings file data">
             <h3 class="feature-title"><a href="#settings-storage">Stored settings</a></h3>
-            <p>Crossway stores preferences in its standard macOS preferences file: shortcuts, timing, scales, ordering, display choices, optional settings, update schedule, and setup status. It also stores a process identifier used to keep one copy running. When an update changes a default, you get the new one for any setting you have not chosen yourself. The file contains no window stills, titles, or switching history.</p>
+            <p>Crossway stores preferences in its standard macOS preferences file: shortcuts, timing, scales, ordering, display choices, optional settings, update schedule, and setup status. It also stores a process identifier used to keep one copy running. The file contains no window stills, titles, or switching history.</p>
             <dl class="feature-meta">
               <dt>Status</dt><dd><span class="feature-status">Always</span></dd>
             </dl>
@@ -1181,10 +1083,10 @@
             <h3 class="feature-title"><a href="#update-checks">Update checks</a></h3>
             <p>Check for Updates in the menu and Check now in Settings perform an immediate check. The result reports that Crossway is current, identifies an available version and release date, or reports a failed check. Auto-update uses the selected schedule and displays an alert only when a new version is available. Download opens the release in the default browser.</p>
             <dl class="feature-meta">
-              <dt>Where</dt><dd>Menu bar → Check for Updates; Settings → Manage → Updates</dd>
+              <dt>Where</dt><dd>Menu bar → Check for Updates; Settings → General → Startup and updates</dd>
               <dt>Status</dt><dd><span class="feature-status">Off by default</span> Auto-update is opt-in; manual checks are always available</dd>
             </dl>
-            <p class="feature-related">See also <a href="#no-auto-install">Manual installation</a> and <a href="#settings-updates">Updates</a>.</p>
+            <p class="feature-related">See also <a href="#no-auto-install">Manual installation</a> and <a href="#settings-startup">Startup</a>.</p>
           </article>
 
           <article class="feature" id="no-auto-install" data-search="auto install automatic download install itself replace helper daemon background">
@@ -1200,7 +1102,7 @@
             <p>Crossway uses the standard macOS login-item service. It appears in System Settings → General → Login Items and can be disabled there or in Crossway Settings.</p>
             <dl class="feature-meta">
               <dt>Default</dt><dd>On</dd>
-              <dt>Settings</dt><dd>Manage → Startup → Launch at login</dd>
+              <dt>Settings</dt><dd>General → Startup and updates → Launch at login</dd>
               <dt>Status</dt><dd><span class="feature-status">On by default</span> Optional</dd>
             </dl>
           </article>
@@ -1274,7 +1176,7 @@
       &ensp;·&ensp;
       <a href="../contact/">Contact</a>
     </p>
-    <p class="fineprint">© 2026 Crossway&ensp;·&ensp;Version 2.1&ensp;·&ensp;No analytics on this page.</p>
+    <p class="fineprint">© 2026 Crossway&ensp;·&ensp;Version 2.0&ensp;·&ensp;No analytics on this page.</p>
   </footer>
 
 </main>
