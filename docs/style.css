@@ -2928,10 +2928,10 @@ html:not(.hacker) .cw-screen::after {
 
 .cw-tile-wrap { flex: none; width: var(--cw-strip-w); display: flex; flex-direction: column; gap: var(--cw-tile-gap); }
 
-/* The SLOT. Transparent and unstroked: the paper fill and the edge
-   belong to the miniature window inside it, and whatever the window does
-   not cover stays clear so the pane — or the selection tint — shows
-   through the letterbox bars. */
+/* The SLOT. Transparent and unstroked: the paper fill, the edge and the
+   selection wash all belong to the miniature window inside it (see
+   .cw-mini), and whatever the window does not cover stays clear so the
+   pane shows through the letterbox bars. */
 .cw-tile {
   position: relative;
   /* Explicit width AND height, both definite: see --cw-tile-h. And
@@ -2941,20 +2941,9 @@ html:not(.hacker) .cw-screen::after {
   flex: none;
   width: var(--cw-strip-w);
   height: var(--cw-strip-h);
-  border-radius: 7px;
   display: grid;
   place-items: center;
   container-type: inline-size;
-}
-/* Selection is a filled wash BEHIND the thumbnail, reaching a little
-   past it on every side. No stroke, no lift, no scale — a selected tile
-   is exactly the size and elevation of every other tile. */
-.cw-tile-wrap.is-sel .cw-tile::before {
-  content: "";
-  position: absolute;
-  inset: calc(-1 * var(--cw-wash-out));
-  border-radius: 9px;
-  background: color-mix(in srgb, var(--scr-ink) var(--cw-sel-win), transparent);
 }
 /* Both of these are tokens because --cw-fold-h adds them up: the cap the
    fold opens to IS this line plus the tile above it. */
@@ -3044,7 +3033,20 @@ html:not(.hacker) .cw-screen::after {
   background: var(--scr-paper);
   display: flex;
   flex-direction: column;
-  box-shadow: 0 1px 6px color-mix(in srgb, var(--scr-shade) 18%, transparent);
+  --cw-mini-lift: 0 1px 6px color-mix(in srgb, var(--scr-shade) 18%, transparent);
+  box-shadow: var(--cw-mini-lift);
+}
+/* Selection is a filled wash round the PICTURE: a spread shadow reaching
+   --cw-wash-out past the miniature on every side, over its lift. A
+   spread shadow's corners are the miniature's radius plus the spread, so
+   the wash runs evenly round them, and a window narrower than its slot is
+   washed at its own shape, never as a box, as the app draws it since
+   2026-09-30. No stroke, no scale: a selected tile is exactly the size of
+   every other tile. */
+.cw-tile-wrap.is-sel .cw-mini,
+.cw-gcell.is-sel .cw-mini {
+  box-shadow: 0 0 0 var(--cw-wash-out) color-mix(in srgb, var(--scr-ink) var(--cw-sel-win), transparent),
+              var(--cw-mini-lift);
 }
 /* Every measurement inside a miniature is a share of the SLOT, not a
    fixed pixel size. The desktop window's own chrome is drawn for a
@@ -3190,17 +3192,9 @@ html:not(.hacker) .cw-screen::after {
      percentage silently becomes "as big as my content". */
   width: var(--cw-tile-w);
   height: var(--cw-tile-h);
-  border-radius: 8px;
   display: grid;
   place-items: center;
   container-type: inline-size;
-}
-.cw-gcell.is-sel .cw-gshot::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--scr-ink) var(--cw-sel-win), transparent);
 }
 
 /* The app mark: BOTTOM-LEFT of the thumbnail, inset, floating on the
@@ -3288,10 +3282,6 @@ html:not(.hacker) .cw-screen::after {
   color: color-mix(in srgb, var(--scr-ink) 60%, transparent);
 }
 .cw-gcell.is-sel .cw-gtitle { color: var(--scr-ink); }
-
-@media (prefers-reduced-motion: no-preference) {
-  .cw-gshot { transition: box-shadow 140ms ease, border-color 140ms ease; }
-}
 
 /* ---- the Dock --------------------------------------------------------
    Bottom centre of the desktop, a translucent bar in the pane's
@@ -3861,11 +3851,11 @@ html.menus { --cw-fold-overhead: var(--menubar-clearance); }   /* the measured b
   --cw-tile-gap: 3px;
   --cw-tile-cap: clamp(9px, 1.5cqw, clamp(12px, 1.089cqw, 15px));
   --cw-cap-line: 1.2;
-  /* How far the selection wash reaches past a tile on every side. The
-     strip is padded by it (the strip clips, so a wash at its edge would
-     be cut off square, and the rightmost window's highlight would lose
-     its right side), and the fold counts that padding, top and
-     bottom. */
+  /* How far the selection wash reaches past a window's miniature on
+     every side. The strip is padded by it (the strip clips, so the wash
+     round a miniature that spans its slot would be cut off square at the
+     strip's edge, and the rightmost window's highlight would lose its
+     right side), and the fold counts that padding, top and bottom. */
   --cw-wash-out: 2px;
   /* The strip's own height, computed rather than guessed, plus a hair
      of headroom for an engine that rounds a line box up. */
