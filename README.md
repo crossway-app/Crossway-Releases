@@ -20,7 +20,7 @@ That is the short version. [The full list of features](https://crosswayapp.com/f
 
 ## Requirements
 
-- macOS 14 to 26.
+- macOS 14 to 27.
 - Apple Silicon or Intel (the app is universal).
 
 ## Download
@@ -73,17 +73,20 @@ Your copy of Crossway was changed after it was downloaded, for example re-zipped
 On macOS 15 and later, this message reads "Apple could not verify “Crossway” is free of malware that may harm your Mac or compromise your privacy." Your copy of Crossway was changed after it was downloaded, for example re-zipped by another app or service, so macOS can't confirm it is the real one. To fix it, move Crossway from your Applications folder to the Trash, then download the zip again from this page in your browser.
 
 **"Crossway requires macOS 14.0 or later."**
-Crossway runs on macOS 14 Sonoma to macOS 26 Tahoe, and this Mac has an older version of macOS. If your Mac can be updated, open **System Settings → General → Software Update** (on macOS 12 or earlier, **System Preferences → Software Update**). When the update is done, open Crossway again. Crossway can't run on an older version.
+Crossway runs on macOS 14 to macOS 27, and this Mac has an older version of macOS. If your Mac can be updated, open **System Settings → General → Software Update** (on macOS 12 or earlier, **System Preferences → Software Update**). When the update is done, open Crossway again. Crossway can't run on an older version.
 
 **"Crossway was not downloaded from the App Store."**
 Your Mac is set to open apps from the App Store only. To allow Crossway, open **System Settings → Privacy & Security** and scroll down to Security. On macOS 15 and later, set "Allow applications from" to **App Store & Known Developers**. On macOS 14, set "Allow applications downloaded from" to **App Store and identified developers**. Then open Crossway again.
+
+**⌘Tab does nothing.**
+Crossway turns off macOS's own ⌘Tab while it runs and turns it back on when it quits. If Crossway was force quit, macOS's ⌘Tab stays off until you open Crossway again.
 
 ## Which version am I running?
 
 - **To find the version of a download:** the release title on this page shows it, for example *Crossway 2.0*. Each release also has a copy of the zip named with its version, like `Crossway-2.0.zip`.
 - **To find which version you have:** click the Crossway icon in the menu bar and choose **Settings**. Your version is shown at the bottom of the Settings window. You can also select Crossway in your Applications folder and press ⌘I. The version is listed in the window that opens.
-- **To check if you have the latest version:** click the Crossway icon in the menu bar and choose **Check for Updates**. Crossway tells you whether you have the latest version. If a newer one is out, it offers to download it in your browser. The **Check now** button in **Settings → General**, under Startup and updates, does the same.
-- **To have Crossway check for you:** click the Crossway icon in the menu bar and choose **Settings**. On the General tab, turn on **Auto-update** under Startup and updates, and choose how often it checks. It is off until you turn it on. When a newer version is out, Crossway tells you, and you download it in your browser yourself.
+- **To check if you have the latest version:** click the Crossway icon in the menu bar and choose **Check for Updates**. Crossway tells you whether you have the latest version. If a newer one is out, it offers to download it in your browser. The **Check now** button in **Settings → Manage**, under Updates, does the same. In Crossway 2.0 it is in **Settings → General**, under Startup and updates.
+- **To have Crossway check for you:** in **Settings → Manage**, turn on **Auto-update** under Updates and choose how often it checks. In Crossway 2.0 it is on the General tab, under Startup and updates. It is off until you turn it on. When a newer version is out, Crossway tells you, and you download it in your browser yourself.
 
 ## Terms
 
